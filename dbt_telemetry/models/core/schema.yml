@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: fct_user_events
+    description: "The core dimensional fact table containing all user telemetry events, joined with user metadata for analytics."
+    meta:
+      contains_pii: true
+      domain: product_analytics
+    columns:
+      - name: event_id
+        description: "Primary key for the event."
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "Foreign key linking to the user dimension. Flagged as sensitive."
+        meta:
+          contains_pii: true
+        tests:
+          - not_null
+      - name: event_type
+        description: "The action the user took (e.g. login, click, purchase)."
+      - name: device_type
+        description: "The hardware device category (e.g. mobile, desktop)."
+      - name: platform
+        description: "The software platform (e.g. iOS, Android, Web)."
+      - name: event_timestamp
+        description: "UTC timestamp of when the event occurred."
+      - name: user_subscription_tier
+        description: "The subscription level of the user at the time of the event (Premium, Free)."
+      - name: user_country
+        description: "The geographic country code of the user."
+      - name: event_hour
+        description: "Truncated hour of the event_timestamp, heavily used in aggregation dashboards."
+      - name: is_session_start
+        description: "Boolean flag (1 or 0) indicating if this event was a login, denoting a new session start."

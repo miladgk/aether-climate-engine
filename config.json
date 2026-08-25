@@ -1,0 +1,32 @@
+{
+    "locations": [
+        {
+            "name": "Berlin",
+            "latitude": 52.52,
+            "longitude": 13.41
+        },
+        {
+            "name": "Tokyo",
+            "latitude": 35.68,
+            "longitude": 139.69
+        },
+        {
+            "name": "New York",
+            "latitude": 40.71,
+            "longitude": -74.00
+        },
+        {
+            "name": "London",
+            "latitude": 51.50,
+            "longitude": -0.12
+        },
+        {
+            "name": "Sydney",
+            "latitude": -33.86,
+            "longitude": 151.20
+        }
+    ],
+    "cache_ttl_seconds": 1800,
+    "anomaly_sigma_threshold": 2.0,
+    "ml_prediction_hours": 48
+}
