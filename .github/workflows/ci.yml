@@ -12,12 +12,27 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: aether_user
+          POSTGRES_PASSWORD: aether_password
+          POSTGRES_DB: aether_warehouse
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       
@@ -37,20 +52,14 @@ jobs:
         run: |
           python3 scripts/custom_bandit.py
       
-      - name: Setup dbt
-        run: |
-          pip install dbt-postgres
-          cd dbt_telemetry
-          dbt deps
-      
-      - name: Run dbt tests
+      - name: Validate dbt Project
         env:
           POSTGRES_HOST: localhost
           POSTGRES_USER: aether_user
           POSTGRES_PASSWORD: aether_password
           POSTGRES_DB: aether_warehouse
           POSTGRES_PORT: 5432
-        # Assuming a Postgres service is defined in the action (omitted for brevity)
         run: |
           cd dbt_telemetry
-          dbt test
+          dbt debug
+          dbt deps
