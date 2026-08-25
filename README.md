@@ -1,7 +1,9 @@
 # Aether — Climate Intelligence & Telemetry Analytics Engine
 
 [![CI Pipeline](https://github.com/your-org/aether/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/aether/actions)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![PostgreSQL 15](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![dbt Core](https://img.shields.io/badge/dbt-1.7.0-orange.svg)](https://www.getdbt.com/)
 [![Apache Airflow](https://img.shields.io/badge/airflow-2.8.1-teal.svg)](https://airflow.apache.org/)
 [![Terraform](https://img.shields.io/badge/terraform-1.5+-purple.svg)](https://www.terraform.io/)
@@ -58,6 +60,18 @@ flowchart TD
         ARCHIVE --> DASH
         DBT --> BI[Downstream Analytics / BI]
     end
+
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px,color:#333;
+    classDef storage fill:#f9d0c4,stroke:#333,stroke-width:2px,color:#333;
+    classDef process fill:#d4e157,stroke:#333,stroke-width:2px,color:#333;
+    classDef error fill:#ef9a9a,stroke:#333,stroke-width:2px,color:#333;
+    classDef database fill:#b3e5fc,stroke:#333,stroke-width:2px,color:#333;
+    classDef dashboard fill:#ce93d8,stroke:#333,stroke-width:2px,color:#333;
+
+    class S3,PG database;
+    class ETL,VAL,AD,ML,ARCHIVE,DBT process;
+    class DLQ error;
+    class DASH,BI dashboard;
 ```
 
 ---
