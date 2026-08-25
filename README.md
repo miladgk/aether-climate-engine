@@ -11,6 +11,10 @@
 
 **Aether** is an enterprise-grade, end-to-end meteorological and climate telemetry analytics platform. It ingests high-frequency atmospheric data across global stations, applies automated statistical anomaly detection, runs multi-model machine learning forecasting engines, and delivers real-time Year-over-Year (YoY) comparative analytics through a custom field-station command dashboard.
 
+<div align="center">
+  <img src="docs/dashboard_preview.jpg" alt="Aether Command Center Dashboard Preview" width="100%">
+</div>
+
 ---
 
 ## 🌟 Key Features
