@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: stg_raw_telemetry
+    description: "Cleansed and standardized raw telemetry data from S3."
+    columns:
+      - name: event_id
+        description: "Unique identifier for the telemetry event."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_type
+        description: "The type of user action."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['click', 'login', 'purchase', 'view', 'logout']
+              quote: false
+
+      - name: user_id
+        description: "The ID of the user performing the action."
+        tests:
+          - not_null
+
+      - name: event_timestamp
+        description: "The time the event occurred."
+        tests:
+          - not_null
