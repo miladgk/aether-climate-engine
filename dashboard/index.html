@@ -1,32 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aether — Climate Intelligence Platform</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg:      #161412;
-            --surface: #1e1b18;
-            --border:  #2a2521;
-            --amber:   #d97706;
-            --amber-l: #fbbf24;
-            --red:     #dc2626;
-            --green:   #16a34a;
-            --blue:    #3b6cf4;
-            --pink:    #db2777;
-            --text:    #e8e0d4;
-            --muted:   #6b6055;
-            --mono:    'DM Mono', monospace;
-            --sans:    'DM Sans', sans-serif;
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        html, body { height: 100%; font-family: var(--sans); background: var(--bg); color: var(--text); overflow: hidden; }
+        :root {
+            --bg: #161412;
+            --surface: #1e1b18;
+            --border: #2a2521;
+            --amber: #d97706;
+            --amber-l: #fbbf24;
+            --red: #dc2626;
+            --green: #16a34a;
+            --blue: #3b6cf4;
+            --pink: #db2777;
+            --text: #e8e0d4;
+            --muted: #6b6055;
+            --mono: 'DM Mono', monospace;
+            --sans: 'DM Sans', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
 
         /* ─── LAYOUT ─────────────────────────────────────────── */
         .app {
@@ -57,9 +73,11 @@
             letter-spacing: -0.03em;
             color: var(--text);
         }
+
         .sidebar-logo .wordmark span {
             color: var(--amber);
         }
+
         .sidebar-logo .tagline {
             font-size: 10px;
             font-family: var(--mono);
@@ -74,7 +92,9 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .sidebar-section:last-child { border-bottom: none; }
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
 
         .sidebar-label {
             font-size: 9px;
@@ -103,19 +123,29 @@
             transition: all 0.15s;
             margin-bottom: 4px;
         }
-        .location-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+
+        .location-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
         .location-btn.active {
             color: var(--text);
             background: rgba(217, 119, 6, 0.12);
             border-color: rgba(217, 119, 6, 0.3);
         }
+
         .location-dot {
-            width: 7px; height: 7px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: var(--muted);
             flex-shrink: 0;
         }
-        .location-btn.active .location-dot { background: var(--amber); }
+
+        .location-btn.active .location-dot {
+            background: var(--amber);
+        }
 
         .custom-select {
             width: 100%;
@@ -129,6 +159,7 @@
             font-family: var(--sans);
             font-size: 13px;
         }
+
         .custom-select option {
             background: var(--surface);
             color: var(--text);
@@ -149,17 +180,27 @@
             transition: all 0.15s;
             margin-bottom: 3px;
         }
-        .model-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-        .model-btn.active { color: var(--amber-l); background: rgba(251, 191, 36, 0.08); border-color: rgba(251, 191, 36, 0.2); }
+
+        .model-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .model-btn.active {
+            color: var(--amber-l);
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.2);
+        }
 
         .horizon-group {
             display: flex;
             gap: 4px;
         }
+
         .horizon-btn {
             flex: 1;
             padding: 7px 0;
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border);
             border-radius: 5px;
             color: var(--muted);
@@ -168,12 +209,28 @@
             cursor: pointer;
             transition: all 0.15s;
         }
-        .horizon-btn:hover { color: var(--text); }
-        .horizon-btn.active { background: var(--amber); border-color: var(--amber); color: #000; font-weight: 500; }
 
-        .theme-group { display: flex; flex-direction: column; gap: 3px; }
+        .horizon-btn:hover {
+            color: var(--text);
+        }
+
+        .horizon-btn.active {
+            background: var(--amber);
+            border-color: var(--amber);
+            color: #000;
+            font-weight: 500;
+        }
+
+        .theme-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
         .theme-btn {
-            display: flex; align-items: center; gap: 9px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
             padding: 8px 12px;
             border: 1px solid transparent;
             border-radius: 5px;
@@ -184,21 +241,72 @@
             cursor: pointer;
             transition: all 0.15s;
         }
-        .theme-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-        .theme-btn.active { color: var(--text); border-color: var(--border); background: rgba(255,255,255,0.05); }
-        .theme-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+        .theme-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .theme-btn.active {
+            color: var(--text);
+            border-color: var(--border);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .theme-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
 
         .sidebar-status {
             margin-top: auto;
             padding: 20px 24px;
             border-top: 1px solid var(--border);
         }
-        .status-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-        .status-row:last-child { margin-bottom: 0; }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-        .dot-green { background: #22c55e; box-shadow: 0 0 6px #22c55e; animation: blink 2.5s ease-in-out infinite; }
-        .dot-red { background: var(--red); }
-        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .status-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-green {
+            background: #22c55e;
+            box-shadow: 0 0 6px #22c55e;
+            animation: blink 2.5s ease-in-out infinite;
+        }
+
+        .dot-red {
+            background: var(--red);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
 
         /* ─── MAIN AREA ──────────────────────────────────────── */
         .main {
@@ -225,7 +333,10 @@
             letter-spacing: 0.01em;
         }
 
-        .breadcrumb { color: var(--border); margin: 0 4px; }
+        .breadcrumb {
+            color: var(--border);
+            margin: 0 4px;
+        }
 
         .main-topbar .location-name {
             font-size: 13px;
@@ -255,7 +366,10 @@
             flex-direction: column;
             overflow: hidden;
         }
-        .chart-panel:last-child { border-bottom: none; }
+
+        .chart-panel:last-child {
+            border-bottom: none;
+        }
 
         .chart-row-header {
             display: flex;
@@ -281,10 +395,13 @@
             font-family: var(--mono);
             color: var(--muted);
         }
+
         .legend-line {
-            width: 18px; height: 2px;
+            width: 18px;
+            height: 2px;
             flex-shrink: 0;
         }
+
         .legend-line.dashed {
             background: repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 7px);
         }
@@ -319,8 +436,14 @@
             margin-bottom: 14px;
         }
 
-        .big-stat-block { margin-bottom: 20px; }
-        .big-stat-block:last-child { margin-bottom: 0; }
+        .big-stat-block {
+            margin-bottom: 20px;
+        }
+
+        .big-stat-block:last-child {
+            margin-bottom: 0;
+        }
+
         .big-stat-block .stat-name {
             font-size: 10px;
             font-family: var(--mono);
@@ -329,7 +452,13 @@
             letter-spacing: 0.08em;
             margin-bottom: 2px;
         }
-        .big-stat-block .stat-row { display: flex; align-items: baseline; gap: 6px; }
+
+        .big-stat-block .stat-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
         .big-stat-block .stat-value {
             font-size: 42px;
             font-weight: 300;
@@ -338,19 +467,30 @@
             color: var(--text);
             font-family: var(--sans);
         }
+
         .big-stat-block .stat-unit {
             font-size: 12px;
             font-family: var(--mono);
             color: var(--muted);
         }
+
         .stat-delta {
             font-family: var(--mono);
             font-size: 10px;
             margin-top: 3px;
         }
-        .stat-delta.pos { color: var(--red); }
-        .stat-delta.neg { color: #22c55e; }
-        .stat-delta.neut { color: var(--muted); }
+
+        .stat-delta.pos {
+            color: var(--red);
+        }
+
+        .stat-delta.neg {
+            color: #22c55e;
+        }
+
+        .stat-delta.neut {
+            color: var(--muted);
+        }
 
         .feed-section {
             flex: 1;
@@ -383,61 +523,138 @@
             font-size: 11px;
             transition: background 0.1s;
         }
-        .feed-row:hover { background: rgba(255,255,255,0.02); }
-        .feed-row .feed-time { color: var(--muted); font-size: 10px; }
-        .feed-row .feed-temp { color: var(--text); }
-        .feed-row .feed-wind { color: var(--muted); }
+
+        .feed-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feed-row .feed-time {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .feed-row .feed-temp {
+            color: var(--text);
+        }
+
+        .feed-row .feed-wind {
+            color: var(--muted);
+        }
+
         .feed-row .feed-ok {
-            width: 5px; height: 5px; border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
             background: #22c55e;
         }
 
         /* feed scrollbar */
-        .feed-section::-webkit-scrollbar { width: 4px; }
-        .feed-section::-webkit-scrollbar-track { background: transparent; }
-        .feed-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .feed-section::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .feed-section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .feed-section::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
 
         /* ─── LOADING ─────────────────────────────────────────── */
         #loading {
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: var(--bg);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             gap: 14px;
             z-index: 9999;
             transition: opacity 0.4s ease;
         }
-        #loading .load-logo { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); }
-        #loading .load-logo span { color: var(--amber); }
-        #loading .load-bar-wrap { width: 120px; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
-        #loading .load-bar { height: 100%; background: var(--amber); border-radius: 1px; animation: load-sweep 1.2s ease-in-out infinite; }
-        @keyframes load-sweep { 0% { width: 0%; margin-left: 0%; } 50% { width: 60%; margin-left: 20%; } 100% { width: 0%; margin-left: 100%; } }
-        #loading .load-text { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+        #loading .load-logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        #loading .load-logo span {
+            color: var(--amber);
+        }
+
+        #loading .load-bar-wrap {
+            width: 120px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        #loading .load-bar {
+            height: 100%;
+            background: var(--amber);
+            border-radius: 1px;
+            animation: load-sweep 1.2s ease-in-out infinite;
+        }
+
+        @keyframes load-sweep {
+            0% {
+                width: 0%;
+                margin-left: 0%;
+            }
+
+            50% {
+                width: 60%;
+                margin-left: 20%;
+            }
+
+            100% {
+                width: 0%;
+                margin-left: 100%;
+            }
+        }
+
+        #loading .load-text {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+        }
 
         /* ─── THEMES ─────────────────────────────────────────── */
         [data-theme="nord"] {
-            --bg:      #1a1f2e;
+            --bg: #1a1f2e;
             --surface: #1f2638;
-            --border:  #2d3550;
-            --amber:   #88c0d0;
+            --border: #2d3550;
+            --amber: #88c0d0;
             --amber-l: #b0d8e6;
-            --text:    #d8dee9;
-            --muted:   #5a6a80;
+            --text: #d8dee9;
+            --muted: #5a6a80;
         }
+
         [data-theme="stone"] {
-            --bg:      #fafaf9;
+            --bg: #fafaf9;
             --surface: #f5f5f4;
-            --border:  #e7e5e4;
-            --amber:   #92400e;
+            --border: #e7e5e4;
+            --amber: #92400e;
             --amber-l: #b45309;
-            --text:    #1c1917;
-            --muted:   #a8a29e;
+            --text: #1c1917;
+            --muted: #a8a29e;
         }
     </style>
 </head>
+
 <body>
     <div id="loading">
         <div class="load-logo">Ae<span>th</span>er</div>
-        <div class="load-bar-wrap"><div class="load-bar"></div></div>
+        <div class="load-bar-wrap">
+            <div class="load-bar"></div>
+        </div>
         <div class="load-text">Fetching telemetry...</div>
     </div>
 
@@ -462,7 +679,8 @@
 
             <div class="sidebar-section">
                 <div class="sidebar-label">Forecast Model</div>
-                <button class="model-btn active" id="model-linear" onclick="changeModel('linear')">Linear Regression</button>
+                <button class="model-btn active" id="model-linear" onclick="changeModel('linear')">Linear
+                    Regression</button>
                 <button class="model-btn" id="model-sma" onclick="changeModel('sma')">Simple Moving Avg</button>
                 <button class="model-btn" id="model-ema" onclick="changeModel('ema')">Exponential Smooth</button>
             </div>
@@ -512,7 +730,8 @@
                     <span class="status-dot dot-red"></span>
                     <span>Postgres offline</span>
                 </div>
-                <div class="status-row" style="margin-top:10px; font-family: var(--mono); font-size:10px; color: var(--muted);">
+                <div class="status-row"
+                    style="margin-top:10px; font-family: var(--mono); font-size:10px; color: var(--muted);">
                     Auto-refresh 10s
                 </div>
             </div>
@@ -678,12 +897,12 @@
                 ]);
                 const liveText = await liveRes.text();
                 globalLiveRecords = liveText.trim().split('\n')
-                    .map(r => { try { return JSON.parse(r); } catch(e) { return null; } })
+                    .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
                     .filter(Boolean);
                 if (predRes && predRes.ok) {
                     const predText = await predRes.text();
                     globalPredRecords = predText.trim().split('\n')
-                        .map(r => { try { return JSON.parse(r); } catch(e) { return null; } })
+                        .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
                         .filter(Boolean);
                 }
                 processData(globalLiveRecords, globalPredRecords);
@@ -696,7 +915,7 @@
                 // Update timestamp
                 document.getElementById('topbar-ts').textContent =
                     'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            } catch(e) { console.error('Fetch error', e); }
+            } catch (e) { console.error('Fetch error', e); }
         }
 
         // ── Process & render ───────────────────────────────────
@@ -708,13 +927,13 @@
             );
 
             const currentYear = locLive.filter(r => r.period !== 'historical').slice(0, 72);
-            const lastYear    = locLive.filter(r => r.period === 'historical');
+            const lastYear = locLive.filter(r => r.period === 'historical');
 
             if (!currentYear.length) return;
 
             const activePred = locPred.slice(0, currentHorizon);
             const totalHours = currentYear.length + activePred.length;
-            
+
             const labels = [];
             const temps = [];
             const winds = [];
@@ -726,16 +945,16 @@
             currentYear.forEach((r, i) => {
                 const d = new Date(r.time);
                 labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
-                temps.push(units.temp === 'C' ? r.temperature_2m : (r.temperature_2m * 9/5 + 32));
+                temps.push(units.temp === 'C' ? r.temperature_2m : (r.temperature_2m * 9 / 5 + 32));
                 winds.push(units.wind === 'kmh' ? r.wind_speed_10m : (r.wind_speed_10m / 3.6));
             });
-            
+
             activePred.forEach((r, i) => {
                 const d = new Date(r.time);
                 labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
                 temps.push(null);
                 winds.push(null);
-                pTemps[currentYear.length + i] = units.temp === 'C' ? r.predicted_temperature_2m : (r.predicted_temperature_2m * 9/5 + 32);
+                pTemps[currentYear.length + i] = units.temp === 'C' ? r.predicted_temperature_2m : (r.predicted_temperature_2m * 9 / 5 + 32);
                 pWinds[currentYear.length + i] = units.wind === 'kmh' ? r.predicted_wind_speed_10m : (r.predicted_wind_speed_10m / 3.6);
             });
 
@@ -751,7 +970,7 @@
                 lastYear.forEach(hr => {
                     const diff = Math.round((new Date(hr.time).getTime() - startMs) / 3600000);
                     if (diff >= 0 && diff < totalHours) {
-                        histTemps[diff] = units.temp === 'C' ? hr.temperature_2m : (hr.temperature_2m * 9/5 + 32);
+                        histTemps[diff] = units.temp === 'C' ? hr.temperature_2m : (hr.temperature_2m * 9 / 5 + 32);
                         histWinds[diff] = units.wind === 'kmh' ? hr.wind_speed_10m : (hr.wind_speed_10m / 3.6);
                     }
                 });
@@ -794,8 +1013,8 @@
                     row.className = 'feed-row';
                     const t = new Date(rec.time);
                     const ts = t.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' '
-                             + t.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
-                    const tTemp = units.temp === 'C' ? rec.temperature_2m : (rec.temperature_2m * 9/5 + 32);
+                        + t.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+                    const tTemp = units.temp === 'C' ? rec.temperature_2m : (rec.temperature_2m * 9 / 5 + 32);
                     const tWind = units.wind === 'kmh' ? rec.wind_speed_10m : (rec.wind_speed_10m / 3.6);
                     row.innerHTML = `
                         <span class="feed-time">${ts}</span>
@@ -818,21 +1037,22 @@
                 if (!chart.config.options.plugins.pulsingDot) return;
                 const activeIndex = chart.config.options.plugins.pulsingDot.index;
                 if (activeIndex === undefined || activeIndex < 0) return;
-                
+
                 const meta = chart.getDatasetMeta(0); // Observed dataset
                 const point = meta.data[activeIndex];
                 if (!point) return;
-                
+
                 const { ctx } = chart;
-                const time = Date.now() / 150;
-                const radius = 4 + Math.abs(Math.sin(time)) * 4;
-                
+                const time = Date.now() / 900;
+                const pulse = Math.abs(Math.sin(time));
+                const radius = 4 + pulse * 3;
+
                 ctx.save();
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
                 ctx.fillStyle = chart.config.options.plugins.pulsingDot.color || '#fbbf24';
                 ctx.shadowColor = chart.config.options.plugins.pulsingDot.color || '#fbbf24';
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = 6 + pulse * 6;
                 ctx.fill();
                 ctx.restore();
             }
@@ -906,4 +1126,5 @@
         animateCharts();
     </script>
 </body>
+
 </html>
