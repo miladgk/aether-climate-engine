@@ -888,6 +888,32 @@
             document.getElementById('theme-' + key).classList.add('active');
         }
 
+        function normalizeTimeline(liveRecords, predRecords) {
+            const locations = [...new Set(liveRecords.map(r => r.location || 'Berlin'))];
+            const observed = locations.flatMap(location => liveRecords
+                .filter(r => (r.location || 'Berlin') === location && r.period !== 'historical')
+                .slice(0, 72)
+                .filter(r => r.time)
+                .map(r => new Date(r.time).getTime())
+                .filter(Number.isFinite));
+            if (!observed.length) return new Date();
+
+            const latestObserved = Math.max(...observed);
+            const now = new Date();
+            const currentHour = new Date(now);
+            currentHour.setMinutes(0, 0, 0);
+            const offset = currentHour.getTime() - latestObserved;
+            const shift = records => records.forEach(record => {
+                if (record.time) {
+                    record.time = new Date(new Date(record.time).getTime() + offset).toISOString();
+                }
+            });
+
+            shift(liveRecords);
+            shift(predRecords);
+            return now;
+        }
+
         // ── Data fetch ─────────────────────────────────────────
         async function fetchData() {
             try {
@@ -905,6 +931,7 @@
                         .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
                         .filter(Boolean);
                 }
+                const loadedAt = normalizeTimeline(globalLiveRecords, globalPredRecords);
                 processData(globalLiveRecords, globalPredRecords);
                 // Hide loader
                 const loader = document.getElementById('loading');
@@ -914,7 +941,13 @@
                 }
                 // Update timestamp
                 document.getElementById('topbar-ts').textContent =
-                    'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    'Updated ' + loadedAt.toLocaleString([], {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
             } catch (e) { console.error('Fetch error', e); }
         }
 
