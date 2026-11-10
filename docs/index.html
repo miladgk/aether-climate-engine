@@ -647,6 +647,35 @@
             --text: #1c1917;
             --muted: #a8a29e;
         }
+
+        @media (max-width: 760px) {
+            html, body { overflow-x: hidden; }
+            body { min-width: 0; }
+            .app { display: block; height: auto; min-height: 100vh; }
+            .sidebar { display: block; border-right: 0; border-bottom: 1px solid var(--border); max-height: none; }
+            .sidebar-logo { padding: 18px 16px 14px; }
+            .sidebar-section { padding: 14px 16px; }
+            .sidebar-section:nth-child(n+3) { display: none; }
+            .main { min-height: 0; }
+            .main-topbar { padding: 14px 16px; }
+            .charts-area { overflow: visible; }
+            .chart-panel { padding: 16px; }
+            .chart-canvas-wrap { min-height: 240px; }
+            .right-panel { display: block; border-left: 0; border-top: 1px solid var(--border); }
+            .right-panel > * { max-width: none; }
+            .feed-list { max-height: 280px; }
+        }
+
+        @media (max-width: 430px) {
+            .sidebar-logo .wordmark { font-size: 16px; }
+            .main-topbar .location-name { font-size: 12px; }
+            .main-topbar .timestamp { font-size: 9px; }
+            .chart-panel { padding: 12px 10px; }
+            .chart-row-header { gap: 7px; flex-wrap: wrap; }
+            .chart-label { font-size: 9px; }
+            .chart-canvas-wrap { min-height: 210px; }
+            .big-stat-block { padding: 14px; }
+        }
     </style>
 </head>
 
