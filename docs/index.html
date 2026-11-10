@@ -315,6 +315,7 @@
             flex-direction: column;
             overflow: hidden;
             background: var(--bg);
+            min-width: 0;
         }
 
         .main-topbar {
@@ -358,6 +359,7 @@
             display: grid;
             grid-template-rows: 1fr 1fr;
             gap: 0;
+            min-width: 0;
         }
 
         .chart-panel {
@@ -366,6 +368,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-width: 0;
         }
 
         .chart-panel:last-child {
@@ -411,6 +414,12 @@
             flex: 1;
             position: relative;
             min-height: 0;
+            min-width: 0;
+        }
+
+        .chart-canvas-wrap canvas {
+            display: block;
+            max-width: 100%;
         }
 
         /* ─── RIGHT PANEL ────────────────────────────────────── */
@@ -648,7 +657,7 @@
             --muted: #a8a29e;
         }
 
-        @media (max-width: 760px) {
+        @media (max-width: 1024px) {
             html, body { overflow-x: hidden; }
             body { min-width: 0; }
             .app { display: block; height: auto; min-height: 100vh; }
@@ -660,7 +669,7 @@
             .main-topbar { padding: 14px 16px; }
             .charts-area { overflow: visible; }
             .chart-panel { padding: 16px; }
-            .chart-canvas-wrap { min-height: 240px; }
+            .chart-canvas-wrap { min-height: 240px; width: 100%; }
             .right-panel { display: block; border-left: 0; border-top: 1px solid var(--border); }
             .right-panel > * { max-width: none; }
             .feed-list { max-height: 280px; }
