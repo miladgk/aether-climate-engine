@@ -15,6 +15,8 @@
   <img src="docs/dashboard_preview.jpg" alt="Aether Command Center Dashboard Preview" width="100%">
 </div>
 
+**Live dashboard:** [miladgk.github.io/aether-climate-engine](https://miladgk.github.io/aether-climate-engine/)
+
 ---
 
 ## 🌟 Key Features

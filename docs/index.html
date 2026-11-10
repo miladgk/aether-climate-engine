@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether — Climate Intelligence Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #161412;
+            --surface: #1e1b18;
+            --border: #2a2521;
+            --amber: #d97706;
+            --amber-l: #fbbf24;
+            --red: #dc2626;
+            --green: #16a34a;
+            --blue: #3b6cf4;
+            --pink: #db2777;
+            --text: #e8e0d4;
+            --muted: #6b6055;
+            --mono: 'DM Mono', monospace;
+            --sans: 'DM Sans', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        /* ─── LAYOUT ─────────────────────────────────────────── */
+        .app {
+            display: grid;
+            grid-template-columns: 220px 1fr 260px;
+            grid-template-rows: 100vh;
+            height: 100vh;
+        }
+
+        /* ─── LEFT SIDEBAR ───────────────────────────────────── */
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-logo .wordmark {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        .sidebar-logo .wordmark span {
+            color: var(--amber);
+        }
+
+        .sidebar-logo .tagline {
+            font-size: 10px;
+            font-family: var(--mono);
+            color: var(--muted);
+            margin-top: 3px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-section {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-label {
+            font-size: 9px;
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .location-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            font-family: var(--sans);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            margin-bottom: 4px;
+        }
+
+        .location-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .location-btn.active {
+            color: var(--text);
+            background: rgba(217, 119, 6, 0.12);
+            border-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .location-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .location-btn.active .location-dot {
+            background: var(--amber);
+        }
+
+        .custom-select {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            outline: none;
+            font-family: var(--sans);
+            font-size: 13px;
+        }
+
+        .custom-select option {
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .model-btn {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--muted);
+            font-family: var(--mono);
+            font-size: 11px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+            margin-bottom: 3px;
+        }
+
+        .model-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .model-btn.active {
+            color: var(--amber-l);
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.2);
+        }
+
+        .horizon-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .horizon-btn {
+            flex: 1;
+            padding: 7px 0;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--muted);
+            font-family: var(--mono);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .horizon-btn:hover {
+            color: var(--text);
+        }
+
+        .horizon-btn.active {
+            background: var(--amber);
+            border-color: var(--amber);
+            color: #000;
+            font-weight: 500;
+        }
+
+        .theme-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .theme-btn {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 8px 12px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            background: transparent;
+            color: var(--muted);
+            font-family: var(--sans);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .theme-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .theme-btn.active {
+            color: var(--text);
+            border-color: var(--border);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .theme-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-status {
+            margin-top: auto;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .status-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-green {
+            background: #22c55e;
+            box-shadow: 0 0 6px #22c55e;
+            animation: blink 2.5s ease-in-out infinite;
+        }
+
+        .dot-red {
+            background: var(--red);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ─── MAIN AREA ──────────────────────────────────────── */
+        .main {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        .main-topbar {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+            padding: 24px 32px 0;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 18px;
+            flex-shrink: 0;
+        }
+
+        .main-topbar .page-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 0.01em;
+        }
+
+        .breadcrumb {
+            color: var(--border);
+            margin: 0 4px;
+        }
+
+        .main-topbar .location-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .main-topbar .timestamp {
+            font-family: var(--mono);
+            font-size: 11px;
+            color: var(--muted);
+            margin-left: auto;
+        }
+
+        .charts-area {
+            flex: 1;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            gap: 0;
+        }
+
+        .chart-panel {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chart-panel:last-child {
+            border-bottom: none;
+        }
+
+        .chart-row-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .chart-label {
+            font-size: 10px;
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-family: var(--mono);
+            color: var(--muted);
+        }
+
+        .legend-line {
+            width: 18px;
+            height: 2px;
+            flex-shrink: 0;
+        }
+
+        .legend-line.dashed {
+            background: repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 7px);
+        }
+
+        .chart-canvas-wrap {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+        }
+
+        /* ─── RIGHT PANEL ────────────────────────────────────── */
+        .right-panel {
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .right-panel-header {
+            padding: 24px 22px 20px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .right-panel-header .section-label {
+            font-size: 9px;
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .big-stat-block {
+            margin-bottom: 20px;
+        }
+
+        .big-stat-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .big-stat-block .stat-name {
+            font-size: 10px;
+            font-family: var(--mono);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+        }
+
+        .big-stat-block .stat-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .big-stat-block .stat-value {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            color: var(--text);
+            font-family: var(--sans);
+        }
+
+        .big-stat-block .stat-unit {
+            font-size: 12px;
+            font-family: var(--mono);
+            color: var(--muted);
+        }
+
+        .stat-delta {
+            font-family: var(--mono);
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        .stat-delta.pos {
+            color: var(--red);
+        }
+
+        .stat-delta.neg {
+            color: #22c55e;
+        }
+
+        .stat-delta.neut {
+            color: var(--muted);
+        }
+
+        .feed-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .feed-header {
+            padding: 16px 22px 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 9px;
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            position: sticky;
+            top: 0;
+            background: var(--surface);
+            z-index: 1;
+        }
+
+        .feed-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--mono);
+            font-size: 11px;
+            transition: background 0.1s;
+        }
+
+        .feed-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feed-row .feed-time {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .feed-row .feed-temp {
+            color: var(--text);
+        }
+
+        .feed-row .feed-wind {
+            color: var(--muted);
+        }
+
+        .feed-row .feed-ok {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        /* feed scrollbar */
+        .feed-section::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .feed-section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .feed-section::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* ─── LOADING ─────────────────────────────────────────── */
+        #loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+
+        #loading .load-logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text);
+        }
+
+        #loading .load-logo span {
+            color: var(--amber);
+        }
+
+        #loading .load-bar-wrap {
+            width: 120px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        #loading .load-bar {
+            height: 100%;
+            background: var(--amber);
+            border-radius: 1px;
+            animation: load-sweep 1.2s ease-in-out infinite;
+        }
+
+        @keyframes load-sweep {
+            0% {
+                width: 0%;
+                margin-left: 0%;
+            }
+
+            50% {
+                width: 60%;
+                margin-left: 20%;
+            }
+
+            100% {
+                width: 0%;
+                margin-left: 100%;
+            }
+        }
+
+        #loading .load-text {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 0.08em;
+        }
+
+        /* ─── THEMES ─────────────────────────────────────────── */
+        [data-theme="nord"] {
+            --bg: #1a1f2e;
+            --surface: #1f2638;
+            --border: #2d3550;
+            --amber: #88c0d0;
+            --amber-l: #b0d8e6;
+            --text: #d8dee9;
+            --muted: #5a6a80;
+        }
+
+        [data-theme="stone"] {
+            --bg: #fafaf9;
+            --surface: #f5f5f4;
+            --border: #e7e5e4;
+            --amber: #92400e;
+            --amber-l: #b45309;
+            --text: #1c1917;
+            --muted: #a8a29e;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading">
+        <div class="load-logo">Ae<span>th</span>er</div>
+        <div class="load-bar-wrap">
+            <div class="load-bar"></div>
+        </div>
+        <div class="load-text">Fetching telemetry...</div>
+    </div>
+
+    <div class="app">
+        <!-- ── SIDEBAR ────────────────────────── -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="wordmark">Ae<span>th</span>er</div>
+                <div class="tagline">Climate Intelligence</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Station</div>
+                <select id="locationSelect" class="custom-select" onchange="changeLocation(this.value)">
+                    <option value="Berlin">Berlin, DE</option>
+                    <option value="Tokyo">Tokyo, JP</option>
+                    <option value="New York">New York, US</option>
+                    <option value="London">London, UK</option>
+                    <option value="Sydney">Sydney, AU</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Forecast Model</div>
+                <button class="model-btn active" id="model-linear" onclick="changeModel('linear')">Linear
+                    Regression</button>
+                <button class="model-btn" id="model-sma" onclick="changeModel('sma')">Simple Moving Avg</button>
+                <button class="model-btn" id="model-ema" onclick="changeModel('ema')">Exponential Smooth</button>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Horizon</div>
+                <div class="horizon-group">
+                    <button class="horizon-btn" id="btn-12" onclick="setHorizon(12)">12h</button>
+                    <button class="horizon-btn" id="btn-24" onclick="setHorizon(24)">24h</button>
+                    <button class="horizon-btn active" id="btn-48" onclick="setHorizon(48)">48h</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Units</div>
+                <div class="horizon-group" style="margin-bottom: 6px;">
+                    <button class="horizon-btn active" id="unit-C" onclick="setUnit('temp', 'C')">°C</button>
+                    <button class="horizon-btn" id="unit-F" onclick="setUnit('temp', 'F')">°F</button>
+                </div>
+                <div class="horizon-group">
+                    <button class="horizon-btn active" id="unit-kmh" onclick="setUnit('wind', 'kmh')">km/h</button>
+                    <button class="horizon-btn" id="unit-ms" onclick="setUnit('wind', 'ms')">m/s</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-label">Display</div>
+                <div class="theme-group">
+                    <button class="theme-btn active" id="theme-default" onclick="applyTheme('', 'default')">
+                        <span class="theme-swatch" style="background:#d97706;"></span> Ember (default)
+                    </button>
+                    <button class="theme-btn" id="theme-nord" onclick="applyTheme('nord', 'nord')">
+                        <span class="theme-swatch" style="background:#88c0d0;"></span> Nord Blue
+                    </button>
+                    <button class="theme-btn" id="theme-stone" onclick="applyTheme('stone', 'stone')">
+                        <span class="theme-swatch" style="background:#92400e;"></span> Stone (light)
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-status">
+                <div class="status-row">
+                    <span class="status-dot dot-green"></span>
+                    <span>Pipeline active</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-dot dot-red"></span>
+                    <span>Postgres offline</span>
+                </div>
+                <div class="status-row"
+                    style="margin-top:10px; font-family: var(--mono); font-size:10px; color: var(--muted);">
+                    Auto-refresh 10s
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── MAIN ──────────────────────────── -->
+        <main class="main">
+            <div class="main-topbar">
+                <span class="page-title">Telemetry</span>
+                <span class="breadcrumb">›</span>
+                <span class="location-name" id="topbar-location">Berlin, Germany</span>
+                <span class="timestamp" id="topbar-ts">—</span>
+            </div>
+
+            <div class="charts-area">
+                <!-- Temperature chart -->
+                <div class="chart-panel">
+                    <div class="chart-row-header">
+                        <span class="chart-label" id="tempChartLabel">Temperature °C</span>
+                        <span class="legend-item">
+                            <span class="legend-line" style="background:#d97706; color:#d97706;"></span>
+                            Observed
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line dashed" style="color:#22c55e;"></span>
+                            Forecast
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line dashed" style="color:#db2777;"></span>
+                            YoY −1yr
+                        </span>
+                    </div>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="tempChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Wind chart -->
+                <div class="chart-panel">
+                    <div class="chart-row-header">
+                        <span class="chart-label" id="windChartLabel">Wind Speed km/h</span>
+                        <span class="legend-item">
+                            <span class="legend-line" style="background:#3b6cf4; color:#3b6cf4;"></span>
+                            Observed
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line dashed" style="color:#22c55e;"></span>
+                            Forecast
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-line dashed" style="color:#db2777;"></span>
+                            YoY −1yr
+                        </span>
+                    </div>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="windChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ── RIGHT PANEL ───────────────────── -->
+        <div class="right-panel">
+            <div class="right-panel-header">
+                <div class="section-label">Current Readings</div>
+                <div class="big-stat-block">
+                    <div class="stat-name">Temperature</div>
+                    <div class="stat-row">
+                        <span class="stat-value" id="currentTemp">--</span>
+                        <span class="stat-unit" id="tempUnitLabel">°C</span>
+                    </div>
+                    <div class="stat-delta neut" id="tempDelta">— vs last year</div>
+                </div>
+                <div class="big-stat-block">
+                    <div class="stat-name">Wind Speed</div>
+                    <div class="stat-row">
+                        <span class="stat-value" id="currentWind">--</span>
+                        <span class="stat-unit" id="windUnitLabel">km/h</span>
+                    </div>
+                    <div class="stat-delta neut" id="windDelta">— vs last year</div>
+                </div>
+            </div>
+
+            <div class="feed-section">
+                <div class="feed-header">Recent Observations</div>
+                <div id="telemetryTableBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Chart defaults ─────────────────────────────────────
+        Chart.defaults.color = '#6b6055';
+        Chart.defaults.font.family = "'DM Mono', monospace";
+        Chart.defaults.font.size = 10;
+        Chart.defaults.plugins.tooltip.backgroundColor = '#1e1b18';
+        Chart.defaults.plugins.tooltip.borderColor = '#2a2521';
+        Chart.defaults.plugins.tooltip.borderWidth = 1;
+        Chart.defaults.plugins.tooltip.titleColor = '#e8e0d4';
+        Chart.defaults.plugins.tooltip.bodyColor = '#6b6055';
+        Chart.defaults.plugins.tooltip.padding = 10;
+        Chart.defaults.plugins.tooltip.cornerRadius = 4;
+        Chart.defaults.plugins.tooltip.displayColors = false;
+
+        // ── State ──────────────────────────────────────────────
+        let globalLiveRecords = [];
+        let globalPredRecords = [];
+        let tempChartInstance = null;
+        let windChartInstance = null;
+        let currentHorizon = 48;
+        let currentLocation = 'Berlin';
+        let currentModel = 'linear';
+        let units = { temp: 'C', wind: 'kmh' };
+
+        // ── Controls ───────────────────────────────────────────
+        function setUnit(type, val) {
+            units[type] = val;
+            if (type === 'temp') {
+                document.getElementById('unit-C').classList.remove('active');
+                document.getElementById('unit-F').classList.remove('active');
+            } else {
+                document.getElementById('unit-kmh').classList.remove('active');
+                document.getElementById('unit-ms').classList.remove('active');
+            }
+            document.getElementById('unit-' + val).classList.add('active');
+            if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
+        }
+        function changeLocation(loc) {
+            currentLocation = loc;
+            const selectEl = document.getElementById('locationSelect');
+            if (selectEl.value !== loc) selectEl.value = loc;
+            const names = { Berlin: 'Berlin, Germany', Tokyo: 'Tokyo, Japan', 'New York': 'New York, US', London: 'London, UK', Sydney: 'Sydney, AU' };
+            document.getElementById('topbar-location').textContent = names[loc] || loc;
+            if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
+        }
+
+        function changeModel(model) {
+            currentModel = model;
+            document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('model-' + model).classList.add('active');
+            if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
+        }
+
+        function setHorizon(hours) {
+            currentHorizon = hours;
+            document.querySelectorAll('.horizon-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + hours).classList.add('active');
+            if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
+        }
+
+        function applyTheme(value, key) {
+            document.documentElement.setAttribute('data-theme', value);
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('theme-' + key).classList.add('active');
+        }
+
+        // ── Data fetch ─────────────────────────────────────────
+        async function fetchData() {
+            try {
+                const [liveRes, predRes] = await Promise.all([
+                    fetch('sample_telemetry.json?t=' + Date.now()),
+                    fetch('predictions.json?t=' + Date.now()).catch(() => null)
+                ]);
+                const liveText = await liveRes.text();
+                globalLiveRecords = liveText.trim().split('\n')
+                    .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
+                    .filter(Boolean);
+                if (predRes && predRes.ok) {
+                    const predText = await predRes.text();
+                    globalPredRecords = predText.trim().split('\n')
+                        .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
+                        .filter(Boolean);
+                }
+                processData(globalLiveRecords, globalPredRecords);
+                // Hide loader
+                const loader = document.getElementById('loading');
+                if (loader && loader.style.display !== 'none') {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 400);
+                }
+                // Update timestamp
+                document.getElementById('topbar-ts').textContent =
+                    'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            } catch (e) { console.error('Fetch error', e); }
+        }
+
+        // ── Process & render ───────────────────────────────────
+        function processData(liveRecords, predRecords) {
+            const locLive = liveRecords.filter(r => (r.location || 'Berlin') === currentLocation);
+            const locPred = predRecords.filter(r =>
+                (r.location || 'Berlin') === currentLocation &&
+                (r.method || 'linear') === currentModel
+            );
+
+            const currentYear = locLive.filter(r => r.period !== 'historical').slice(0, 72);
+            const lastYear = locLive.filter(r => r.period === 'historical');
+
+            if (!currentYear.length) return;
+
+            const activePred = locPred.slice(0, currentHorizon);
+            const totalHours = currentYear.length + activePred.length;
+
+            const labels = [];
+            const temps = [];
+            const winds = [];
+            const pTemps = Array(totalHours).fill(null);
+            const pWinds = Array(totalHours).fill(null);
+            const histTemps = Array(totalHours).fill(null);
+            const histWinds = Array(totalHours).fill(null);
+
+            currentYear.forEach((r, i) => {
+                const d = new Date(r.time);
+                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
+                temps.push(units.temp === 'C' ? r.temperature_2m : (r.temperature_2m * 9 / 5 + 32));
+                winds.push(units.wind === 'kmh' ? r.wind_speed_10m : (r.wind_speed_10m / 3.6));
+            });
+
+            activePred.forEach((r, i) => {
+                const d = new Date(r.time);
+                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
+                temps.push(null);
+                winds.push(null);
+                pTemps[currentYear.length + i] = units.temp === 'C' ? r.predicted_temperature_2m : (r.predicted_temperature_2m * 9 / 5 + 32);
+                pWinds[currentYear.length + i] = units.wind === 'kmh' ? r.predicted_wind_speed_10m : (r.predicted_wind_speed_10m / 3.6);
+            });
+
+            // Connect forecast line
+            if (currentYear.length && activePred.length) {
+                pTemps[currentYear.length - 1] = temps[currentYear.length - 1];
+                pWinds[currentYear.length - 1] = winds[currentYear.length - 1];
+            }
+
+            // Build YoY arrays aligned by hour index for total timeline
+            if (lastYear.length > 0 && currentYear.length > 0) {
+                const startMs = new Date(currentYear[0].time).getTime();
+                lastYear.forEach(hr => {
+                    const diff = Math.round((new Date(hr.time).getTime() - startMs) / 3600000);
+                    if (diff >= 0 && diff < totalHours) {
+                        histTemps[diff] = units.temp === 'C' ? hr.temperature_2m : (hr.temperature_2m * 9 / 5 + 32);
+                        histWinds[diff] = units.wind === 'kmh' ? hr.wind_speed_10m : (hr.wind_speed_10m / 3.6);
+                    }
+                });
+            }
+
+            // Delta vs YoY for current reading
+            const latestTemp = temps.filter(v => v !== null).pop();
+            const latestWind = winds.filter(v => v !== null).pop();
+            const lastHistTemp = histTemps.slice(0, currentYear.length).filter(v => v !== null).pop();
+            const lastHistWind = histWinds.slice(0, currentYear.length).filter(v => v !== null).pop();
+
+            document.getElementById('currentTemp').textContent = latestTemp != null ? latestTemp.toFixed(1) : '--';
+            document.getElementById('currentWind').textContent = latestWind != null ? latestWind.toFixed(1) : '--';
+            document.getElementById('tempUnitLabel').textContent = units.temp === 'C' ? '°C' : '°F';
+            document.getElementById('windUnitLabel').textContent = units.wind === 'kmh' ? 'km/h' : 'm/s';
+            document.getElementById('tempChartLabel').textContent = 'Temperature ' + (units.temp === 'C' ? '°C' : '°F');
+            document.getElementById('windChartLabel').textContent = 'Wind Speed ' + (units.wind === 'kmh' ? 'km/h' : 'm/s');
+
+            if (lastHistTemp != null && latestTemp != null) {
+                const delta = (latestTemp - lastHistTemp).toFixed(1);
+                const thresh = units.temp === 'C' ? 0.5 : 0.9;
+                const el = document.getElementById('tempDelta');
+                el.textContent = (delta > 0 ? '+' : '') + delta + (units.temp === 'C' ? '°C' : '°F') + ' vs last year';
+                el.className = 'stat-delta ' + (delta > thresh ? 'pos' : delta < -thresh ? 'neg' : 'neut');
+            }
+            if (lastHistWind != null && latestWind != null) {
+                const delta = (latestWind - lastHistWind).toFixed(1);
+                const thresh = units.wind === 'kmh' ? 0.5 : 0.14;
+                const el = document.getElementById('windDelta');
+                el.textContent = (delta > 0 ? '+' : '') + delta + (units.wind === 'kmh' ? ' km/h' : ' m/s') + ' vs last year';
+                el.className = 'stat-delta ' + (delta > thresh ? 'pos' : delta < -thresh ? 'neg' : 'neut');
+            }
+
+            // Live feed
+            const feed = document.getElementById('telemetryTableBody');
+            if (feed) {
+                feed.innerHTML = '';
+                [...currentYear].reverse().slice(0, 15).forEach(rec => {
+                    const row = document.createElement('div');
+                    row.className = 'feed-row';
+                    const t = new Date(rec.time);
+                    const ts = t.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' '
+                        + t.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+                    const tTemp = units.temp === 'C' ? rec.temperature_2m : (rec.temperature_2m * 9 / 5 + 32);
+                    const tWind = units.wind === 'kmh' ? rec.wind_speed_10m : (rec.wind_speed_10m / 3.6);
+                    row.innerHTML = `
+                        <span class="feed-time">${ts}</span>
+                        <span class="feed-temp">${tTemp.toFixed(1)}°</span>
+                        <span class="feed-wind">${tWind.toFixed(1)} ${units.wind === 'kmh' ? 'km/h' : 'm/s'}</span>
+                        <span class="feed-ok"></span>`;
+                    feed.appendChild(row);
+                });
+            }
+
+            renderTempChart(labels, temps, pTemps, histTemps, currentYear.length - 1);
+            renderWindChart(labels, winds, pWinds, histWinds, currentYear.length - 1);
+        }
+
+        // ── Charts ─────────────────────────────────────────────
+        // ── Pulsing Dot Plugin ─────────────────────────────────
+        const pulsingDotPlugin = {
+            id: 'pulsingDot',
+            afterDraw: (chart) => {
+                if (!chart.config.options.plugins.pulsingDot) return;
+                const activeIndex = chart.config.options.plugins.pulsingDot.index;
+                if (activeIndex === undefined || activeIndex < 0) return;
+
+                const meta = chart.getDatasetMeta(0); // Observed dataset
+                const point = meta.data[activeIndex];
+                if (!point) return;
+
+                const { ctx } = chart;
+                const time = Date.now() / 900;
+                const pulse = Math.abs(Math.sin(time));
+                const radius = 4 + pulse * 3;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = chart.config.options.plugins.pulsingDot.color || '#fbbf24';
+                ctx.shadowColor = chart.config.options.plugins.pulsingDot.color || '#fbbf24';
+                ctx.shadowBlur = 6 + pulse * 6;
+                ctx.fill();
+                ctx.restore();
+            }
+        };
+        Chart.register(pulsingDotPlugin);
+
+        // Global animation loop for the pulsing effect
+        let animFrame;
+        function animateCharts() {
+            if (tempChartInstance) tempChartInstance.draw();
+            if (windChartInstance) windChartInstance.draw();
+            animFrame = requestAnimationFrame(animateCharts);
+        }
+
+        const chartOpts = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            animation: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+                    border: { display: false },
+                    ticks: { maxTicksLimit: 5 }
+                },
+                x: {
+                    grid: { display: false },
+                    border: { display: false },
+                    ticks: { maxTicksLimit: 7, maxRotation: 0 }
+                }
+            }
+        };
+
+        function renderTempChart(labels, current, predicted, historical, currentIndex) {
+            const ctx = document.getElementById('tempChart').getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 0, 300);
+            grad.addColorStop(0, 'rgba(217,119,6,0.18)');
+            grad.addColorStop(1, 'rgba(217,119,6,0)');
+            const chartData = {
+                labels,
+                datasets: [
+                    { label: 'Observed', data: current, borderColor: '#d97706', backgroundColor: grad, borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.3 },
+                    { label: 'Forecast', data: predicted, borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4, 5], pointRadius: 0, fill: false, tension: 0.3 },
+                    { label: 'YoY', data: historical, borderColor: '#db2777', borderWidth: 1, borderDash: [2, 4], pointRadius: 0, fill: false, tension: 0.3 }
+                ]
+            };
+            const opts = { ...chartOpts, plugins: { ...chartOpts.plugins, pulsingDot: { index: currentIndex, color: '#d97706' } } };
+            if (tempChartInstance) { tempChartInstance.data = chartData; tempChartInstance.options = opts; tempChartInstance.update('none'); }
+            else { tempChartInstance = new Chart(ctx, { type: 'line', data: chartData, options: opts }); }
+        }
+
+        function renderWindChart(labels, current, predicted, historical, currentIndex) {
+            const ctx = document.getElementById('windChart').getContext('2d');
+            const chartData = {
+                labels,
+                datasets: [
+                    { label: 'Observed', type: 'bar', data: current, backgroundColor: 'rgba(59,108,244,0.55)', borderRadius: 1, barPercentage: 0.8, categoryPercentage: 0.9 },
+                    { label: 'Forecast', type: 'line', data: predicted, borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4, 5], pointRadius: 0, tension: 0.3 },
+                    { label: 'YoY', type: 'line', data: historical, borderColor: '#db2777', borderWidth: 1, borderDash: [2, 4], pointRadius: 0, tension: 0.3 }
+                ]
+            };
+            const opts = { ...chartOpts, plugins: { ...chartOpts.plugins, pulsingDot: { index: currentIndex, color: '#3b6cf4' } } };
+            if (windChartInstance) { windChartInstance.data = chartData; windChartInstance.options = opts; windChartInstance.update('none'); }
+            else { windChartInstance = new Chart(ctx, { type: 'bar', data: chartData, options: opts }); }
+        }
+
+        // ── Init ───────────────────────────────────────────────
+        fetchData();
+        setInterval(fetchData, 10000);
+        animateCharts();
+    </script>
+</body>
+
+</html>
