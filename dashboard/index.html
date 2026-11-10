@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether — Climate Intelligence Platform</title>
+    <title>Aether | Climate Intelligence Platform</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -314,6 +315,7 @@
             flex-direction: column;
             overflow: hidden;
             background: var(--bg);
+            min-width: 0;
         }
 
         .main-topbar {
@@ -357,6 +359,7 @@
             display: grid;
             grid-template-rows: 1fr 1fr;
             gap: 0;
+            min-width: 0;
         }
 
         .chart-panel {
@@ -365,6 +368,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-width: 0;
         }
 
         .chart-panel:last-child {
@@ -410,6 +414,12 @@
             flex: 1;
             position: relative;
             min-height: 0;
+            min-width: 0;
+        }
+
+        .chart-canvas-wrap canvas {
+            display: block;
+            max-width: 100%;
         }
 
         /* ─── RIGHT PANEL ────────────────────────────────────── */
@@ -645,6 +655,44 @@
             --amber-l: #b45309;
             --text: #1c1917;
             --muted: #a8a29e;
+        }
+
+        @media (max-width: 1024px) {
+            html, body {
+                height: auto;
+                min-height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            body {
+                min-width: 0;
+                touch-action: pan-y;
+            }
+            .app { display: block; height: auto; min-height: 100vh; }
+            .sidebar { display: block; border-right: 0; border-bottom: 1px solid var(--border); max-height: none; }
+            .sidebar-logo { padding: 18px 16px 14px; }
+            .sidebar-section { padding: 14px 16px; }
+            .sidebar-section:nth-child(n+3) { display: none; }
+            .main { min-height: 0; }
+            .main-topbar { padding: 14px 16px; }
+            .charts-area { overflow: visible; }
+            .chart-panel { padding: 16px; }
+            .chart-canvas-wrap { min-height: 240px; width: 100%; }
+            .right-panel { display: block; border-left: 0; border-top: 1px solid var(--border); }
+            .right-panel > * { max-width: none; }
+            .feed-list { max-height: 280px; }
+        }
+
+        @media (max-width: 430px) {
+            .sidebar-logo .wordmark { font-size: 16px; }
+            .main-topbar .location-name { font-size: 12px; }
+            .main-topbar .timestamp { font-size: 9px; }
+            .chart-panel { padding: 12px 10px; }
+            .chart-row-header { gap: 7px; flex-wrap: wrap; }
+            .chart-label { font-size: 9px; }
+            .chart-canvas-wrap { min-height: 210px; }
+            .big-stat-block { padding: 14px; }
         }
     </style>
 </head>
@@ -888,6 +936,32 @@
             document.getElementById('theme-' + key).classList.add('active');
         }
 
+        function normalizeTimeline(liveRecords, predRecords) {
+            const locations = [...new Set(liveRecords.map(r => r.location || 'Berlin'))];
+            const observed = locations.flatMap(location => liveRecords
+                .filter(r => (r.location || 'Berlin') === location && r.period !== 'historical')
+                .slice(0, 72)
+                .filter(r => r.time)
+                .map(r => new Date(r.time).getTime())
+                .filter(Number.isFinite));
+            if (!observed.length) return new Date();
+
+            const latestObserved = Math.max(...observed);
+            const now = new Date();
+            const currentHour = new Date(now);
+            currentHour.setMinutes(0, 0, 0);
+            const offset = currentHour.getTime() - latestObserved;
+            const shift = records => records.forEach(record => {
+                if (record.time) {
+                    record.time = new Date(new Date(record.time).getTime() + offset).toISOString();
+                }
+            });
+
+            shift(liveRecords);
+            shift(predRecords);
+            return now;
+        }
+
         // ── Data fetch ─────────────────────────────────────────
         async function fetchData() {
             try {
@@ -905,6 +979,7 @@
                         .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
                         .filter(Boolean);
                 }
+                const loadedAt = normalizeTimeline(globalLiveRecords, globalPredRecords);
                 processData(globalLiveRecords, globalPredRecords);
                 // Hide loader
                 const loader = document.getElementById('loading');
@@ -914,7 +989,13 @@
                 }
                 // Update timestamp
                 document.getElementById('topbar-ts').textContent =
-                    'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    'Updated ' + loadedAt.toLocaleString([], {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
             } catch (e) { console.error('Fetch error', e); }
         }
 

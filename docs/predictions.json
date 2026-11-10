@@ -1,0 +1,720 @@
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 3.13, "predicted_wind_speed_10m": 2.48, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 2.8, "predicted_wind_speed_10m": 2.12, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 2.62, "predicted_wind_speed_10m": 1.85, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 2.59, "predicted_wind_speed_10m": 1.7, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 2.7, "predicted_wind_speed_10m": 1.71, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 2.93, "predicted_wind_speed_10m": 1.86, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 3.27, "predicted_wind_speed_10m": 2.17, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 3.68, "predicted_wind_speed_10m": 2.62, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 4.14, "predicted_wind_speed_10m": 3.18, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 4.6, "predicted_wind_speed_10m": 3.81, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 5.04, "predicted_wind_speed_10m": 4.49, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 5.42, "predicted_wind_speed_10m": 5.15, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 5.71, "predicted_wind_speed_10m": 5.77, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 5.9, "predicted_wind_speed_10m": 6.29, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 5.96, "predicted_wind_speed_10m": 6.69, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 5.91, "predicted_wind_speed_10m": 6.93, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 5.73, "predicted_wind_speed_10m": 7.01, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 5.45, "predicted_wind_speed_10m": 6.91, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 5.08, "predicted_wind_speed_10m": 6.64, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 4.64, "predicted_wind_speed_10m": 6.22, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 4.17, "predicted_wind_speed_10m": 5.68, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 3.71, "predicted_wind_speed_10m": 5.05, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 3.28, "predicted_wind_speed_10m": 4.37, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 2.91, "predicted_wind_speed_10m": 3.69, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 2.64, "predicted_wind_speed_10m": 3.06, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 2.47, "predicted_wind_speed_10m": 2.51, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 2.43, "predicted_wind_speed_10m": 2.09, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 2.52, "predicted_wind_speed_10m": 1.81, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 2.72, "predicted_wind_speed_10m": 1.7, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 3.04, "predicted_wind_speed_10m": 1.76, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 3.45, "predicted_wind_speed_10m": 1.99, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 3.93, "predicted_wind_speed_10m": 2.36, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 4.43, "predicted_wind_speed_10m": 2.86, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 4.94, "predicted_wind_speed_10m": 3.45, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 5.42, "predicted_wind_speed_10m": 4.08, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 5.83, "predicted_wind_speed_10m": 4.71, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 6.15, "predicted_wind_speed_10m": 5.29, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 6.36, "predicted_wind_speed_10m": 5.79, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 6.45, "predicted_wind_speed_10m": 6.16, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 6.41, "predicted_wind_speed_10m": 6.39, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 6.24, "predicted_wind_speed_10m": 6.45, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 5.97, "predicted_wind_speed_10m": 6.34, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 5.61, "predicted_wind_speed_10m": 6.06, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 5.18, "predicted_wind_speed_10m": 5.63, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 4.73, "predicted_wind_speed_10m": 5.08, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 4.27, "predicted_wind_speed_10m": 4.44, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 3.84, "predicted_wind_speed_10m": 3.75, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 3.48, "predicted_wind_speed_10m": 3.07, "method": "linear", "location": "Berlin"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 3.15, "predicted_wind_speed_10m": 2.33, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 2.83, "predicted_wind_speed_10m": 1.84, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 2.65, "predicted_wind_speed_10m": 1.47, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 2.62, "predicted_wind_speed_10m": 1.24, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 2.73, "predicted_wind_speed_10m": 1.17, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 2.95, "predicted_wind_speed_10m": 1.28, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 3.28, "predicted_wind_speed_10m": 1.54, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 3.68, "predicted_wind_speed_10m": 1.96, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 4.12, "predicted_wind_speed_10m": 2.5, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 4.57, "predicted_wind_speed_10m": 3.12, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 4.99, "predicted_wind_speed_10m": 3.78, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 5.35, "predicted_wind_speed_10m": 4.44, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 5.63, "predicted_wind_speed_10m": 5.06, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 5.79, "predicted_wind_speed_10m": 5.59, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 5.84, "predicted_wind_speed_10m": 6.0, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 5.76, "predicted_wind_speed_10m": 6.25, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 5.57, "predicted_wind_speed_10m": 6.34, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 5.26, "predicted_wind_speed_10m": 6.26, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 4.86, "predicted_wind_speed_10m": 6.01, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 4.41, "predicted_wind_speed_10m": 5.61, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 3.92, "predicted_wind_speed_10m": 5.08, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 3.43, "predicted_wind_speed_10m": 4.47, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 2.97, "predicted_wind_speed_10m": 3.82, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 2.58, "predicted_wind_speed_10m": 3.16, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 2.28, "predicted_wind_speed_10m": 2.55, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 2.1, "predicted_wind_speed_10m": 2.03, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 2.03, "predicted_wind_speed_10m": 1.63, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 2.09, "predicted_wind_speed_10m": 1.38, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 2.28, "predicted_wind_speed_10m": 1.29, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 2.57, "predicted_wind_speed_10m": 1.38, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 2.96, "predicted_wind_speed_10m": 1.63, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 3.41, "predicted_wind_speed_10m": 2.03, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 3.89, "predicted_wind_speed_10m": 2.56, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 4.37, "predicted_wind_speed_10m": 3.17, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 4.82, "predicted_wind_speed_10m": 3.82, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 5.21, "predicted_wind_speed_10m": 4.48, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 5.5, "predicted_wind_speed_10m": 5.09, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 5.69, "predicted_wind_speed_10m": 5.62, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 5.75, "predicted_wind_speed_10m": 6.02, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 5.69, "predicted_wind_speed_10m": 6.27, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 5.5, "predicted_wind_speed_10m": 6.36, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 5.2, "predicted_wind_speed_10m": 6.27, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 4.82, "predicted_wind_speed_10m": 6.02, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 4.37, "predicted_wind_speed_10m": 5.62, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 3.88, "predicted_wind_speed_10m": 5.09, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 3.4, "predicted_wind_speed_10m": 4.48, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 2.95, "predicted_wind_speed_10m": 3.82, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 2.56, "predicted_wind_speed_10m": 3.17, "method": "sma", "location": "Berlin"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 3.12, "predicted_wind_speed_10m": 2.17, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 2.77, "predicted_wind_speed_10m": 1.54, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 2.58, "predicted_wind_speed_10m": 1.06, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 2.53, "predicted_wind_speed_10m": 0.73, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 2.62, "predicted_wind_speed_10m": 0.58, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 2.83, "predicted_wind_speed_10m": 0.61, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 3.15, "predicted_wind_speed_10m": 0.82, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 3.54, "predicted_wind_speed_10m": 1.19, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 3.97, "predicted_wind_speed_10m": 1.68, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 4.41, "predicted_wind_speed_10m": 2.26, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 4.83, "predicted_wind_speed_10m": 2.89, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 5.18, "predicted_wind_speed_10m": 3.53, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 5.45, "predicted_wind_speed_10m": 4.12, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 5.62, "predicted_wind_speed_10m": 4.63, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 5.66, "predicted_wind_speed_10m": 5.02, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 5.58, "predicted_wind_speed_10m": 5.27, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 5.38, "predicted_wind_speed_10m": 5.34, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 5.07, "predicted_wind_speed_10m": 5.25, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 4.68, "predicted_wind_speed_10m": 4.99, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 4.22, "predicted_wind_speed_10m": 4.58, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 3.73, "predicted_wind_speed_10m": 4.05, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 3.24, "predicted_wind_speed_10m": 3.44, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 2.78, "predicted_wind_speed_10m": 2.78, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 2.39, "predicted_wind_speed_10m": 2.12, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 2.09, "predicted_wind_speed_10m": 1.51, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 1.9, "predicted_wind_speed_10m": 0.98, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 1.83, "predicted_wind_speed_10m": 0.58, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 1.9, "predicted_wind_speed_10m": 0.32, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 2.08, "predicted_wind_speed_10m": 0.24, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 2.38, "predicted_wind_speed_10m": 0.32, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 2.76, "predicted_wind_speed_10m": 0.57, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 3.21, "predicted_wind_speed_10m": 0.97, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 3.69, "predicted_wind_speed_10m": 1.5, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 4.17, "predicted_wind_speed_10m": 2.11, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 4.62, "predicted_wind_speed_10m": 2.76, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 5.01, "predicted_wind_speed_10m": 3.42, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 5.31, "predicted_wind_speed_10m": 4.03, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 5.49, "predicted_wind_speed_10m": 4.55, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 5.55, "predicted_wind_speed_10m": 4.96, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 5.49, "predicted_wind_speed_10m": 5.21, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 5.3, "predicted_wind_speed_10m": 5.3, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 5.01, "predicted_wind_speed_10m": 5.21, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 4.62, "predicted_wind_speed_10m": 4.96, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 4.17, "predicted_wind_speed_10m": 4.55, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 3.69, "predicted_wind_speed_10m": 4.03, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 3.2, "predicted_wind_speed_10m": 3.42, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 2.75, "predicted_wind_speed_10m": 2.76, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 2.37, "predicted_wind_speed_10m": 2.11, "method": "ema", "location": "Berlin"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 7.81, "predicted_wind_speed_10m": 1.72, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 7.56, "predicted_wind_speed_10m": 1.31, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 7.46, "predicted_wind_speed_10m": 0.99, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 7.53, "predicted_wind_speed_10m": 0.77, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 7.75, "predicted_wind_speed_10m": 0.66, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 8.11, "predicted_wind_speed_10m": 0.68, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 8.58, "predicted_wind_speed_10m": 0.81, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 9.13, "predicted_wind_speed_10m": 1.05, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 9.73, "predicted_wind_speed_10m": 1.38, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 10.32, "predicted_wind_speed_10m": 1.76, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 10.88, "predicted_wind_speed_10m": 2.18, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 11.36, "predicted_wind_speed_10m": 2.59, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 11.73, "predicted_wind_speed_10m": 2.98, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 11.96, "predicted_wind_speed_10m": 3.3, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 12.04, "predicted_wind_speed_10m": 3.55, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 11.96, "predicted_wind_speed_10m": 3.69, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 11.73, "predicted_wind_speed_10m": 3.71, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 11.37, "predicted_wind_speed_10m": 3.62, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 10.89, "predicted_wind_speed_10m": 3.41, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 10.33, "predicted_wind_speed_10m": 3.1, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 9.74, "predicted_wind_speed_10m": 2.7, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 9.14, "predicted_wind_speed_10m": 2.24, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 8.59, "predicted_wind_speed_10m": 1.76, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 8.11, "predicted_wind_speed_10m": 1.27, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 7.74, "predicted_wind_speed_10m": 0.81, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 7.52, "predicted_wind_speed_10m": 0.42, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 7.44, "predicted_wind_speed_10m": 0.1, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 7.52, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 7.76, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 8.13, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 8.62, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 9.18, "predicted_wind_speed_10m": 0.22, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 9.78, "predicted_wind_speed_10m": 0.54, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 10.38, "predicted_wind_speed_10m": 0.93, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 10.95, "predicted_wind_speed_10m": 1.35, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 11.43, "predicted_wind_speed_10m": 1.77, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 11.8, "predicted_wind_speed_10m": 2.16, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 12.04, "predicted_wind_speed_10m": 2.49, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 12.12, "predicted_wind_speed_10m": 2.73, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 12.05, "predicted_wind_speed_10m": 2.88, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 11.82, "predicted_wind_speed_10m": 2.9, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 11.46, "predicted_wind_speed_10m": 2.81, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 10.98, "predicted_wind_speed_10m": 2.6, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 10.42, "predicted_wind_speed_10m": 2.29, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 9.83, "predicted_wind_speed_10m": 1.89, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 9.23, "predicted_wind_speed_10m": 1.44, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 8.68, "predicted_wind_speed_10m": 0.95, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 8.2, "predicted_wind_speed_10m": 0.46, "method": "linear", "location": "Tokyo"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 7.56, "predicted_wind_speed_10m": 1.78, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 7.09, "predicted_wind_speed_10m": 1.41, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 6.82, "predicted_wind_speed_10m": 1.13, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 6.73, "predicted_wind_speed_10m": 0.96, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 6.82, "predicted_wind_speed_10m": 0.9, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 7.07, "predicted_wind_speed_10m": 0.96, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 7.44, "predicted_wind_speed_10m": 1.13, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 7.91, "predicted_wind_speed_10m": 1.41, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 8.44, "predicted_wind_speed_10m": 1.77, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 8.97, "predicted_wind_speed_10m": 2.19, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 9.48, "predicted_wind_speed_10m": 2.64, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 9.91, "predicted_wind_speed_10m": 3.1, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 10.24, "predicted_wind_speed_10m": 3.52, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 10.44, "predicted_wind_speed_10m": 3.88, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 10.49, "predicted_wind_speed_10m": 4.16, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 10.39, "predicted_wind_speed_10m": 4.33, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 10.14, "predicted_wind_speed_10m": 4.39, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 9.75, "predicted_wind_speed_10m": 4.33, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 9.26, "predicted_wind_speed_10m": 4.16, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 8.69, "predicted_wind_speed_10m": 3.88, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 8.08, "predicted_wind_speed_10m": 3.52, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 7.47, "predicted_wind_speed_10m": 3.09, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 6.9, "predicted_wind_speed_10m": 2.64, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 6.42, "predicted_wind_speed_10m": 2.19, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 6.04, "predicted_wind_speed_10m": 1.77, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 5.81, "predicted_wind_speed_10m": 1.4, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 5.72, "predicted_wind_speed_10m": 1.13, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 5.8, "predicted_wind_speed_10m": 0.95, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 6.03, "predicted_wind_speed_10m": 0.89, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 6.39, "predicted_wind_speed_10m": 0.95, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 6.87, "predicted_wind_speed_10m": 1.13, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 7.43, "predicted_wind_speed_10m": 1.4, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 8.03, "predicted_wind_speed_10m": 1.77, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 8.62, "predicted_wind_speed_10m": 2.19, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 9.18, "predicted_wind_speed_10m": 2.64, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 9.66, "predicted_wind_speed_10m": 3.09, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 10.03, "predicted_wind_speed_10m": 3.52, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 10.26, "predicted_wind_speed_10m": 3.88, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 10.34, "predicted_wind_speed_10m": 4.16, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 10.26, "predicted_wind_speed_10m": 4.33, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 10.03, "predicted_wind_speed_10m": 4.39, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 9.66, "predicted_wind_speed_10m": 4.33, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 9.18, "predicted_wind_speed_10m": 4.16, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 8.62, "predicted_wind_speed_10m": 3.88, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 8.02, "predicted_wind_speed_10m": 3.52, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 7.42, "predicted_wind_speed_10m": 3.09, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 6.86, "predicted_wind_speed_10m": 2.64, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 6.38, "predicted_wind_speed_10m": 2.19, "method": "sma", "location": "Tokyo"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 7.47, "predicted_wind_speed_10m": 1.72, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 6.93, "predicted_wind_speed_10m": 1.3, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 6.59, "predicted_wind_speed_10m": 0.98, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 6.45, "predicted_wind_speed_10m": 0.77, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 6.49, "predicted_wind_speed_10m": 0.68, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 6.69, "predicted_wind_speed_10m": 0.71, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 7.04, "predicted_wind_speed_10m": 0.87, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 7.48, "predicted_wind_speed_10m": 1.12, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 7.98, "predicted_wind_speed_10m": 1.47, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 8.5, "predicted_wind_speed_10m": 1.88, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 8.98, "predicted_wind_speed_10m": 2.32, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 9.4, "predicted_wind_speed_10m": 2.76, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 9.72, "predicted_wind_speed_10m": 3.18, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 9.91, "predicted_wind_speed_10m": 3.53, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 9.95, "predicted_wind_speed_10m": 3.8, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 9.84, "predicted_wind_speed_10m": 3.97, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 9.58, "predicted_wind_speed_10m": 4.03, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 9.19, "predicted_wind_speed_10m": 3.96, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 8.69, "predicted_wind_speed_10m": 3.79, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 8.11, "predicted_wind_speed_10m": 3.51, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 7.5, "predicted_wind_speed_10m": 3.14, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 6.89, "predicted_wind_speed_10m": 2.72, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 6.32, "predicted_wind_speed_10m": 2.26, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 5.83, "predicted_wind_speed_10m": 1.81, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 5.46, "predicted_wind_speed_10m": 1.38, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 5.22, "predicted_wind_speed_10m": 1.02, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 5.13, "predicted_wind_speed_10m": 0.74, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 5.21, "predicted_wind_speed_10m": 0.57, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 5.44, "predicted_wind_speed_10m": 0.51, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 5.8, "predicted_wind_speed_10m": 0.57, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 6.28, "predicted_wind_speed_10m": 0.74, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 6.83, "predicted_wind_speed_10m": 1.02, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 7.43, "predicted_wind_speed_10m": 1.38, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 8.03, "predicted_wind_speed_10m": 1.8, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 8.59, "predicted_wind_speed_10m": 2.25, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 9.07, "predicted_wind_speed_10m": 2.71, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 9.43, "predicted_wind_speed_10m": 3.13, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 9.66, "predicted_wind_speed_10m": 3.49, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 9.74, "predicted_wind_speed_10m": 3.77, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 9.66, "predicted_wind_speed_10m": 3.94, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 9.43, "predicted_wind_speed_10m": 4.0, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 9.06, "predicted_wind_speed_10m": 3.94, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 8.58, "predicted_wind_speed_10m": 3.77, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 8.02, "predicted_wind_speed_10m": 3.49, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 7.42, "predicted_wind_speed_10m": 3.13, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 6.82, "predicted_wind_speed_10m": 2.71, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 6.26, "predicted_wind_speed_10m": 2.25, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 5.78, "predicted_wind_speed_10m": 1.8, "method": "ema", "location": "Tokyo"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 12.69, "predicted_wind_speed_10m": 4.26, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 12.02, "predicted_wind_speed_10m": 2.82, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 11.68, "predicted_wind_speed_10m": 1.89, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 11.66, "predicted_wind_speed_10m": 1.53, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 11.92, "predicted_wind_speed_10m": 1.75, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 12.41, "predicted_wind_speed_10m": 2.54, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 13.07, "predicted_wind_speed_10m": 3.85, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 13.83, "predicted_wind_speed_10m": 5.57, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 14.62, "predicted_wind_speed_10m": 7.58, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 15.38, "predicted_wind_speed_10m": 9.74, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 16.03, "predicted_wind_speed_10m": 11.9, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 16.53, "predicted_wind_speed_10m": 13.91, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 16.83, "predicted_wind_speed_10m": 15.61, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 16.9, "predicted_wind_speed_10m": 16.89, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 16.74, "predicted_wind_speed_10m": 17.65, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 16.34, "predicted_wind_speed_10m": 17.83, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 15.74, "predicted_wind_speed_10m": 17.42, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 14.96, "predicted_wind_speed_10m": 16.43, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 14.07, "predicted_wind_speed_10m": 14.92, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 13.12, "predicted_wind_speed_10m": 12.99, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 12.17, "predicted_wind_speed_10m": 10.76, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 11.3, "predicted_wind_speed_10m": 8.38, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 10.55, "predicted_wind_speed_10m": 5.99, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 9.98, "predicted_wind_speed_10m": 3.76, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 9.63, "predicted_wind_speed_10m": 1.83, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 9.52, "predicted_wind_speed_10m": 0.32, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 9.66, "predicted_wind_speed_10m": 0, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 10.05, "predicted_wind_speed_10m": 0, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 10.65, "predicted_wind_speed_10m": 0, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 11.43, "predicted_wind_speed_10m": 0, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 12.34, "predicted_wind_speed_10m": 1.1, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 13.32, "predicted_wind_speed_10m": 2.79, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 14.29, "predicted_wind_speed_10m": 4.78, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 15.2, "predicted_wind_speed_10m": 6.93, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 15.99, "predicted_wind_speed_10m": 9.07, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 16.6, "predicted_wind_speed_10m": 11.06, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 16.99, "predicted_wind_speed_10m": 12.75, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 17.14, "predicted_wind_speed_10m": 14.01, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 17.04, "predicted_wind_speed_10m": 14.77, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 16.7, "predicted_wind_speed_10m": 14.94, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 16.15, "predicted_wind_speed_10m": 14.52, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 15.42, "predicted_wind_speed_10m": 13.53, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 14.56, "predicted_wind_speed_10m": 12.01, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 13.64, "predicted_wind_speed_10m": 10.08, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 12.72, "predicted_wind_speed_10m": 7.85, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 11.86, "predicted_wind_speed_10m": 5.46, "method": "linear", "location": "New York"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 11.13, "predicted_wind_speed_10m": 3.07, "method": "linear", "location": "New York"}
+{"time": "2026-11-14T00:00:00", "predicted_temperature_2m": 10.58, "predicted_wind_speed_10m": 0.84, "method": "linear", "location": "New York"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 12.88, "predicted_wind_speed_10m": 4.17, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 12.38, "predicted_wind_speed_10m": 2.68, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 12.18, "predicted_wind_speed_10m": 1.72, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 12.27, "predicted_wind_speed_10m": 1.35, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 12.61, "predicted_wind_speed_10m": 1.59, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 13.17, "predicted_wind_speed_10m": 2.41, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 13.89, "predicted_wind_speed_10m": 3.76, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 14.69, "predicted_wind_speed_10m": 5.53, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 15.52, "predicted_wind_speed_10m": 7.61, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 16.3, "predicted_wind_speed_10m": 9.85, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 16.97, "predicted_wind_speed_10m": 12.09, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 17.48, "predicted_wind_speed_10m": 14.18, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 17.78, "predicted_wind_speed_10m": 15.97, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 17.85, "predicted_wind_speed_10m": 17.35, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 17.68, "predicted_wind_speed_10m": 18.21, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 17.27, "predicted_wind_speed_10m": 18.5, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 16.66, "predicted_wind_speed_10m": 18.19, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 15.87, "predicted_wind_speed_10m": 17.31, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 14.96, "predicted_wind_speed_10m": 15.91, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 13.99, "predicted_wind_speed_10m": 14.1, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 13.02, "predicted_wind_speed_10m": 11.98, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 12.13, "predicted_wind_speed_10m": 9.71, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 11.35, "predicted_wind_speed_10m": 7.45, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 10.76, "predicted_wind_speed_10m": 5.33, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 10.38, "predicted_wind_speed_10m": 3.52, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 10.25, "predicted_wind_speed_10m": 2.13, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 10.37, "predicted_wind_speed_10m": 1.25, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 10.73, "predicted_wind_speed_10m": 0.95, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 11.31, "predicted_wind_speed_10m": 1.25, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 12.06, "predicted_wind_speed_10m": 2.12, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 12.95, "predicted_wind_speed_10m": 3.51, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 13.89, "predicted_wind_speed_10m": 5.32, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 14.84, "predicted_wind_speed_10m": 7.43, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 15.72, "predicted_wind_speed_10m": 9.69, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 16.48, "predicted_wind_speed_10m": 11.96, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 17.06, "predicted_wind_speed_10m": 14.07, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 17.42, "predicted_wind_speed_10m": 15.88, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 17.55, "predicted_wind_speed_10m": 17.27, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 17.42, "predicted_wind_speed_10m": 18.14, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 17.05, "predicted_wind_speed_10m": 18.44, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 16.47, "predicted_wind_speed_10m": 18.14, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 15.71, "predicted_wind_speed_10m": 17.27, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 14.83, "predicted_wind_speed_10m": 15.88, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 13.88, "predicted_wind_speed_10m": 14.07, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 12.93, "predicted_wind_speed_10m": 11.96, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 12.04, "predicted_wind_speed_10m": 9.69, "method": "sma", "location": "New York"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 11.28, "predicted_wind_speed_10m": 7.43, "method": "sma", "location": "New York"}
+{"time": "2026-11-14T00:00:00", "predicted_temperature_2m": 10.7, "predicted_wind_speed_10m": 5.32, "method": "sma", "location": "New York"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 12.95, "predicted_wind_speed_10m": 3.84, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 12.51, "predicted_wind_speed_10m": 2.07, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 12.36, "predicted_wind_speed_10m": 0.87, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 12.49, "predicted_wind_speed_10m": 0.3, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 12.88, "predicted_wind_speed_10m": 0.36, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 13.47, "predicted_wind_speed_10m": 1.04, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 14.21, "predicted_wind_speed_10m": 2.26, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 15.04, "predicted_wind_speed_10m": 3.93, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 15.88, "predicted_wind_speed_10m": 5.92, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 16.68, "predicted_wind_speed_10m": 8.08, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 17.36, "predicted_wind_speed_10m": 10.26, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 17.88, "predicted_wind_speed_10m": 12.29, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 18.19, "predicted_wind_speed_10m": 14.04, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 18.27, "predicted_wind_speed_10m": 15.38, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 18.11, "predicted_wind_speed_10m": 16.2, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 17.71, "predicted_wind_speed_10m": 16.46, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 17.1, "predicted_wind_speed_10m": 16.13, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 16.32, "predicted_wind_speed_10m": 15.23, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 15.41, "predicted_wind_speed_10m": 13.82, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 14.44, "predicted_wind_speed_10m": 11.98, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 13.48, "predicted_wind_speed_10m": 9.86, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 12.58, "predicted_wind_speed_10m": 7.58, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 11.81, "predicted_wind_speed_10m": 5.3, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 11.22, "predicted_wind_speed_10m": 3.18, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 10.85, "predicted_wind_speed_10m": 1.36, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 10.72, "predicted_wind_speed_10m": 0, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 10.84, "predicted_wind_speed_10m": 0, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 11.2, "predicted_wind_speed_10m": 0, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 11.78, "predicted_wind_speed_10m": 0, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 12.53, "predicted_wind_speed_10m": 0, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 13.41, "predicted_wind_speed_10m": 1.32, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 14.36, "predicted_wind_speed_10m": 3.13, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 15.31, "predicted_wind_speed_10m": 5.24, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 16.19, "predicted_wind_speed_10m": 7.5, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 16.95, "predicted_wind_speed_10m": 9.77, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 17.53, "predicted_wind_speed_10m": 11.88, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 17.89, "predicted_wind_speed_10m": 13.69, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 18.02, "predicted_wind_speed_10m": 15.08, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 17.89, "predicted_wind_speed_10m": 15.95, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 17.53, "predicted_wind_speed_10m": 16.25, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 16.94, "predicted_wind_speed_10m": 15.95, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 16.18, "predicted_wind_speed_10m": 15.07, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 15.3, "predicted_wind_speed_10m": 13.68, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 14.35, "predicted_wind_speed_10m": 11.87, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 13.4, "predicted_wind_speed_10m": 9.76, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 12.51, "predicted_wind_speed_10m": 7.49, "method": "ema", "location": "New York"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 11.75, "predicted_wind_speed_10m": 5.23, "method": "ema", "location": "New York"}
+{"time": "2026-11-14T00:00:00", "predicted_temperature_2m": 11.17, "predicted_wind_speed_10m": 3.12, "method": "ema", "location": "New York"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 8.25, "predicted_wind_speed_10m": 8.32, "method": "linear", "location": "London"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 8.11, "predicted_wind_speed_10m": 7.74, "method": "linear", "location": "London"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 8.09, "predicted_wind_speed_10m": 7.34, "method": "linear", "location": "London"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 8.18, "predicted_wind_speed_10m": 7.16, "method": "linear", "location": "London"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 8.39, "predicted_wind_speed_10m": 7.26, "method": "linear", "location": "London"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 8.7, "predicted_wind_speed_10m": 7.63, "method": "linear", "location": "London"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 9.1, "predicted_wind_speed_10m": 8.29, "method": "linear", "location": "London"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 9.56, "predicted_wind_speed_10m": 9.19, "method": "linear", "location": "London"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 10.05, "predicted_wind_speed_10m": 10.3, "method": "linear", "location": "London"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 10.54, "predicted_wind_speed_10m": 11.54, "method": "linear", "location": "London"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 11.0, "predicted_wind_speed_10m": 12.86, "method": "linear", "location": "London"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 11.4, "predicted_wind_speed_10m": 14.16, "method": "linear", "location": "London"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 11.71, "predicted_wind_speed_10m": 15.38, "method": "linear", "location": "London"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 11.92, "predicted_wind_speed_10m": 16.43, "method": "linear", "location": "London"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 12.02, "predicted_wind_speed_10m": 17.25, "method": "linear", "location": "London"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 12.0, "predicted_wind_speed_10m": 17.81, "method": "linear", "location": "London"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 11.86, "predicted_wind_speed_10m": 18.05, "method": "linear", "location": "London"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 11.62, "predicted_wind_speed_10m": 17.98, "method": "linear", "location": "London"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 11.29, "predicted_wind_speed_10m": 17.61, "method": "linear", "location": "London"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 10.91, "predicted_wind_speed_10m": 16.96, "method": "linear", "location": "London"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 10.49, "predicted_wind_speed_10m": 16.09, "method": "linear", "location": "London"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 10.08, "predicted_wind_speed_10m": 15.06, "method": "linear", "location": "London"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 9.69, "predicted_wind_speed_10m": 13.95, "method": "linear", "location": "London"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 9.37, "predicted_wind_speed_10m": 12.84, "method": "linear", "location": "London"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 9.13, "predicted_wind_speed_10m": 11.81, "method": "linear", "location": "London"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 8.99, "predicted_wind_speed_10m": 10.94, "method": "linear", "location": "London"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 8.97, "predicted_wind_speed_10m": 10.28, "method": "linear", "location": "London"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 9.06, "predicted_wind_speed_10m": 9.89, "method": "linear", "location": "London"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 9.28, "predicted_wind_speed_10m": 9.8, "method": "linear", "location": "London"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 9.59, "predicted_wind_speed_10m": 10.02, "method": "linear", "location": "London"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 9.99, "predicted_wind_speed_10m": 10.54, "method": "linear", "location": "London"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 10.45, "predicted_wind_speed_10m": 11.33, "method": "linear", "location": "London"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 10.94, "predicted_wind_speed_10m": 12.35, "method": "linear", "location": "London"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 11.43, "predicted_wind_speed_10m": 13.51, "method": "linear", "location": "London"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 11.89, "predicted_wind_speed_10m": 14.76, "method": "linear", "location": "London"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 12.29, "predicted_wind_speed_10m": 16.0, "method": "linear", "location": "London"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 12.61, "predicted_wind_speed_10m": 17.17, "method": "linear", "location": "London"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 12.82, "predicted_wind_speed_10m": 18.18, "method": "linear", "location": "London"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 12.92, "predicted_wind_speed_10m": 18.97, "method": "linear", "location": "London"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 12.9, "predicted_wind_speed_10m": 19.49, "method": "linear", "location": "London"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 12.76, "predicted_wind_speed_10m": 19.71, "method": "linear", "location": "London"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 12.52, "predicted_wind_speed_10m": 19.61, "method": "linear", "location": "London"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 12.19, "predicted_wind_speed_10m": 19.22, "method": "linear", "location": "London"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 11.81, "predicted_wind_speed_10m": 18.56, "method": "linear", "location": "London"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 11.39, "predicted_wind_speed_10m": 17.68, "method": "linear", "location": "London"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 10.98, "predicted_wind_speed_10m": 16.64, "method": "linear", "location": "London"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 10.59, "predicted_wind_speed_10m": 15.52, "method": "linear", "location": "London"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 10.27, "predicted_wind_speed_10m": 14.4, "method": "linear", "location": "London"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 8.13, "predicted_wind_speed_10m": 7.71, "method": "sma", "location": "London"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 7.87, "predicted_wind_speed_10m": 6.61, "method": "sma", "location": "London"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 7.74, "predicted_wind_speed_10m": 5.75, "method": "sma", "location": "London"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 7.74, "predicted_wind_speed_10m": 5.18, "method": "sma", "location": "London"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 7.87, "predicted_wind_speed_10m": 4.93, "method": "sma", "location": "London"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 8.1, "predicted_wind_speed_10m": 5.0, "method": "sma", "location": "London"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 8.43, "predicted_wind_speed_10m": 5.38, "method": "sma", "location": "London"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 8.82, "predicted_wind_speed_10m": 6.05, "method": "sma", "location": "London"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 9.25, "predicted_wind_speed_10m": 6.95, "method": "sma", "location": "London"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 9.68, "predicted_wind_speed_10m": 8.0, "method": "sma", "location": "London"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 10.08, "predicted_wind_speed_10m": 9.15, "method": "sma", "location": "London"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 10.43, "predicted_wind_speed_10m": 10.3, "method": "sma", "location": "London"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 10.69, "predicted_wind_speed_10m": 11.37, "method": "sma", "location": "London"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 10.86, "predicted_wind_speed_10m": 12.3, "method": "sma", "location": "London"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 10.91, "predicted_wind_speed_10m": 13.0, "method": "sma", "location": "London"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 10.84, "predicted_wind_speed_10m": 13.44, "method": "sma", "location": "London"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 10.66, "predicted_wind_speed_10m": 13.59, "method": "sma", "location": "London"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 10.37, "predicted_wind_speed_10m": 13.42, "method": "sma", "location": "London"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 10.0, "predicted_wind_speed_10m": 12.95, "method": "sma", "location": "London"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 9.58, "predicted_wind_speed_10m": 12.22, "method": "sma", "location": "London"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 9.12, "predicted_wind_speed_10m": 11.27, "method": "sma", "location": "London"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 8.66, "predicted_wind_speed_10m": 10.16, "method": "sma", "location": "London"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 8.24, "predicted_wind_speed_10m": 8.97, "method": "sma", "location": "London"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 7.88, "predicted_wind_speed_10m": 7.78, "method": "sma", "location": "London"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 7.6, "predicted_wind_speed_10m": 6.68, "method": "sma", "location": "London"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 7.42, "predicted_wind_speed_10m": 5.73, "method": "sma", "location": "London"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 7.36, "predicted_wind_speed_10m": 5.0, "method": "sma", "location": "London"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 7.42, "predicted_wind_speed_10m": 4.54, "method": "sma", "location": "London"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 7.59, "predicted_wind_speed_10m": 4.39, "method": "sma", "location": "London"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 7.87, "predicted_wind_speed_10m": 4.54, "method": "sma", "location": "London"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 8.23, "predicted_wind_speed_10m": 4.99, "method": "sma", "location": "London"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 8.65, "predicted_wind_speed_10m": 5.72, "method": "sma", "location": "London"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 9.1, "predicted_wind_speed_10m": 6.66, "method": "sma", "location": "London"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 9.56, "predicted_wind_speed_10m": 7.76, "method": "sma", "location": "London"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 9.98, "predicted_wind_speed_10m": 8.95, "method": "sma", "location": "London"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 10.34, "predicted_wind_speed_10m": 10.13, "method": "sma", "location": "London"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 10.62, "predicted_wind_speed_10m": 11.23, "method": "sma", "location": "London"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 10.79, "predicted_wind_speed_10m": 12.17, "method": "sma", "location": "London"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 10.85, "predicted_wind_speed_10m": 12.9, "method": "sma", "location": "London"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 10.79, "predicted_wind_speed_10m": 13.35, "method": "sma", "location": "London"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 10.62, "predicted_wind_speed_10m": 13.51, "method": "sma", "location": "London"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 10.34, "predicted_wind_speed_10m": 13.35, "method": "sma", "location": "London"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 9.98, "predicted_wind_speed_10m": 12.9, "method": "sma", "location": "London"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 9.55, "predicted_wind_speed_10m": 12.17, "method": "sma", "location": "London"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 9.1, "predicted_wind_speed_10m": 11.23, "method": "sma", "location": "London"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 8.65, "predicted_wind_speed_10m": 10.12, "method": "sma", "location": "London"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 8.23, "predicted_wind_speed_10m": 8.94, "method": "sma", "location": "London"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 7.86, "predicted_wind_speed_10m": 7.76, "method": "sma", "location": "London"}
+{"time": "2026-11-12T00:00:00", "predicted_temperature_2m": 8.07, "predicted_wind_speed_10m": 7.66, "method": "ema", "location": "London"}
+{"time": "2026-11-12T01:00:00", "predicted_temperature_2m": 7.77, "predicted_wind_speed_10m": 6.5, "method": "ema", "location": "London"}
+{"time": "2026-11-12T02:00:00", "predicted_temperature_2m": 7.6, "predicted_wind_speed_10m": 5.6, "method": "ema", "location": "London"}
+{"time": "2026-11-12T03:00:00", "predicted_temperature_2m": 7.57, "predicted_wind_speed_10m": 5.0, "method": "ema", "location": "London"}
+{"time": "2026-11-12T04:00:00", "predicted_temperature_2m": 7.67, "predicted_wind_speed_10m": 4.71, "method": "ema", "location": "London"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 7.88, "predicted_wind_speed_10m": 4.76, "method": "ema", "location": "London"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 8.18, "predicted_wind_speed_10m": 5.13, "method": "ema", "location": "London"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 8.56, "predicted_wind_speed_10m": 5.77, "method": "ema", "location": "London"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 8.97, "predicted_wind_speed_10m": 6.65, "method": "ema", "location": "London"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 9.39, "predicted_wind_speed_10m": 7.7, "method": "ema", "location": "London"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 9.78, "predicted_wind_speed_10m": 8.83, "method": "ema", "location": "London"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 10.12, "predicted_wind_speed_10m": 9.97, "method": "ema", "location": "London"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 10.37, "predicted_wind_speed_10m": 11.04, "method": "ema", "location": "London"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 10.53, "predicted_wind_speed_10m": 11.96, "method": "ema", "location": "London"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 10.57, "predicted_wind_speed_10m": 12.66, "method": "ema", "location": "London"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 10.5, "predicted_wind_speed_10m": 13.09, "method": "ema", "location": "London"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 10.32, "predicted_wind_speed_10m": 13.23, "method": "ema", "location": "London"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 10.03, "predicted_wind_speed_10m": 13.06, "method": "ema", "location": "London"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 9.66, "predicted_wind_speed_10m": 12.59, "method": "ema", "location": "London"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 9.23, "predicted_wind_speed_10m": 11.85, "method": "ema", "location": "London"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 8.77, "predicted_wind_speed_10m": 10.9, "method": "ema", "location": "London"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 8.31, "predicted_wind_speed_10m": 9.79, "method": "ema", "location": "London"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 7.89, "predicted_wind_speed_10m": 8.6, "method": "ema", "location": "London"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 7.52, "predicted_wind_speed_10m": 7.41, "method": "ema", "location": "London"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 7.24, "predicted_wind_speed_10m": 6.31, "method": "ema", "location": "London"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 7.06, "predicted_wind_speed_10m": 5.36, "method": "ema", "location": "London"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 7.0, "predicted_wind_speed_10m": 4.63, "method": "ema", "location": "London"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 7.06, "predicted_wind_speed_10m": 4.17, "method": "ema", "location": "London"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 7.23, "predicted_wind_speed_10m": 4.01, "method": "ema", "location": "London"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 7.51, "predicted_wind_speed_10m": 4.16, "method": "ema", "location": "London"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 7.87, "predicted_wind_speed_10m": 4.62, "method": "ema", "location": "London"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 8.29, "predicted_wind_speed_10m": 5.34, "method": "ema", "location": "London"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 8.74, "predicted_wind_speed_10m": 6.28, "method": "ema", "location": "London"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 9.19, "predicted_wind_speed_10m": 7.39, "method": "ema", "location": "London"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 9.62, "predicted_wind_speed_10m": 8.57, "method": "ema", "location": "London"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 9.98, "predicted_wind_speed_10m": 9.75, "method": "ema", "location": "London"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 10.26, "predicted_wind_speed_10m": 10.85, "method": "ema", "location": "London"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 10.43, "predicted_wind_speed_10m": 11.79, "method": "ema", "location": "London"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 10.49, "predicted_wind_speed_10m": 12.52, "method": "ema", "location": "London"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 10.43, "predicted_wind_speed_10m": 12.97, "method": "ema", "location": "London"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 10.25, "predicted_wind_speed_10m": 13.13, "method": "ema", "location": "London"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 9.98, "predicted_wind_speed_10m": 12.97, "method": "ema", "location": "London"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 9.61, "predicted_wind_speed_10m": 12.52, "method": "ema", "location": "London"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 9.19, "predicted_wind_speed_10m": 11.79, "method": "ema", "location": "London"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 8.74, "predicted_wind_speed_10m": 10.85, "method": "ema", "location": "London"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 8.28, "predicted_wind_speed_10m": 9.74, "method": "ema", "location": "London"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 7.86, "predicted_wind_speed_10m": 8.56, "method": "ema", "location": "London"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 7.5, "predicted_wind_speed_10m": 7.38, "method": "ema", "location": "London"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 23.1, "predicted_wind_speed_10m": 12.84, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 23.52, "predicted_wind_speed_10m": 11.72, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 24.19, "predicted_wind_speed_10m": 11.41, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 25.01, "predicted_wind_speed_10m": 11.79, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 25.9, "predicted_wind_speed_10m": 12.68, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 26.76, "predicted_wind_speed_10m": 13.91, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 27.52, "predicted_wind_speed_10m": 15.3, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 28.1, "predicted_wind_speed_10m": 16.65, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 28.44, "predicted_wind_speed_10m": 17.81, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 28.52, "predicted_wind_speed_10m": 18.63, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 28.31, "predicted_wind_speed_10m": 19.0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 27.83, "predicted_wind_speed_10m": 18.85, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 27.1, "predicted_wind_speed_10m": 18.14, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 26.17, "predicted_wind_speed_10m": 16.9, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 25.09, "predicted_wind_speed_10m": 15.16, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 23.95, "predicted_wind_speed_10m": 13.03, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 22.81, "predicted_wind_speed_10m": 10.62, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 21.76, "predicted_wind_speed_10m": 8.08, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 20.88, "predicted_wind_speed_10m": 5.56, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 20.21, "predicted_wind_speed_10m": 3.22, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 19.82, "predicted_wind_speed_10m": 1.2, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 19.73, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 19.95, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 20.47, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 21.26, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 22.27, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 23.44, "predicted_wind_speed_10m": 0.44, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 24.69, "predicted_wind_speed_10m": 2.2, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 25.93, "predicted_wind_speed_10m": 4.26, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 27.1, "predicted_wind_speed_10m": 6.49, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 28.12, "predicted_wind_speed_10m": 8.72, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 28.92, "predicted_wind_speed_10m": 10.79, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 29.45, "predicted_wind_speed_10m": 12.56, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 29.69, "predicted_wind_speed_10m": 13.9, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 29.62, "predicted_wind_speed_10m": 14.71, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 29.25, "predicted_wind_speed_10m": 14.93, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 28.62, "predicted_wind_speed_10m": 14.55, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 27.77, "predicted_wind_speed_10m": 13.57, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 26.77, "predicted_wind_speed_10m": 12.07, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 25.68, "predicted_wind_speed_10m": 10.13, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 24.6, "predicted_wind_speed_10m": 7.89, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 23.6, "predicted_wind_speed_10m": 5.49, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 22.75, "predicted_wind_speed_10m": 3.09, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-14T00:00:00", "predicted_temperature_2m": 22.11, "predicted_wind_speed_10m": 0.86, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-14T01:00:00", "predicted_temperature_2m": 21.75, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-14T02:00:00", "predicted_temperature_2m": 21.68, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-14T03:00:00", "predicted_temperature_2m": 21.92, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-14T04:00:00", "predicted_temperature_2m": 22.46, "predicted_wind_speed_10m": 0, "method": "linear", "location": "Sydney"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 22.88, "predicted_wind_speed_10m": 13.91, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 23.11, "predicted_wind_speed_10m": 13.71, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 23.6, "predicted_wind_speed_10m": 14.2, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 24.25, "predicted_wind_speed_10m": 15.26, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 24.99, "predicted_wind_speed_10m": 16.75, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 25.71, "predicted_wind_speed_10m": 18.49, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 26.33, "predicted_wind_speed_10m": 20.33, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 26.78, "predicted_wind_speed_10m": 22.08, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 27.0, "predicted_wind_speed_10m": 23.58, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 26.96, "predicted_wind_speed_10m": 24.71, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 26.64, "predicted_wind_speed_10m": 25.35, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 26.05, "predicted_wind_speed_10m": 25.44, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 25.22, "predicted_wind_speed_10m": 24.95, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 24.18, "predicted_wind_speed_10m": 23.89, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 23.0, "predicted_wind_speed_10m": 22.34, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 21.76, "predicted_wind_speed_10m": 20.37, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 20.53, "predicted_wind_speed_10m": 18.11, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 19.39, "predicted_wind_speed_10m": 15.7, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 18.41, "predicted_wind_speed_10m": 13.31, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 17.65, "predicted_wind_speed_10m": 11.09, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 17.17, "predicted_wind_speed_10m": 9.19, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 16.99, "predicted_wind_speed_10m": 7.72, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 17.12, "predicted_wind_speed_10m": 6.79, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 17.55, "predicted_wind_speed_10m": 6.45, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 18.25, "predicted_wind_speed_10m": 6.73, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 19.17, "predicted_wind_speed_10m": 7.6, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 20.25, "predicted_wind_speed_10m": 9.01, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 21.41, "predicted_wind_speed_10m": 10.85, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 22.57, "predicted_wind_speed_10m": 13.0, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 23.65, "predicted_wind_speed_10m": 15.31, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 24.58, "predicted_wind_speed_10m": 17.62, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 25.29, "predicted_wind_speed_10m": 19.77, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 25.74, "predicted_wind_speed_10m": 21.62, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 25.89, "predicted_wind_speed_10m": 23.04, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 25.73, "predicted_wind_speed_10m": 23.93, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 25.28, "predicted_wind_speed_10m": 24.23, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 24.56, "predicted_wind_speed_10m": 23.92, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 23.62, "predicted_wind_speed_10m": 23.02, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 22.53, "predicted_wind_speed_10m": 21.6, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 21.36, "predicted_wind_speed_10m": 19.74, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 20.19, "predicted_wind_speed_10m": 17.57, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 19.1, "predicted_wind_speed_10m": 15.25, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 18.16, "predicted_wind_speed_10m": 12.93, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-14T00:00:00", "predicted_temperature_2m": 17.44, "predicted_wind_speed_10m": 10.77, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-14T01:00:00", "predicted_temperature_2m": 16.99, "predicted_wind_speed_10m": 8.91, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-14T02:00:00", "predicted_temperature_2m": 16.84, "predicted_wind_speed_10m": 7.48, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-14T03:00:00", "predicted_temperature_2m": 16.99, "predicted_wind_speed_10m": 6.58, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-14T04:00:00", "predicted_temperature_2m": 17.44, "predicted_wind_speed_10m": 6.28, "method": "sma", "location": "Sydney"}
+{"time": "2026-11-12T05:00:00", "predicted_temperature_2m": 23.09, "predicted_wind_speed_10m": 13.86, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T06:00:00", "predicted_temperature_2m": 23.49, "predicted_wind_speed_10m": 13.61, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T07:00:00", "predicted_temperature_2m": 24.13, "predicted_wind_speed_10m": 14.07, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T08:00:00", "predicted_temperature_2m": 24.91, "predicted_wind_speed_10m": 15.1, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T09:00:00", "predicted_temperature_2m": 25.75, "predicted_wind_speed_10m": 16.56, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T10:00:00", "predicted_temperature_2m": 26.56, "predicted_wind_speed_10m": 18.28, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T11:00:00", "predicted_temperature_2m": 27.26, "predicted_wind_speed_10m": 20.1, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T12:00:00", "predicted_temperature_2m": 27.78, "predicted_wind_speed_10m": 21.83, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T13:00:00", "predicted_temperature_2m": 28.06, "predicted_wind_speed_10m": 23.32, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T14:00:00", "predicted_temperature_2m": 28.07, "predicted_wind_speed_10m": 24.43, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T15:00:00", "predicted_temperature_2m": 27.79, "predicted_wind_speed_10m": 25.06, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T16:00:00", "predicted_temperature_2m": 27.23, "predicted_wind_speed_10m": 25.14, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T17:00:00", "predicted_temperature_2m": 26.43, "predicted_wind_speed_10m": 24.65, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T18:00:00", "predicted_temperature_2m": 25.41, "predicted_wind_speed_10m": 23.59, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T19:00:00", "predicted_temperature_2m": 24.26, "predicted_wind_speed_10m": 22.03, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T20:00:00", "predicted_temperature_2m": 23.04, "predicted_wind_speed_10m": 20.05, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T21:00:00", "predicted_temperature_2m": 21.82, "predicted_wind_speed_10m": 17.79, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T22:00:00", "predicted_temperature_2m": 20.69, "predicted_wind_speed_10m": 15.38, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-12T23:00:00", "predicted_temperature_2m": 19.72, "predicted_wind_speed_10m": 12.99, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T00:00:00", "predicted_temperature_2m": 18.98, "predicted_wind_speed_10m": 10.77, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T01:00:00", "predicted_temperature_2m": 18.5, "predicted_wind_speed_10m": 8.86, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T02:00:00", "predicted_temperature_2m": 18.33, "predicted_wind_speed_10m": 7.39, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T03:00:00", "predicted_temperature_2m": 18.46, "predicted_wind_speed_10m": 6.45, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T04:00:00", "predicted_temperature_2m": 18.9, "predicted_wind_speed_10m": 6.12, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T05:00:00", "predicted_temperature_2m": 19.6, "predicted_wind_speed_10m": 6.4, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T06:00:00", "predicted_temperature_2m": 20.53, "predicted_wind_speed_10m": 7.27, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T07:00:00", "predicted_temperature_2m": 21.61, "predicted_wind_speed_10m": 8.67, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T08:00:00", "predicted_temperature_2m": 22.77, "predicted_wind_speed_10m": 10.51, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T09:00:00", "predicted_temperature_2m": 23.93, "predicted_wind_speed_10m": 12.66, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T10:00:00", "predicted_temperature_2m": 25.02, "predicted_wind_speed_10m": 14.97, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T11:00:00", "predicted_temperature_2m": 25.95, "predicted_wind_speed_10m": 17.28, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T12:00:00", "predicted_temperature_2m": 26.66, "predicted_wind_speed_10m": 19.44, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T13:00:00", "predicted_temperature_2m": 27.11, "predicted_wind_speed_10m": 21.28, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T14:00:00", "predicted_temperature_2m": 27.26, "predicted_wind_speed_10m": 22.7, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T15:00:00", "predicted_temperature_2m": 27.1, "predicted_wind_speed_10m": 23.59, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T16:00:00", "predicted_temperature_2m": 26.65, "predicted_wind_speed_10m": 23.9, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T17:00:00", "predicted_temperature_2m": 25.93, "predicted_wind_speed_10m": 23.59, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T18:00:00", "predicted_temperature_2m": 24.99, "predicted_wind_speed_10m": 22.69, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T19:00:00", "predicted_temperature_2m": 23.9, "predicted_wind_speed_10m": 21.26, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T20:00:00", "predicted_temperature_2m": 22.73, "predicted_wind_speed_10m": 19.4, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T21:00:00", "predicted_temperature_2m": 21.56, "predicted_wind_speed_10m": 17.23, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T22:00:00", "predicted_temperature_2m": 20.47, "predicted_wind_speed_10m": 14.91, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-13T23:00:00", "predicted_temperature_2m": 19.54, "predicted_wind_speed_10m": 12.59, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-14T00:00:00", "predicted_temperature_2m": 18.82, "predicted_wind_speed_10m": 10.43, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-14T01:00:00", "predicted_temperature_2m": 18.37, "predicted_wind_speed_10m": 8.57, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-14T02:00:00", "predicted_temperature_2m": 18.21, "predicted_wind_speed_10m": 7.14, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-14T03:00:00", "predicted_temperature_2m": 18.37, "predicted_wind_speed_10m": 6.25, "method": "ema", "location": "Sydney"}
+{"time": "2026-11-14T04:00:00", "predicted_temperature_2m": 18.82, "predicted_wind_speed_10m": 5.94, "method": "ema", "location": "Sydney"}
