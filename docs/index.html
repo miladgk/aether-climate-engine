@@ -658,8 +658,17 @@
         }
 
         @media (max-width: 1024px) {
-            html, body { overflow-x: hidden; }
-            body { min-width: 0; }
+            html, body {
+                height: auto;
+                min-height: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            body {
+                min-width: 0;
+                touch-action: pan-y;
+            }
             .app { display: block; height: auto; min-height: 100vh; }
             .sidebar { display: block; border-right: 0; border-bottom: 1px solid var(--border); max-height: none; }
             .sidebar-logo { padding: 18px 16px 14px; }
