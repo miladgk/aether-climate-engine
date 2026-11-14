@@ -36,7 +36,7 @@ with DAG(
     'daily_telemetry_ingestion',
     default_args=default_args,
     description='A daily DAG to ingest telemetry JSON logs from S3 to PostgreSQL',
-    schedule_interval='@daily',
+    schedule='@daily',
     start_date=datetime(2026, 8, 20), # arbitrary start date in the past
     catchup=False,
     tags=['telemetry', 'ingestion'],
@@ -45,7 +45,6 @@ with DAG(
     ingest_task = PythonOperator(
         task_id='ingest_telemetry_data',
         python_callable=ingestion_wrapper,
-        provide_context=True,
     )
 
     ingest_task

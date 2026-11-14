@@ -5,7 +5,7 @@
 [![PostgreSQL 15](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![dbt Core](https://img.shields.io/badge/dbt-1.7.0-orange.svg)](https://www.getdbt.com/)
-[![Apache Airflow](https://img.shields.io/badge/airflow-2.8.1-teal.svg)](https://airflow.apache.org/)
+[![Apache Airflow](https://img.shields.io/badge/airflow-2.10.5-teal.svg)](https://airflow.apache.org/)
 [![Terraform](https://img.shields.io/badge/terraform-1.5+-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -35,7 +35,7 @@
   - Real-time blinking radar indicators marking the exact current-time horizon.
 - **🏗️ Modern Data Warehouse & Modeling**: PostgreSQL raw layer paired with **dbt Core** dimensional models (staging, marts, facts) and **Apache Airflow** orchestration.
 - **☁️ Infrastructure as Code (IaC)**: Modular **Terraform** configurations for AWS S3, IAM policies, and cloud storage lifecycle management.
-- **🧪 Robust Testing & Security**: Pytest suite with mock layers (`pytest-mock`, `moto`), Bandit AST security scanning, and GitHub Actions CI workflow.
+- **🧪 Robust Testing & Security**: Unit, smoke, integration (real PostgreSQL), E2E + cross-browser compatibility (Chromium/Firefox/WebKit via Playwright) and regression test layers via Pytest (`pytest-mock`, `moto`), Bandit SAST scanning, `pip-audit` dependency/CVE scanning, and a GitHub Actions CI workflow that runs them all on every push/PR.
 
 ---
 
@@ -118,11 +118,14 @@ flowchart TD
 ├── terraform/                  # Infrastructure as Code
 │   ├── main.tf                 # S3 buckets & AWS IAM policies
 │   └── variables.tf
-└── tests/                      # Automated unit test suite
+└── tests/                      # Automated test suite (unit, smoke, integration)
     ├── conftest.py             # Mock fixtures (AWS, Postgres)
-    ├── test_anomaly_detector.py
-    ├── test_extract_load.py
-    └── test_predictor.py
+    ├── test_extract_load.py    # Unit: ETL logic
+    ├── test_predictor.py       # Unit: ML forecasting models
+    ├── test_pii.py             # Unit: PII hashing
+    ├── test_smoke.py           # Smoke: fast end-to-end sanity pass
+    ├── test_integration_postgres.py  # Integration: real PostgreSQL round-trip
+    └── test_e2e_dashboard.py   # E2E + Compatibility: live dashboard across 3 browser engines
 ```
 
 ---
@@ -169,14 +172,61 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
 ## 🧪 Testing & Quality Assurance
 
-Run the comprehensive unit test suite:
+This project exercises several layers of the testing pyramid, each catching a different class of bug:
+
+| Layer | Files | What it catches |
+|---|---|---|
+| **Unit** | `test_extract_load.py`, `test_predictor.py`, `test_pii.py` | Logic bugs in a single function (flattening, anomaly math, PII hashing), fully mocked — no network, no DB. |
+| **Smoke** | `test_smoke.py` | Fast, shallow sanity pass over the whole build: do core modules import, is `config.json` valid, do the ETL/ML stages run end-to-end on a tiny dataset? |
+| **Integration** | `test_integration_postgres.py` | `PostgresClient` against a **real** PostgreSQL instance (table creation, bulk insert via `execute_values`, round-tripped reads) — the SQL path that mocks can't verify. Auto-skips if no database is reachable. |
+| **E2E** | `test_e2e_dashboard.py` | Drives the actual dashboard with Playwright: page loads, Chart.js renders both charts, unit/theme toggles update the UI, station switching updates the topbar — the only layer that touches the frontend JS at all. |
+| **Compatibility** | `test_e2e_dashboard.py` (parametrized) | Every E2E test above runs once per rendering engine — **Chromium, Firefox, WebKit/Safari** — so a browser-specific CSS/JS quirk fails on that one engine instead of going unnoticed. Any engine not installed is skipped individually. |
+| **Regression** | the full suite, run in CI on every push/PR | Re-runs everything above automatically so a change can't silently break a previously-working feature. |
+| **Security (SAST)** | `scripts/custom_bandit.py` | Static scan for insecure patterns in *our own code* (hardcoded secrets, unsafe deserialization, etc.). |
+| **Dependency / SCA Scanning** | `pip-audit` (CI step) | Scans every *third-party* package actually installed (`apache-airflow`, `protobuf`, `pytest`, etc.) against the PyPA Advisory Database for known CVEs — catches vulnerable dependencies that SAST never looks at. Advisory only: reports findings in the CI log without failing the build, since upgrading a pinned framework version (e.g. Airflow) is a deliberate decision, not something a gate should force on every push. |
+
+Run everything:
 ```bash
-# Run pytest with coverage
+# Full suite (unit + smoke + integration where a DB is reachable + E2E where a browser is installed)
 pytest tests/ -v
 
-# Run security static analysis
+# Just the integration tests, against a local Postgres container:
+docker run -d -p 5432:5432 \
+  -e POSTGRES_USER=aether_user -e POSTGRES_PASSWORD=aether_password \
+  -e POSTGRES_DB=aether_warehouse postgres:15
+pytest tests/test_integration_postgres.py -v
+
+# Just the E2E + cross-browser compatibility tests (one-time browser install, then run):
+playwright install chromium firefox webkit
+pytest tests/test_e2e_dashboard.py -v
+
+# Run security static analysis (our own code)
 python3 scripts/custom_bandit.py
+
+# Scan third-party dependencies for known CVEs
+pip install pip-audit
+pip-audit
 ```
+
+The CI workflow (`.github/workflows/ci.yml`) spins up a real Postgres service container, so the integration tests run on every push/PR, not just locally.
+
+### Dependency remediation (what `pip-audit` found and what we did about it)
+
+Running the scan surfaced a real, pre-existing dependency conflict and a set of outdated/vulnerable pins. Here's what was fixed and what's structurally blocked:
+
+**Fixed:**
+- Removed an explicit `protobuf<4.25.0` pin that conflicted with `apache-airflow`'s own `opentelemetry-proto` requirement (`protobuf>=5.0`) — this was breaking `pip install -r requirements.txt` entirely on a clean environment. Letting pip's resolver pick the version itself (`protobuf==5.29.6`) resolves it.
+- `apache-airflow` `2.8.1` → `2.10.5` (latest 2.x release) — removes every CVE that had a 2.x fix, without the breaking API migration to Airflow 3.x. Updated `dags/daily_telemetry_ingestion.py` to drop two now-deprecated APIs (`schedule_interval` → `schedule`, removed `provide_context=True`) surfaced by the upgrade.
+- `pytest` `8.0.0` → `9.0.3` — verified against the full suite (30 tests, including E2E across 3 browsers and the Postgres integration tests) on Python 3.10, matching CI exactly.
+- `pip`/`setuptools` are now upgraded explicitly in the CI install step.
+
+**Structurally blocked (verified by actually attempting each, not guessed):**
+- `apache-airflow` and its provider packages still carry CVEs whose only fix is Airflow **3.x** — a breaking architecture change, out of scope for an in-place dependency bump.
+- `cryptography`, `urllib3`, `sqlparse` can't be upgraded past their vulnerable versions because `dbt-core==1.7.0` hard-pins `cffi<2.0.0` and `urllib3~=1.0`; every patched release of those libraries requires newer versions than that. Unblocking this needs a `dbt-core` 1.8+ upgrade (a package-split architecture change in dbt itself) that hasn't been validated against this project's `dbt_telemetry/` models.
+- `flask`, `werkzeug`, `flask-appbuilder` are version-capped by Airflow 2.x's own webserver compatibility requirements, not by anything in this project.
+- `dnspython`, `filelock` only ship CVE fixes in releases that require **Python 3.11+**, while CI runs Python 3.10.
+
+The dependency scan step stays advisory (reports, doesn't fail the build) so these known, upstream-blocked findings don't turn CI red on every push.
 
 ---
 
