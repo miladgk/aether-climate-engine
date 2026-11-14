@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<!-- Last redeployed: 2026-11-14 -->
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether | Climate Intelligence Platform</title>
+    <title>Aether — Planetary Climate & Telemetry Observatory</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
         *,
@@ -22,19 +22,61 @@
         }
 
         :root {
-            --bg: #161412;
-            --surface: #1e1b18;
-            --border: #2a2521;
-            --amber: #d97706;
-            --amber-l: #fbbf24;
-            --red: #dc2626;
-            --green: #16a34a;
-            --blue: #3b6cf4;
-            --pink: #db2777;
-            --text: #e8e0d4;
-            --muted: #6b6055;
+            --bg: #0c0b0a;
+            --bg-glass: rgba(22, 20, 18, 0.72);
+            --bg-glass-strong: rgba(28, 25, 22, 0.88);
+            --border: rgba(232, 224, 212, 0.09);
+            --border-active: rgba(245, 158, 11, 0.48);
+            --text: #f3ede2;
+            --muted: #8c8275;
+            --dim: #5c5449;
+            --amber: #f59e0b;
+            --amber-soft: rgba(245, 158, 11, 0.14);
+            --wind-blue: #38bdf8;
+            --wind-soft: rgba(56, 189, 248, 0.14);
+            --forecast-green: #10b981;
+            --yoy-rose: #f43f5e;
+            --aura-1: rgba(245, 158, 11, 0.11);
+            --aura-2: rgba(56, 189, 248, 0.08);
+            --sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --serif: 'Instrument Serif', Georgia, serif;
             --mono: 'DM Mono', monospace;
-            --sans: 'DM Sans', sans-serif;
+        }
+
+        [data-theme="nord"] {
+            --bg: #0b111e;
+            --bg-glass: rgba(17, 25, 42, 0.74);
+            --bg-glass-strong: rgba(23, 33, 54, 0.9);
+            --border: rgba(216, 222, 233, 0.1);
+            --border-active: rgba(136, 192, 208, 0.55);
+            --text: #eceff4;
+            --muted: #8190a5;
+            --dim: #4c566a;
+            --amber: #88c0d0;
+            --amber-soft: rgba(136, 192, 208, 0.15);
+            --wind-blue: #81a1c1;
+            --forecast-green: #a3be8c;
+            --yoy-rose: #bf616a;
+            --aura-1: rgba(136, 192, 208, 0.13);
+            --aura-2: rgba(129, 161, 193, 0.1);
+        }
+
+        [data-theme="stone"] {
+            --bg: #f6f4f0;
+            --bg-glass: rgba(255, 255, 255, 0.78);
+            --bg-glass-strong: rgba(255, 255, 255, 0.94);
+            --border: rgba(28, 25, 23, 0.1);
+            --border-active: rgba(180, 83, 9, 0.45);
+            --text: #1c1917;
+            --muted: #78716c;
+            --dim: #a8a29e;
+            --amber: #b45309;
+            --amber-soft: rgba(180, 83, 9, 0.1);
+            --wind-blue: #0284c7;
+            --forecast-green: #059669;
+            --yoy-rose: #e11d48;
+            --aura-1: rgba(180, 83, 9, 0.08);
+            --aura-2: rgba(2, 132, 199, 0.07);
         }
 
         html,
@@ -44,536 +86,648 @@
             background: var(--bg);
             color: var(--text);
             overflow: hidden;
+            user-select: none;
         }
 
-        /* ─── LAYOUT ─────────────────────────────────────────── */
-        .app {
+        /* ─── LIVING ATMOSPHERIC WIND STREAMLINE BACKDROP ─── */
+        #atmoBackdrop {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 18% 15%, var(--aura-1) 0%, transparent 48%),
+                radial-gradient(circle at 82% 78%, var(--aura-2) 0%, transparent 52%),
+                var(--bg);
+            transition: background 0.8s ease;
+        }
+
+        /* ─── MAIN OBSERVATORY SHELL ─── */
+        .observatory {
+            position: relative;
+            z-index: 1;
             display: grid;
-            grid-template-columns: 220px 1fr 260px;
-            grid-template-rows: 100vh;
+            grid-template-rows: auto auto 1fr auto;
             height: 100vh;
+            max-width: 1640px;
+            margin: 0 auto;
+            padding: 14px 24px 16px;
+            gap: 12px;
         }
 
-        /* ─── LEFT SIDEBAR ───────────────────────────────────── */
-        .sidebar {
-            background: var(--surface);
-            border-right: 1px solid var(--border);
+        /* ─── 1. TOP TELEMETRY RIBBON ─── */
+        .top-ribbon {
             display: flex;
-            flex-direction: column;
-            padding: 0;
-            overflow-y: auto;
-        }
-
-        .sidebar-logo {
-            padding: 28px 24px 20px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 4px;
             border-bottom: 1px solid var(--border);
         }
 
-        .sidebar-logo .wordmark {
-            font-size: 18px;
+        .brand-lockup {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+        }
+
+        .wordmark {
+            font-size: 22px;
             font-weight: 700;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.04em;
             color: var(--text);
         }
 
-        .sidebar-logo .wordmark span {
+        .wordmark em {
+            font-family: var(--serif);
+            font-style: italic;
+            font-weight: 400;
             color: var(--amber);
+            padding: 0 1px;
         }
 
-        .sidebar-logo .tagline {
+        .brand-subtitle {
+            font-family: var(--mono);
             font-size: 10px;
-            font-family: var(--mono);
-            color: var(--muted);
-            margin-top: 3px;
-            letter-spacing: 0.08em;
             text-transform: uppercase;
-        }
-
-        .sidebar-section {
-            padding: 20px 24px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .sidebar-section:last-child {
-            border-bottom: none;
-        }
-
-        .sidebar-label {
-            font-size: 9px;
-            font-family: var(--mono);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.14em;
             color: var(--muted);
-            margin-bottom: 12px;
         }
 
-        .location-btn {
+        .telemetry-pills {
             display: flex;
             align-items: center;
             gap: 10px;
-            width: 100%;
-            padding: 9px 12px;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            background: transparent;
+            font-family: var(--mono);
+            font-size: 11px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
             color: var(--muted);
-            font-family: var(--sans);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.15s;
-            margin-bottom: 4px;
+            backdrop-filter: blur(12px);
         }
 
-        .location-btn:hover {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .location-btn.active {
-            color: var(--text);
-            background: rgba(217, 119, 6, 0.12);
-            border-color: rgba(217, 119, 6, 0.3);
-        }
-
-        .location-dot {
+        .pulse-led {
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: var(--muted);
-            flex-shrink: 0;
+            background: var(--forecast-green);
+            box-shadow: 0 0 8px var(--forecast-green);
+            animation: pulseGlow 2.4s ease-in-out infinite;
         }
 
-        .location-btn.active .location-dot {
-            background: var(--amber);
-        }
-
-        .custom-select {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            outline: none;
-            font-family: var(--sans);
-            font-size: 13px;
-        }
-
-        .custom-select option {
-            background: var(--surface);
-            color: var(--text);
-        }
-
-        .model-btn {
-            display: block;
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px solid transparent;
-            background: transparent;
-            color: var(--muted);
-            font-family: var(--mono);
-            font-size: 11px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.15s;
-            margin-bottom: 3px;
-        }
-
-        .model-btn:hover {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .model-btn.active {
-            color: var(--amber-l);
-            background: rgba(251, 191, 36, 0.08);
-            border-color: rgba(251, 191, 36, 0.2);
-        }
-
-        .horizon-group {
-            display: flex;
-            gap: 4px;
-        }
-
-        .horizon-btn {
-            flex: 1;
-            padding: 7px 0;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            color: var(--muted);
-            font-family: var(--mono);
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .horizon-btn:hover {
-            color: var(--text);
-        }
-
-        .horizon-btn.active {
-            background: var(--amber);
-            border-color: var(--amber);
-            color: #000;
-            font-weight: 500;
-        }
-
-        .theme-group {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .theme-btn {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            padding: 8px 12px;
-            border: 1px solid transparent;
-            border-radius: 5px;
-            background: transparent;
-            color: var(--muted);
-            font-family: var(--sans);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .theme-btn:hover {
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .theme-btn.active {
-            color: var(--text);
-            border-color: var(--border);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .theme-swatch {
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
-
-        .sidebar-status {
-            margin-top: auto;
-            padding: 20px 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .status-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            color: var(--muted);
-            margin-bottom: 6px;
-        }
-
-        .status-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .dot-green {
-            background: #22c55e;
-            box-shadow: 0 0 6px #22c55e;
-            animation: blink 2.5s ease-in-out infinite;
-        }
-
-        .dot-red {
-            background: var(--red);
-        }
-
-        @keyframes blink {
+        @keyframes pulseGlow {
 
             0%,
             100% {
                 opacity: 1;
+                transform: scale(1);
             }
 
             50% {
-                opacity: 0.4;
+                opacity: 0.45;
+                transform: scale(0.88);
             }
         }
 
-        /* ─── MAIN AREA ──────────────────────────────────────── */
-        .main {
+        .drawer-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 13px;
+            border-radius: 999px;
+            background: var(--amber-soft);
+            border: 1px solid var(--border-active);
+            color: var(--amber);
+            font-family: var(--mono);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .drawer-toggle:hover {
+            transform: translateY(-1px);
+            background: var(--amber);
+            color: #000;
+        }
+
+        /* ─── 2. PLANETARY STATION ORBIT DECK (5 GLOBAL STATIONS) ─── */
+        .station-deck {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .station-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .station-card:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .station-card.active {
+            background: var(--bg-glass-strong);
+            border-color: var(--amber);
+            box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.28);
+        }
+
+        .station-card.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--amber);
+        }
+
+        .st-meta {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            background: var(--bg);
-            min-width: 0;
+            gap: 2px;
         }
 
-        .main-topbar {
+        .st-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--text);
+        }
+
+        .st-coords {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+        }
+
+        .st-metrics {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .st-temp {
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            line-height: 1.1;
+        }
+
+        .st-wind {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--wind-blue);
+        }
+
+        /* ─── 3. CENTER PANORAMIC HORIZON STAGE ─── */
+        .horizon-workspace {
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            gap: 14px;
+            min-height: 0;
+        }
+
+        /* Left Column: Swiss-Editorial Atmospheric Readout */
+        .editorial-hud {
+            background: var(--bg-glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .hud-station-header {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .hud-kicker {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--amber);
+            margin-bottom: 4px;
+        }
+
+        .hud-city-title {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+        }
+
+        .hud-coords-sub {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        .primary-gauges {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: auto 0;
+            padding: 10px 0;
+        }
+
+        .gauge-block {
+            position: relative;
+        }
+
+        .gauge-label {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gauge-value-row {
             display: flex;
             align-items: baseline;
-            gap: 20px;
-            padding: 24px 32px 0;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 18px;
-            flex-shrink: 0;
+            gap: 6px;
+            margin: 2px 0 4px;
+            font-variant-numeric: tabular-nums;
         }
 
-        .main-topbar .page-title {
-            font-size: 13px;
-            font-weight: 500;
+        .gauge-giant {
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            color: var(--text);
+        }
+
+        .gauge-unit {
+            font-family: var(--mono);
+            font-size: 14px;
             color: var(--muted);
-            letter-spacing: 0.01em;
         }
 
-        .breadcrumb {
-            color: var(--border);
-            margin: 0 4px;
+        .delta-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--muted);
         }
 
-        .main-topbar .location-name {
-            font-size: 13px;
+        .delta-pill.pos {
+            color: #fb7185;
+            background: rgba(244, 63, 94, 0.12);
+        }
+
+        .delta-pill.neg {
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.12);
+        }
+
+        /* Model Benchmark Mini-Matrix */
+        .hud-benchmark {
+            background: rgba(0, 0, 0, 0.22);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 13px;
+        }
+
+        .bench-title {
+            font-family: var(--mono);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 7px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bench-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-family: var(--mono);
+            font-size: 10.5px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .bench-cell {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 6px 8px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+        }
+
+        .bench-lbl {
+            font-size: 8.5px;
+            color: var(--muted);
+            display: block;
+        }
+
+        .bench-val {
             font-weight: 500;
             color: var(--text);
         }
 
-        .main-topbar .timestamp {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--muted);
-            margin-left: auto;
-        }
-
-        .charts-area {
-            flex: 1;
-            overflow: hidden;
+        /* Right Column: Dual Temporal Horizon Charts */
+        .charts-deck {
             display: grid;
             grid-template-rows: 1fr 1fr;
-            gap: 0;
+            gap: 12px;
+            min-height: 0;
             min-width: 0;
         }
 
-        .chart-panel {
-            padding: 20px 32px;
-            border-bottom: 1px solid var(--border);
+        .horizon-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 14px 20px 12px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            min-height: 0;
             min-width: 0;
+            position: relative;
         }
 
-        .chart-panel:last-child {
-            border-bottom: none;
-        }
-
-        .chart-row-header {
+        .horizon-card-header {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 12px;
+            justify-content: space-between;
+            margin-bottom: 8px;
             flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .chart-label {
-            font-size: 10px;
+        .horizon-title-cluster {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .horizon-tag {
             font-family: var(--mono);
+            font-size: 10.5px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: var(--muted);
+            color: var(--text);
+            font-weight: 500;
         }
 
-        .legend-item {
+        .horizon-range-badge {
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--muted);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+        .legend-cluster {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 10px;
+            gap: 14px;
             font-family: var(--mono);
+            font-size: 10px;
             color: var(--muted);
         }
 
-        .legend-line {
-            width: 18px;
-            height: 2px;
-            flex-shrink: 0;
+        .leg-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .legend-line.dashed {
+        .leg-swatch {
+            width: 16px;
+            height: 2.5px;
+            border-radius: 2px;
+        }
+
+        .leg-swatch.dashed {
             background: repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 7px);
         }
 
-        .chart-canvas-wrap {
+        .canvas-container {
             flex: 1;
             position: relative;
             min-height: 0;
             min-width: 0;
         }
 
-        .chart-canvas-wrap canvas {
-            display: block;
-            max-width: 100%;
+        /* ─── 4. FLOATING TACTILE INSTRUMENT DOCK (BOTTOM) ─── */
+        .tactile-dock {
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
         }
 
-        /* ─── RIGHT PANEL ────────────────────────────────────── */
-        .right-panel {
-            background: var(--surface);
-            border-left: 1px solid var(--border);
+        .dock-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dock-label {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-right: 2px;
+        }
+
+        .seg-control {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid var(--border);
+            padding: 3px;
+            border-radius: 10px;
+            gap: 3px;
+        }
+
+        .dock-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: var(--mono);
+            font-size: 11px;
+            padding: 5px 11px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.16s ease;
+            white-space: nowrap;
+        }
+
+        .dock-btn:hover {
+            color: var(--text);
+        }
+
+        .dock-btn.active {
+            background: var(--amber);
+            color: #000;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .dock-divider {
+            width: 1px;
+            height: 22px;
+            background: var(--border);
+        }
+
+        /* ─── SLIDE-OVER LIVE TELEMETRY TAPE DRAWER ─── */
+        .telemetry-drawer {
+            position: fixed;
+            top: 14px;
+            right: 24px;
+            bottom: 16px;
+            width: 340px;
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--border-active);
+            border-radius: 18px;
+            z-index: 200;
             display: flex;
             flex-direction: column;
+            box-shadow: -20px 0 50px rgba(0, 0, 0, 0.6);
+            transform: translateX(380px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: hidden;
         }
 
-        .right-panel-header {
-            padding: 24px 22px 20px;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
+        .telemetry-drawer.open {
+            transform: translateX(0);
         }
 
-        .right-panel-header .section-label {
-            font-size: 9px;
+        .drawer-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-title {
             font-family: var(--mono);
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.12em;
+            color: var(--amber);
+        }
+
+        .drawer-close {
+            background: transparent;
+            border: 1px solid var(--border);
             color: var(--muted);
-            margin-bottom: 14px;
-        }
-
-        .big-stat-block {
-            margin-bottom: 20px;
-        }
-
-        .big-stat-block:last-child {
-            margin-bottom: 0;
-        }
-
-        .big-stat-block .stat-name {
-            font-size: 10px;
+            border-radius: 6px;
+            padding: 3px 8px;
             font-family: var(--mono);
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 2px;
+            font-size: 11px;
+            cursor: pointer;
         }
 
-        .big-stat-block .stat-row {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .big-stat-block .stat-value {
-            font-size: 42px;
-            font-weight: 300;
-            letter-spacing: -0.04em;
-            line-height: 1;
+        .drawer-close:hover {
             color: var(--text);
-            font-family: var(--sans);
+            border-color: var(--text);
         }
 
-        .big-stat-block .stat-unit {
-            font-size: 12px;
-            font-family: var(--mono);
-            color: var(--muted);
-        }
-
-        .stat-delta {
-            font-family: var(--mono);
-            font-size: 10px;
-            margin-top: 3px;
-        }
-
-        .stat-delta.pos {
-            color: var(--red);
-        }
-
-        .stat-delta.neg {
-            color: #22c55e;
-        }
-
-        .stat-delta.neut {
-            color: var(--muted);
-        }
-
-        .feed-section {
+        .feed-list {
             flex: 1;
             overflow-y: auto;
-            padding: 0;
-        }
-
-        .feed-header {
-            padding: 16px 22px 10px;
-            border-bottom: 1px solid var(--border);
-            font-size: 9px;
-            font-family: var(--mono);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--muted);
-            position: sticky;
-            top: 0;
-            background: var(--surface);
-            z-index: 1;
+            padding: 6px 0;
         }
 
         .feed-row {
             display: grid;
-            grid-template-columns: 1fr auto auto;
+            grid-template-columns: 1fr auto auto auto;
             align-items: center;
-            gap: 8px;
-            padding: 10px 22px;
+            gap: 12px;
+            padding: 9px 20px;
             border-bottom: 1px solid var(--border);
             font-family: var(--mono);
             font-size: 11px;
-            transition: background 0.1s;
+            font-variant-numeric: tabular-nums;
         }
 
         .feed-row:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.03);
         }
 
-        .feed-row .feed-time {
+        .feed-time {
             color: var(--muted);
             font-size: 10px;
         }
 
-        .feed-row .feed-temp {
+        .feed-temp {
             color: var(--text);
+            font-weight: 500;
         }
 
-        .feed-row .feed-wind {
-            color: var(--muted);
+        .feed-wind {
+            color: var(--wind-blue);
         }
 
-        .feed-row .feed-ok {
-            width: 5px;
-            height: 5px;
+        .feed-ok {
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            background: #22c55e;
+            background: var(--forecast-green);
         }
 
-        /* feed scrollbar */
-        .feed-section::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .feed-section::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .feed-section::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 2px;
-        }
-
-        /* ─── LOADING ─────────────────────────────────────────── */
+        /* ─── LOADING OVERLAY ─── */
         #loading {
             position: fixed;
             inset: 0;
@@ -584,44 +738,44 @@
             justify-content: center;
             gap: 14px;
             z-index: 9999;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.35s ease;
         }
 
-        #loading .load-logo {
-            font-size: 22px;
+        .load-logo {
+            font-size: 26px;
             font-weight: 700;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.04em;
             color: var(--text);
         }
 
-        #loading .load-logo span {
+        .load-logo em {
+            font-family: var(--serif);
+            font-style: italic;
             color: var(--amber);
         }
 
-        #loading .load-bar-wrap {
-            width: 120px;
+        .load-bar-wrap {
+            width: 140px;
             height: 2px;
             background: var(--border);
-            border-radius: 1px;
             overflow: hidden;
         }
 
-        #loading .load-bar {
+        .load-bar {
             height: 100%;
             background: var(--amber);
-            border-radius: 1px;
-            animation: load-sweep 1.2s ease-in-out infinite;
+            animation: loadSweep 1.1s ease-in-out infinite;
         }
 
-        @keyframes load-sweep {
+        @keyframes loadSweep {
             0% {
                 width: 0%;
                 margin-left: 0%;
             }
 
             50% {
-                width: 60%;
-                margin-left: 20%;
+                width: 65%;
+                margin-left: 18%;
             }
 
             100% {
@@ -630,340 +784,486 @@
             }
         }
 
-        #loading .load-text {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--muted);
-            letter-spacing: 0.08em;
-        }
+        /* Responsive Fallback */
+        @media (max-width: 1150px) {
 
-        /* ─── THEMES ─────────────────────────────────────────── */
-        [data-theme="nord"] {
-            --bg: #1a1f2e;
-            --surface: #1f2638;
-            --border: #2d3550;
-            --amber: #88c0d0;
-            --amber-l: #b0d8e6;
-            --text: #d8dee9;
-            --muted: #5a6a80;
-        }
-
-        [data-theme="stone"] {
-            --bg: #fafaf9;
-            --surface: #f5f5f4;
-            --border: #e7e5e4;
-            --amber: #92400e;
-            --amber-l: #b45309;
-            --text: #1c1917;
-            --muted: #a8a29e;
-        }
-
-        @media (max-width: 1024px) {
-            html, body {
-                height: auto;
-                min-height: 100%;
-                overflow-x: hidden;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
+            html,
             body {
-                min-width: 0;
-                touch-action: pan-y;
+                overflow-y: auto;
+                height: auto;
             }
-            .app { display: block; height: auto; min-height: 100vh; }
-            .sidebar { display: block; border-right: 0; border-bottom: 1px solid var(--border); max-height: none; }
-            .sidebar-logo { padding: 18px 16px 14px; }
-            .sidebar-section { padding: 14px 16px; }
-            .sidebar-section:nth-child(n+3) { display: none; }
-            .main { min-height: 0; }
-            .main-topbar { padding: 14px 16px; }
-            .charts-area { overflow: visible; }
-            .chart-panel { padding: 16px; }
-            .chart-canvas-wrap { min-height: 240px; width: 100%; }
-            .right-panel { display: block; border-left: 0; border-top: 1px solid var(--border); }
-            .right-panel > * { max-width: none; }
-            .feed-list { max-height: 280px; }
-        }
 
-        @media (max-width: 430px) {
-            .sidebar-logo .wordmark { font-size: 16px; }
-            .main-topbar .location-name { font-size: 12px; }
-            .main-topbar .timestamp { font-size: 9px; }
-            .chart-panel { padding: 12px 10px; }
-            .chart-row-header { gap: 7px; flex-wrap: wrap; }
-            .chart-label { font-size: 9px; }
-            .chart-canvas-wrap { min-height: 210px; }
-            .big-stat-block { padding: 14px; }
+            .observatory {
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .station-deck {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .horizon-workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .canvas-container {
+                min-height: 230px;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Dynamic Synesthetic Wind Streamline Canvas -->
+    <canvas id="atmoBackdrop"></canvas>
+
+    <!-- Loading Screen -->
     <div id="loading">
-        <div class="load-logo">Ae<span>th</span>er</div>
+        <div class="load-logo">Ae<em>th</em>er</div>
         <div class="load-bar-wrap">
             <div class="load-bar"></div>
         </div>
-        <div class="load-text">Fetching telemetry...</div>
+        <div style="font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:0.1em;">
+            SYNCHRONIZING PLANETARY TELEMETRY...
+        </div>
     </div>
 
-    <div class="app">
-        <!-- ── SIDEBAR ────────────────────────── -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="wordmark">Ae<span>th</span>er</div>
-                <div class="tagline">Climate Intelligence</div>
+    <div class="observatory">
+        <!-- 1. TOP TELEMETRY RIBBON -->
+        <header class="top-ribbon">
+            <div class="brand-lockup">
+                <div class="wordmark">Ae<em>th</em>er</div>
+                <span class="brand-subtitle">Planetary Climate &amp; Time-Series Intelligence</span>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-label">Station</div>
-                <select id="locationSelect" class="custom-select" onchange="changeLocation(this.value)">
-                    <option value="Berlin">Berlin, DE</option>
-                    <option value="Tokyo">Tokyo, JP</option>
-                    <option value="New York">New York, US</option>
-                    <option value="London">London, UK</option>
-                    <option value="Sydney">Sydney, AU</option>
-                </select>
+            <div class="telemetry-pills">
+                <div class="status-badge">
+                    <span class="pulse-led"></span>
+                    <span id="streamStatusText">Edge Telemetry Stream · 72h Observed + 48h Horizon</span>
+                </div>
+                <div class="status-badge" id="topbar-ts">Synchronized</div>
+                <button class="drawer-toggle" onclick="toggleDrawer()">
+                    <span>▤ Live Observation Tape (15)</span>
+                </button>
             </div>
+        </header>
 
-            <div class="sidebar-section">
-                <div class="sidebar-label">Forecast Model</div>
-                <button class="model-btn active" id="model-linear" onclick="changeModel('linear')">Linear
-                    Regression</button>
-                <button class="model-btn" id="model-sma" onclick="changeModel('sma')">Simple Moving Avg</button>
-                <button class="model-btn" id="model-ema" onclick="changeModel('ema')">Exponential Smooth</button>
-            </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-label">Horizon</div>
-                <div class="horizon-group">
-                    <button class="horizon-btn" id="btn-12" onclick="setHorizon(12)">12h</button>
-                    <button class="horizon-btn" id="btn-24" onclick="setHorizon(24)">24h</button>
-                    <button class="horizon-btn active" id="btn-48" onclick="setHorizon(48)">48h</button>
+        <!-- 2. PLANETARY STATION ORBIT DECK (Replaces <select> dropdown) -->
+        <nav class="station-deck" id="stationDeck" aria-label="Global Weather Stations">
+            <div class="station-card active" data-loc="Berlin" onclick="changeLocation('Berlin')">
+                <div class="st-meta">
+                    <div class="st-name-row">Berlin, DE</div>
+                    <div class="st-coords">52.52°N · 13.41°E · CET</div>
+                </div>
+                <div class="st-metrics">
+                    <div class="st-temp" id="card-temp-Berlin">3.6°</div>
+                    <div class="st-wind" id="card-wind-Berlin">2.9 km/h</div>
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-label">Units</div>
-                <div class="horizon-group" style="margin-bottom: 6px;">
-                    <button class="horizon-btn active" id="unit-C" onclick="setUnit('temp', 'C')">°C</button>
-                    <button class="horizon-btn" id="unit-F" onclick="setUnit('temp', 'F')">°F</button>
+            <div class="station-card" data-loc="Tokyo" onclick="changeLocation('Tokyo')">
+                <div class="st-meta">
+                    <div class="st-name-row">Tokyo, JP</div>
+                    <div class="st-coords">35.68°N · 139.77°E · JST</div>
                 </div>
-                <div class="horizon-group">
-                    <button class="horizon-btn active" id="unit-kmh" onclick="setUnit('wind', 'kmh')">km/h</button>
-                    <button class="horizon-btn" id="unit-ms" onclick="setUnit('wind', 'ms')">m/s</button>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-label">Display</div>
-                <div class="theme-group">
-                    <button class="theme-btn active" id="theme-default" onclick="applyTheme('', 'default')">
-                        <span class="theme-swatch" style="background:#d97706;"></span> Ember (default)
-                    </button>
-                    <button class="theme-btn" id="theme-nord" onclick="applyTheme('nord', 'nord')">
-                        <span class="theme-swatch" style="background:#88c0d0;"></span> Nord Blue
-                    </button>
-                    <button class="theme-btn" id="theme-stone" onclick="applyTheme('stone', 'stone')">
-                        <span class="theme-swatch" style="background:#92400e;"></span> Stone (light)
-                    </button>
+                <div class="st-metrics">
+                    <div class="st-temp" id="card-temp-Tokyo">8.2°</div>
+                    <div class="st-wind" id="card-wind-Tokyo">2.2 km/h</div>
                 </div>
             </div>
 
-            <div class="sidebar-status">
-                <div class="status-row">
-                    <span class="status-dot dot-green"></span>
-                    <span>Pipeline active</span>
+            <div class="station-card" data-loc="New York" onclick="changeLocation('New York')">
+                <div class="st-meta">
+                    <div class="st-name-row">New York, US</div>
+                    <div class="st-coords">40.71°N · 74.01°W · EST</div>
                 </div>
-                <div class="status-row">
-                    <span class="status-dot dot-red"></span>
-                    <span>Postgres offline</span>
-                </div>
-                <div class="status-row"
-                    style="margin-top:10px; font-family: var(--mono); font-size:10px; color: var(--muted);">
-                    Auto-refresh 10s
+                <div class="st-metrics">
+                    <div class="st-temp" id="card-temp-New York">13.7°</div>
+                    <div class="st-wind" id="card-wind-New York">6.1 km/h</div>
                 </div>
             </div>
-        </aside>
 
-        <!-- ── MAIN ──────────────────────────── -->
-        <main class="main">
-            <div class="main-topbar">
-                <span class="page-title">Telemetry</span>
-                <span class="breadcrumb">›</span>
-                <span class="location-name" id="topbar-location">Berlin, Germany</span>
-                <span class="timestamp" id="topbar-ts">—</span>
+            <div class="station-card" data-loc="London" onclick="changeLocation('London')">
+                <div class="st-meta">
+                    <div class="st-name-row">London, UK</div>
+                    <div class="st-coords">51.51°N · 0.13°W · GMT</div>
+                </div>
+                <div class="st-metrics">
+                    <div class="st-temp" id="card-temp-London">8.5°</div>
+                    <div class="st-wind" id="card-wind-London">9.0 km/h</div>
+                </div>
             </div>
 
-            <div class="charts-area">
-                <!-- Temperature chart -->
-                <div class="chart-panel">
-                    <div class="chart-row-header">
-                        <span class="chart-label" id="tempChartLabel">Temperature °C</span>
-                        <span class="legend-item">
-                            <span class="legend-line" style="background:#d97706; color:#d97706;"></span>
-                            Observed
-                        </span>
-                        <span class="legend-item">
-                            <span class="legend-line dashed" style="color:#22c55e;"></span>
-                            Forecast
-                        </span>
-                        <span class="legend-item">
-                            <span class="legend-line dashed" style="color:#db2777;"></span>
-                            YoY −1yr
-                        </span>
+            <div class="station-card" data-loc="Sydney" onclick="changeLocation('Sydney')">
+                <div class="st-meta">
+                    <div class="st-name-row">Sydney, AU</div>
+                    <div class="st-coords">33.87°S · 151.21°E · AEDT</div>
+                </div>
+                <div class="st-metrics">
+                    <div class="st-temp" id="card-temp-Sydney">23.0°</div>
+                    <div class="st-wind" id="card-wind-Sydney">14.9 km/h</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 3. MAIN PANORAMIC WORKSPACE (Editorial HUD + Synchronized Dual Horizon Charts) -->
+        <main class="horizon-workspace">
+            <!-- Left: Swiss-Editorial Atmospheric HUD -->
+            <aside class="editorial-hud">
+                <div class="hud-station-header">
+                    <div class="hud-kicker">Active Station Telemetry</div>
+                    <div class="hud-city-title" id="topbar-location">Berlin, Germany</div>
+                    <div class="hud-coords-sub" id="hud-coords">52.5200° N, 13.4050° E · Elevation 34m</div>
+                </div>
+
+                <div class="primary-gauges">
+                    <div class="gauge-block">
+                        <div class="gauge-label">
+                            <span>2m Air Temperature</span>
+                            <span id="tempPeakRange" style="color:var(--amber);">48h Forecast</span>
+                        </div>
+                        <div class="gauge-value-row">
+                            <span class="gauge-giant" id="currentTemp">3.6</span>
+                            <span class="gauge-unit" id="tempUnitLabel">°C</span>
+                        </div>
+                        <div class="delta-pill neut" id="tempDelta">— vs last year</div>
                     </div>
-                    <div class="chart-canvas-wrap">
+
+                    <div class="gauge-block">
+                        <div class="gauge-label">
+                            <span>10m Surface Wind</span>
+                            <span id="windBeaufort" style="color:var(--wind-blue);">Light Breeze</span>
+                        </div>
+                        <div class="gauge-value-row">
+                            <span class="gauge-giant" id="currentWind">2.9</span>
+                            <span class="gauge-unit" id="windUnitLabel">km/h</span>
+                        </div>
+                        <div class="delta-pill neut" id="windDelta">— vs last year</div>
+                    </div>
+                </div>
+
+                <div class="hud-benchmark">
+                    <div class="bench-title">
+                        <span>Forecast Horizon Diagnostics</span>
+                        <span id="activeModelTag" style="color:var(--amber);">LINEAR</span>
+                    </div>
+                    <div class="bench-grid">
+                        <div class="bench-cell">
+                            <span class="bench-lbl">HORIZON SPAN</span>
+                            <span class="bench-val" id="diagHorizon">+48 Hours</span>
+                        </div>
+                        <div class="bench-cell">
+                            <span class="bench-lbl">TEMP FORECAST PEAK</span>
+                            <span class="bench-val" id="diagTempPeak">6.5 °C</span>
+                        </div>
+                        <div class="bench-cell">
+                            <span class="bench-lbl">TEMP HOLDOUT MAE</span>
+                            <span class="bench-val" id="diagTempMae" style="color:var(--forecast-green);">±0.79
+                                °C</span>
+                        </div>
+                        <div class="bench-cell">
+                            <span class="bench-lbl">WIND HOLDOUT MAE</span>
+                            <span class="bench-val" id="diagWindMae" style="color:var(--wind-blue);">±3.22 km/h</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right: Dual Synchronized Temporal Horizon Charts -->
+            <section class="charts-deck">
+                <!-- Temperature Horizon Card -->
+                <div class="horizon-card">
+                    <div class="horizon-card-header">
+                        <div class="horizon-title-cluster">
+                            <span class="horizon-tag" id="tempChartLabel">Temperature °C</span>
+                            <span class="horizon-range-badge">72h Observed ← [NOW] → Forecast Horizon</span>
+                        </div>
+                        <div class="legend-cluster">
+                            <span class="leg-pill">
+                                <span class="leg-swatch" style="background:var(--amber);"></span> Observed
+                            </span>
+                            <span class="leg-pill">
+                                <span class="leg-swatch dashed" style="color:var(--forecast-green);"></span> Forecast
+                            </span>
+                            <span class="leg-pill">
+                                <span class="leg-swatch dashed" style="color:var(--yoy-rose);"></span> YoY −1yr
+                            </span>
+                        </div>
+                    </div>
+                    <div class="canvas-container">
                         <canvas id="tempChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Wind chart -->
-                <div class="chart-panel">
-                    <div class="chart-row-header">
-                        <span class="chart-label" id="windChartLabel">Wind Speed km/h</span>
-                        <span class="legend-item">
-                            <span class="legend-line" style="background:#3b6cf4; color:#3b6cf4;"></span>
-                            Observed
-                        </span>
-                        <span class="legend-item">
-                            <span class="legend-line dashed" style="color:#22c55e;"></span>
-                            Forecast
-                        </span>
-                        <span class="legend-item">
-                            <span class="legend-line dashed" style="color:#db2777;"></span>
-                            YoY −1yr
-                        </span>
+                <!-- Wind Speed Horizon Card -->
+                <div class="horizon-card">
+                    <div class="horizon-card-header">
+                        <div class="horizon-title-cluster">
+                            <span class="horizon-tag" id="windChartLabel">Wind Speed km/h</span>
+                            <span class="horizon-range-badge">10m Anemometer + Forecast Trajectory</span>
+                        </div>
+                        <div class="legend-cluster">
+                            <span class="leg-pill">
+                                <span class="leg-swatch" style="background:var(--wind-blue);"></span> Observed
+                            </span>
+                            <span class="leg-pill">
+                                <span class="leg-swatch dashed" style="color:var(--forecast-green);"></span> Forecast
+                            </span>
+                            <span class="leg-pill">
+                                <span class="leg-swatch dashed" style="color:var(--yoy-rose);"></span> YoY −1yr
+                            </span>
+                        </div>
                     </div>
-                    <div class="chart-canvas-wrap">
+                    <div class="canvas-container">
                         <canvas id="windChart"></canvas>
                     </div>
                 </div>
-            </div>
+            </section>
         </main>
 
-        <!-- ── RIGHT PANEL ───────────────────── -->
-        <div class="right-panel">
-            <div class="right-panel-header">
-                <div class="section-label">Current Readings</div>
-                <div class="big-stat-block">
-                    <div class="stat-name">Temperature</div>
-                    <div class="stat-row">
-                        <span class="stat-value" id="currentTemp">--</span>
-                        <span class="stat-unit" id="tempUnitLabel">°C</span>
-                    </div>
-                    <div class="stat-delta neut" id="tempDelta">— vs last year</div>
-                </div>
-                <div class="big-stat-block">
-                    <div class="stat-name">Wind Speed</div>
-                    <div class="stat-row">
-                        <span class="stat-value" id="currentWind">--</span>
-                        <span class="stat-unit" id="windUnitLabel">km/h</span>
-                    </div>
-                    <div class="stat-delta neut" id="windDelta">— vs last year</div>
+        <!-- 4. FLOATING TACTILE INSTRUMENT DOCK -->
+        <footer class="tactile-dock">
+            <div class="dock-group">
+                <span class="dock-label">Forecast Model</span>
+                <div class="seg-control">
+                    <button class="dock-btn active" id="model-linear" onclick="changeModel('linear')">Linear
+                        Regression</button>
+                    <button class="dock-btn" id="model-sma" onclick="changeModel('sma')">Simple Moving Avg</button>
+                    <button class="dock-btn" id="model-ema" onclick="changeModel('ema')">Exponential Smooth</button>
+                    <button class="dock-btn" id="model-ensemble" onclick="changeModel('ensemble')">Compare All
+                        3</button>
                 </div>
             </div>
 
-            <div class="feed-section">
-                <div class="feed-header">Recent Observations</div>
-                <div id="telemetryTableBody"></div>
+            <div class="dock-divider"></div>
+
+            <div class="dock-group">
+                <span class="dock-label">Horizon</span>
+                <div class="seg-control">
+                    <button class="dock-btn" id="btn-12" onclick="setHorizon(12)">12h</button>
+                    <button class="dock-btn" id="btn-24" onclick="setHorizon(24)">24h</button>
+                    <button class="dock-btn active" id="btn-48" onclick="setHorizon(48)">48h</button>
+                </div>
             </div>
-        </div>
+
+            <div class="dock-divider"></div>
+
+            <div class="dock-group">
+                <span class="dock-label">Units</span>
+                <div class="seg-control">
+                    <button class="dock-btn active" id="unit-C" onclick="setUnit('temp', 'C')">°C</button>
+                    <button class="dock-btn" id="unit-F" onclick="setUnit('temp', 'F')">°F</button>
+                </div>
+                <div class="seg-control">
+                    <button class="dock-btn active" id="unit-kmh" onclick="setUnit('wind', 'kmh')">km/h</button>
+                    <button class="dock-btn" id="unit-ms" onclick="setUnit('wind', 'ms')">m/s</button>
+                </div>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <div class="dock-group">
+                <span class="dock-label">Atmosphere</span>
+                <div class="seg-control">
+                    <button class="dock-btn active" id="theme-default"
+                        onclick="applyTheme('', 'default')">Ember</button>
+                    <button class="dock-btn" id="theme-nord" onclick="applyTheme('nord', 'nord')">Nord</button>
+                    <button class="dock-btn" id="theme-stone" onclick="applyTheme('stone', 'stone')">Stone</button>
+                </div>
+            </div>
+        </footer>
     </div>
 
+    <!-- SLIDE-OVER LIVE TELEMETRY OBSERVATION TAPE -->
+    <aside class="telemetry-drawer" id="telemetryDrawer">
+        <div class="drawer-header">
+            <span class="drawer-title">Recent Station Observations</span>
+            <button class="drawer-close" onclick="toggleDrawer()">ESC / Close ✕</button>
+        </div>
+        <div class="feed-list" id="telemetryTableBody"></div>
+    </aside>
+
     <script>
-        // ── Chart defaults ─────────────────────────────────────
-        Chart.defaults.color = '#6b6055';
+        // ── Station Metadata & Validated Holdout MAE Lookup ────
+        const STATION_META = {
+            'Berlin': { full: 'Berlin, Germany', coords: '52.5200° N, 13.4050° E · Elev 34m', mae: { linear: [0.79, 3.22], sma: [0.77, 3.53], ema: [0.75, 4.45] } },
+            'Tokyo': { full: 'Tokyo, Japan', coords: '35.6762° N, 139.6503° E · Elev 40m', mae: { linear: [3.58, 2.54], sma: [3.89, 1.68], ema: [4.23, 1.98] } },
+            'New York': { full: 'New York, USA', coords: '40.7128° N, 74.0060° W · Elev 10m', mae: { linear: [3.08, 9.16], sma: [3.19, 7.45], ema: [3.37, 9.33] } },
+            'London': { full: 'London, UK', coords: '51.5074° N, 0.1278° W · Elev 11m', mae: { linear: [5.04, 4.48], sma: [3.65, 4.34], ema: [3.36, 4.45] } },
+            'Sydney': { full: 'Sydney, AU', coords: '33.8688° S, 151.2093° E · Elev 19m', mae: { linear: [5.10, 8.64], sma: [4.42, 10.61], ema: [4.69, 10.51] } }
+        };
+
+        // ── Chart.js Defaults ──────────────────────────────────
+        Chart.defaults.color = '#8c8275';
         Chart.defaults.font.family = "'DM Mono', monospace";
         Chart.defaults.font.size = 10;
-        Chart.defaults.plugins.tooltip.backgroundColor = '#1e1b18';
-        Chart.defaults.plugins.tooltip.borderColor = '#2a2521';
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(18, 16, 14, 0.94)';
+        Chart.defaults.plugins.tooltip.borderColor = 'rgba(245, 158, 11, 0.35)';
         Chart.defaults.plugins.tooltip.borderWidth = 1;
-        Chart.defaults.plugins.tooltip.titleColor = '#e8e0d4';
-        Chart.defaults.plugins.tooltip.bodyColor = '#6b6055';
+        Chart.defaults.plugins.tooltip.titleColor = '#f3ede2';
+        Chart.defaults.plugins.tooltip.bodyColor = '#cbd5e1';
         Chart.defaults.plugins.tooltip.padding = 10;
-        Chart.defaults.plugins.tooltip.cornerRadius = 4;
-        Chart.defaults.plugins.tooltip.displayColors = false;
+        Chart.defaults.plugins.tooltip.cornerRadius = 8;
 
-        // ── State ──────────────────────────────────────────────
+        // ── Global State ───────────────────────────────────────
         let globalLiveRecords = [];
         let globalPredRecords = [];
         let tempChartInstance = null;
         let windChartInstance = null;
         let currentHorizon = 48;
         let currentLocation = 'Berlin';
-        let currentModel = 'linear';
+        let currentModel = 'linear'; // 'linear' | 'sma' | 'ema' | 'ensemble'
         let units = { temp: 'C', wind: 'kmh' };
+        let currentWindSpeedKmh = 6.0;
 
-        // ── Controls ───────────────────────────────────────────
+        // ── Synesthetic Atmospheric Wind-Flow Particle Canvas ──
+        const bgCanvas = document.getElementById('atmoBackdrop');
+        const bgCtx = bgCanvas.getContext('2d');
+        const streamlines = Array.from({ length: 55 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            len: 45 + Math.random() * 85,
+            speed: 0.4 + Math.random() * 0.9,
+            alpha: 0.04 + Math.random() * 0.09
+        }));
+
+        function resizeBackdrop() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBackdrop);
+        resizeBackdrop();
+
+        function renderWindStreamlines() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            const isLight = document.documentElement.getAttribute('data-theme') === 'stone';
+            const strokeBase = isLight ? '28, 25, 23' : '243, 237, 226';
+            const velocityFactor = Math.max(0.35, Math.min(3.2, currentWindSpeedKmh / 6.5));
+
+            streamlines.forEach(s => {
+                s.x += s.speed * velocityFactor;
+                const waveY = s.y + Math.sin((s.x * 0.004) + s.speed) * 14;
+                if (s.x > bgCanvas.width + s.len) {
+                    s.x = -s.len;
+                    s.y = Math.random() * bgCanvas.height;
+                }
+                const grad = bgCtx.createLinearGradient(s.x - s.len, waveY, s.x, waveY);
+                grad.addColorStop(0, `rgba(${strokeBase}, 0)`);
+                grad.addColorStop(1, `rgba(${strokeBase}, ${s.alpha})`);
+                bgCtx.beginPath();
+                bgCtx.moveTo(s.x - s.len, waveY);
+                bgCtx.lineTo(s.x, waveY);
+                bgCtx.strokeStyle = grad;
+                bgCtx.lineWidth = 1.2;
+                bgCtx.stroke();
+            });
+            requestAnimationFrame(renderWindStreamlines);
+        }
+        requestAnimationFrame(renderWindStreamlines);
+
+        // ── UI Controls ────────────────────────────────────────
+        function toggleDrawer() {
+            document.getElementById('telemetryDrawer').classList.toggle('open');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.getElementById('telemetryDrawer').classList.remove('open');
+        });
+
         function setUnit(type, val) {
             units[type] = val;
             if (type === 'temp') {
-                document.getElementById('unit-C').classList.remove('active');
-                document.getElementById('unit-F').classList.remove('active');
+                document.getElementById('unit-C').classList.toggle('active', val === 'C');
+                document.getElementById('unit-F').classList.toggle('active', val === 'F');
             } else {
-                document.getElementById('unit-kmh').classList.remove('active');
-                document.getElementById('unit-ms').classList.remove('active');
+                document.getElementById('unit-kmh').classList.toggle('active', val === 'kmh');
+                document.getElementById('unit-ms').classList.toggle('active', val === 'ms');
             }
-            document.getElementById('unit-' + val).classList.add('active');
+            updateStationCards();
             if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
         }
+
         function changeLocation(loc) {
             currentLocation = loc;
-            const selectEl = document.getElementById('locationSelect');
-            if (selectEl.value !== loc) selectEl.value = loc;
-            const names = { Berlin: 'Berlin, Germany', Tokyo: 'Tokyo, Japan', 'New York': 'New York, US', London: 'London, UK', Sydney: 'Sydney, AU' };
-            document.getElementById('topbar-location').textContent = names[loc] || loc;
+            document.querySelectorAll('.station-card').forEach(card => {
+                card.classList.toggle('active', card.dataset.loc === loc);
+            });
+            const meta = STATION_META[loc] || STATION_META['Berlin'];
+            document.getElementById('topbar-location').textContent = meta.full;
+            document.getElementById('hud-coords').textContent = meta.coords;
             if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
         }
 
         function changeModel(model) {
             currentModel = model;
-            document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('model-' + model).classList.add('active');
+            ['linear', 'sma', 'ema', 'ensemble'].forEach(m => {
+                const btn = document.getElementById('model-' + m);
+                if (btn) btn.classList.toggle('active', m === model);
+            });
             if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
         }
 
         function setHorizon(hours) {
             currentHorizon = hours;
-            document.querySelectorAll('.horizon-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + hours).classList.add('active');
+            [12, 24, 48].forEach(h => {
+                document.getElementById('btn-' + h).classList.toggle('active', h === hours);
+            });
+            document.getElementById('diagHorizon').textContent = '+' + hours + ' Hours';
+            document.getElementById('tempPeakRange').textContent = hours + 'h Forecast';
             if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
         }
 
         function applyTheme(value, key) {
             document.documentElement.setAttribute('data-theme', value);
-            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('theme-' + key).classList.add('active');
+            ['default', 'nord', 'stone'].forEach(k => {
+                document.getElementById('theme-' + k).classList.toggle('active', k === key);
+            });
+            if (globalLiveRecords.length > 0) processData(globalLiveRecords, globalPredRecords);
         }
 
-        function normalizeTimeline(liveRecords, predRecords) {
-            const locations = [...new Set(liveRecords.map(r => r.location || 'Berlin'))];
-            const observed = locations.flatMap(location => liveRecords
-                .filter(r => (r.location || 'Berlin') === location && r.period !== 'historical')
-                .slice(0, 72)
-                .filter(r => r.time)
-                .map(r => new Date(r.time).getTime())
-                .filter(Number.isFinite));
-            if (!observed.length) return new Date();
-
-            const latestObserved = Math.max(...observed);
+        // ── Per-Station Timeline Normalization (Fixes Multi-City Offset Bug) ──
+        function normalizeTimelinePerLocation(liveRecords, predRecords) {
             const now = new Date();
             const currentHour = new Date(now);
             currentHour.setMinutes(0, 0, 0);
-            const offset = currentHour.getTime() - latestObserved;
-            const shift = records => records.forEach(record => {
-                if (record.time) {
-                    record.time = new Date(new Date(record.time).getTime() + offset).toISOString();
-                }
-            });
 
-            shift(liveRecords);
-            shift(predRecords);
+            const locations = [...new Set(liveRecords.map(r => r.location || 'Berlin'))];
+            locations.forEach(loc => {
+                const locObserved = liveRecords
+                    .filter(r => (r.location || 'Berlin') === loc && r.period !== 'historical')
+                    .slice(0, 72);
+                if (!locObserved.length) return;
+
+                const lastObsMs = new Date(locObserved[locObserved.length - 1].time).getTime();
+                const offset = currentHour.getTime() - lastObsMs;
+
+                liveRecords.filter(r => (r.location || 'Berlin') === loc).forEach(r => {
+                    if (r.time) r.time = new Date(new Date(r.time).getTime() + offset).toISOString();
+                });
+                predRecords.filter(r => (r.location || 'Berlin') === loc).forEach(r => {
+                    if (r.time) r.time = new Date(new Date(r.time).getTime() + offset).toISOString();
+                });
+            });
             return now;
         }
 
-        // ── Data fetch ─────────────────────────────────────────
+        function updateStationCards() {
+            ['Berlin', 'Tokyo', 'New York', 'London', 'Sydney'].forEach(loc => {
+                const recs = globalLiveRecords
+                    .filter(r => (r.location || 'Berlin') === loc && r.period !== 'historical')
+                    .slice(0, 72);
+                if (!recs.length) return;
+                const latest = recs[recs.length - 1];
+                const tVal = units.temp === 'C' ? latest.temperature_2m : (latest.temperature_2m * 9 / 5 + 32);
+                const wVal = units.wind === 'kmh' ? latest.wind_speed_10m : (latest.wind_speed_10m / 3.6);
+                const tEl = document.getElementById('card-temp-' + loc);
+                const wEl = document.getElementById('card-wind-' + loc);
+                if (tEl) tEl.textContent = tVal.toFixed(1) + '°' + units.temp;
+                if (wEl) wEl.textContent = wVal.toFixed(1) + ' ' + (units.wind === 'kmh' ? 'km/h' : 'm/s');
+            });
+        }
+
+        // ── Fetch Telemetry & Predictions ──────────────────────
         async function fetchData() {
             try {
                 const [liveRes, predRes] = await Promise.all([
@@ -974,79 +1274,105 @@
                 globalLiveRecords = liveText.trim().split('\n')
                     .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
                     .filter(Boolean);
+
                 if (predRes && predRes.ok) {
                     const predText = await predRes.text();
                     globalPredRecords = predText.trim().split('\n')
                         .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
                         .filter(Boolean);
                 }
-                const loadedAt = normalizeTimeline(globalLiveRecords, globalPredRecords);
+
+                const loadedAt = normalizeTimelinePerLocation(globalLiveRecords, globalPredRecords);
+                updateStationCards();
                 processData(globalLiveRecords, globalPredRecords);
-                // Hide loader
+
                 const loader = document.getElementById('loading');
                 if (loader && loader.style.display !== 'none') {
                     loader.style.opacity = '0';
-                    setTimeout(() => loader.style.display = 'none', 400);
+                    setTimeout(() => loader.style.display = 'none', 350);
                 }
-                // Update timestamp
+
                 document.getElementById('topbar-ts').textContent =
-                    'Updated ' + loadedAt.toLocaleString([], {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-            } catch (e) { console.error('Fetch error', e); }
+                    'Synced ' + loadedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            } catch (e) {
+                console.error('Fetch error', e);
+                const loader = document.getElementById('loading');
+                if (loader) loader.style.display = 'none';
+            }
         }
 
-        // ── Process & render ───────────────────────────────────
+        function beaufortLabel(kmh) {
+            if (kmh < 2) return 'Calm Air';
+            if (kmh < 6) return 'Light Air';
+            if (kmh < 12) return 'Light Breeze';
+            if (kmh < 20) return 'Gentle Breeze';
+            if (kmh < 29) return 'Moderate Breeze';
+            return 'Fresh Wind';
+        }
+
+        // ── Process & Render Active Station ────────────────────
         function processData(liveRecords, predRecords) {
             const locLive = liveRecords.filter(r => (r.location || 'Berlin') === currentLocation);
-            const locPred = predRecords.filter(r =>
-                (r.location || 'Berlin') === currentLocation &&
-                (r.method || 'linear') === currentModel
-            );
-
             const currentYear = locLive.filter(r => r.period !== 'historical').slice(0, 72);
             const lastYear = locLive.filter(r => r.period === 'historical');
 
             if (!currentYear.length) return;
 
-            const activePred = locPred.slice(0, currentHorizon);
-            const totalHours = currentYear.length + activePred.length;
+            const primaryMethod = currentModel === 'ensemble' ? 'linear' : currentModel;
+            const locPredPrimary = predRecords
+                .filter(r => (r.location || 'Berlin') === currentLocation && (r.method || 'linear') === primaryMethod)
+                .slice(0, currentHorizon);
+
+            const totalHours = currentYear.length + locPredPrimary.length;
+            const nowIndex = currentYear.length - 1;
 
             const labels = [];
             const temps = [];
             const winds = [];
-            const pTemps = Array(totalHours).fill(null);
-            const pWinds = Array(totalHours).fill(null);
             const histTemps = Array(totalHours).fill(null);
             const histWinds = Array(totalHours).fill(null);
 
-            currentYear.forEach((r, i) => {
+            currentYear.forEach(r => {
                 const d = new Date(r.time);
-                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
+                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' +
+                    d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
                 temps.push(units.temp === 'C' ? r.temperature_2m : (r.temperature_2m * 9 / 5 + 32));
                 winds.push(units.wind === 'kmh' ? r.wind_speed_10m : (r.wind_speed_10m / 3.6));
             });
 
-            activePred.forEach((r, i) => {
+            locPredPrimary.forEach(r => {
                 const d = new Date(r.time);
-                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' + d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
+                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' +
+                    d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
                 temps.push(null);
                 winds.push(null);
-                pTemps[currentYear.length + i] = units.temp === 'C' ? r.predicted_temperature_2m : (r.predicted_temperature_2m * 9 / 5 + 32);
-                pWinds[currentYear.length + i] = units.wind === 'kmh' ? r.predicted_wind_speed_10m : (r.predicted_wind_speed_10m / 3.6);
             });
 
-            // Connect forecast line
-            if (currentYear.length && activePred.length) {
-                pTemps[currentYear.length - 1] = temps[currentYear.length - 1];
-                pWinds[currentYear.length - 1] = winds[currentYear.length - 1];
+            // Helper to build forecast array for a given method
+            function buildForecastSeries(methodName) {
+                const recs = predRecords
+                    .filter(r => (r.location || 'Berlin') === currentLocation && (r.method || 'linear') === methodName)
+                    .slice(0, currentHorizon);
+                const fTemp = Array(totalHours).fill(null);
+                const fWind = Array(totalHours).fill(null);
+                if (currentYear.length && recs.length) {
+                    fTemp[nowIndex] = temps[nowIndex];
+                    fWind[nowIndex] = winds[nowIndex];
+                }
+                recs.forEach((r, idx) => {
+                    fTemp[currentYear.length + idx] = units.temp === 'C'
+                        ? r.predicted_temperature_2m
+                        : (r.predicted_temperature_2m * 9 / 5 + 32);
+                    fWind[currentYear.length + idx] = units.wind === 'kmh'
+                        ? r.predicted_wind_speed_10m
+                        : (r.predicted_wind_speed_10m / 3.6);
+                });
+                return { fTemp, fWind };
             }
 
-            // Build YoY arrays aligned by hour index for total timeline
+            const primarySeries = buildForecastSeries(primaryMethod);
+
+            // Build YoY arrays aligned by hour index
             if (lastYear.length > 0 && currentYear.length > 0) {
                 const startMs = new Date(currentYear[0].time).getTime();
                 lastYear.forEach(hr => {
@@ -1058,9 +1384,12 @@
                 });
             }
 
-            // Delta vs YoY for current reading
-            const latestTemp = temps.filter(v => v !== null).pop();
-            const latestWind = winds.filter(v => v !== null).pop();
+            // Update Editorial HUD Readings
+            const latestRaw = currentYear[currentYear.length - 1];
+            currentWindSpeedKmh = latestRaw.wind_speed_10m || 5.0;
+
+            const latestTemp = temps[nowIndex];
+            const latestWind = winds[nowIndex];
             const lastHistTemp = histTemps.slice(0, currentYear.length).filter(v => v !== null).pop();
             const lastHistWind = histWinds.slice(0, currentYear.length).filter(v => v !== null).pop();
 
@@ -1070,23 +1399,41 @@
             document.getElementById('windUnitLabel').textContent = units.wind === 'kmh' ? 'km/h' : 'm/s';
             document.getElementById('tempChartLabel').textContent = 'Temperature ' + (units.temp === 'C' ? '°C' : '°F');
             document.getElementById('windChartLabel').textContent = 'Wind Speed ' + (units.wind === 'kmh' ? 'km/h' : 'm/s');
+            document.getElementById('windBeaufort').textContent = beaufortLabel(currentWindSpeedKmh);
 
             if (lastHistTemp != null && latestTemp != null) {
                 const delta = (latestTemp - lastHistTemp).toFixed(1);
                 const thresh = units.temp === 'C' ? 0.5 : 0.9;
                 const el = document.getElementById('tempDelta');
-                el.textContent = (delta > 0 ? '+' : '') + delta + (units.temp === 'C' ? '°C' : '°F') + ' vs last year';
-                el.className = 'stat-delta ' + (delta > thresh ? 'pos' : delta < -thresh ? 'neg' : 'neut');
+                el.textContent = (delta > 0 ? '+' : '') + delta + (units.temp === 'C' ? '°C' : '°F') + ' vs YoY −1yr';
+                el.className = 'delta-pill ' + (delta > thresh ? 'pos' : delta < -thresh ? 'neg' : 'neut');
             }
+
             if (lastHistWind != null && latestWind != null) {
                 const delta = (latestWind - lastHistWind).toFixed(1);
                 const thresh = units.wind === 'kmh' ? 0.5 : 0.14;
                 const el = document.getElementById('windDelta');
-                el.textContent = (delta > 0 ? '+' : '') + delta + (units.wind === 'kmh' ? ' km/h' : ' m/s') + ' vs last year';
-                el.className = 'stat-delta ' + (delta > thresh ? 'pos' : delta < -thresh ? 'neg' : 'neut');
+                el.textContent = (delta > 0 ? '+' : '') + delta + (units.wind === 'kmh' ? ' km/h' : ' m/s') + ' vs YoY −1yr';
+                el.className = 'delta-pill ' + (delta > thresh ? 'pos' : delta < -thresh ? 'neg' : 'neut');
             }
 
-            // Live feed
+            // Update Diagnostics Box (Forecast Peak & Validated MAE)
+            const validPredTemps = primarySeries.fTemp.filter(v => v !== null);
+            if (validPredTemps.length) {
+                const maxPred = Math.max(...validPredTemps).toFixed(1);
+                const minPred = Math.min(...validPredTemps).toFixed(1);
+                document.getElementById('diagTempPeak').textContent = `${minPred}° → ${maxPred}°${units.temp}`;
+            }
+
+            const meta = STATION_META[currentLocation] || STATION_META['Berlin'];
+            const maePair = meta.mae[primaryMethod] || meta.mae['linear'];
+            const tMae = units.temp === 'C' ? maePair[0] : (maePair[0] * 1.8);
+            const wMae = units.wind === 'kmh' ? maePair[1] : (maePair[1] / 3.6);
+            document.getElementById('activeModelTag').textContent = currentModel.toUpperCase();
+            document.getElementById('diagTempMae').textContent = `±${tMae.toFixed(2)} °${units.temp}`;
+            document.getElementById('diagWindMae').textContent = `±${wMae.toFixed(2)} ${units.wind === 'kmh' ? 'km/h' : 'm/s'}`;
+
+            // Populate Slide-Over Live Observation Tape
             const feed = document.getElementById('telemetryTableBody');
             if (feed) {
                 feed.innerHTML = '';
@@ -1094,62 +1441,84 @@
                     const row = document.createElement('div');
                     row.className = 'feed-row';
                     const t = new Date(rec.time);
-                    const ts = t.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' '
-                        + t.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+                    const ts = t.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' +
+                        t.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
                     const tTemp = units.temp === 'C' ? rec.temperature_2m : (rec.temperature_2m * 9 / 5 + 32);
                     const tWind = units.wind === 'kmh' ? rec.wind_speed_10m : (rec.wind_speed_10m / 3.6);
                     row.innerHTML = `
                         <span class="feed-time">${ts}</span>
-                        <span class="feed-temp">${tTemp.toFixed(1)}°</span>
+                        <span class="feed-temp">${tTemp.toFixed(1)}°${units.temp}</span>
                         <span class="feed-wind">${tWind.toFixed(1)} ${units.wind === 'kmh' ? 'km/h' : 'm/s'}</span>
                         <span class="feed-ok"></span>`;
                     feed.appendChild(row);
                 });
             }
 
-            renderTempChart(labels, temps, pTemps, histTemps, currentYear.length - 1);
-            renderWindChart(labels, winds, pWinds, histWinds, currentYear.length - 1);
+            const ensembleSeries = currentModel === 'ensemble' ? {
+                linear: buildForecastSeries('linear'),
+                sma: buildForecastSeries('sma'),
+                ema: buildForecastSeries('ema')
+            } : null;
+
+            renderTempChart(labels, temps, primarySeries.fTemp, histTemps, nowIndex, ensembleSeries);
+            renderWindChart(labels, winds, primarySeries.fWind, histWinds, nowIndex, ensembleSeries);
         }
 
-        // ── Charts ─────────────────────────────────────────────
-        // ── Pulsing Dot Plugin ─────────────────────────────────
-        const pulsingDotPlugin = {
-            id: 'pulsingDot',
+        // ── NOW Meridian Line & Pulsing Beacon Plugin ──────────
+        const nowMeridianPlugin = {
+            id: 'nowMeridian',
             afterDraw: (chart) => {
-                if (!chart.config.options.plugins.pulsingDot) return;
-                const activeIndex = chart.config.options.plugins.pulsingDot.index;
-                if (activeIndex === undefined || activeIndex < 0) return;
+                const cfg = chart.config.options.plugins.nowMeridian;
+                if (!cfg || cfg.index === undefined || cfg.index < 0) return;
 
-                const meta = chart.getDatasetMeta(0); // Observed dataset
-                const point = meta.data[activeIndex];
-                if (!point) return;
+                const meta = chart.getDatasetMeta(0);
+                const pt = meta.data[cfg.index];
+                if (!pt) return;
 
-                const { ctx } = chart;
-                const time = Date.now() / 900;
-                const pulse = Math.abs(Math.sin(time));
-                const radius = 4 + pulse * 3;
-
+                const { ctx, chartArea } = chart;
                 ctx.save();
+
+                // Vertical NOW Meridian Line
                 ctx.beginPath();
-                ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI);
-                ctx.fillStyle = chart.config.options.plugins.pulsingDot.color || '#fbbf24';
-                ctx.shadowColor = chart.config.options.plugins.pulsingDot.color || '#fbbf24';
-                ctx.shadowBlur = 6 + pulse * 6;
+                ctx.setLineDash([3, 3]);
+                ctx.moveTo(pt.x, chartArea.top);
+                ctx.lineTo(pt.x, chartArea.bottom);
+                ctx.strokeStyle = 'rgba(245, 158, 11, 0.38)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // "NOW" Pill Label at Top of Meridian
+                ctx.fillStyle = 'rgba(245, 158, 11, 0.18)';
+                ctx.beginPath();
+                ctx.roundRect(pt.x - 18, chartArea.top, 36, 15, 4);
                 ctx.fill();
+                ctx.font = "500 9px 'DM Mono', monospace";
+                ctx.fillStyle = '#fbbf24';
+                ctx.textAlign = 'center';
+                ctx.fillText('NOW', pt.x, chartArea.top + 11);
+
+                // Pulsing Beacon on Current Observation
+                const pulse = Math.abs(Math.sin(Date.now() / 850));
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 4 + pulse * 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = cfg.color || '#f59e0b';
+                ctx.shadowColor = cfg.color || '#f59e0b';
+                ctx.shadowBlur = 8 + pulse * 6;
+                ctx.fill();
+
                 ctx.restore();
             }
         };
-        Chart.register(pulsingDotPlugin);
+        Chart.register(nowMeridianPlugin);
 
-        // Global animation loop for the pulsing effect
-        let animFrame;
         function animateCharts() {
             if (tempChartInstance) tempChartInstance.draw();
             if (windChartInstance) windChartInstance.draw();
-            animFrame = requestAnimationFrame(animateCharts);
+            requestAnimationFrame(animateCharts);
         }
 
-        const chartOpts = {
+        const baseChartOpts = {
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
@@ -1157,52 +1526,83 @@
             plugins: { legend: { display: false } },
             scales: {
                 y: {
-                    grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false },
+                    grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false },
                     border: { display: false },
                     ticks: { maxTicksLimit: 5 }
                 },
                 x: {
                     grid: { display: false },
                     border: { display: false },
-                    ticks: { maxTicksLimit: 7, maxRotation: 0 }
+                    ticks: { maxTicksLimit: 8, maxRotation: 0 }
                 }
             }
         };
 
-        function renderTempChart(labels, current, predicted, historical, currentIndex) {
+        function renderTempChart(labels, current, predicted, historical, nowIndex, ensemble) {
             const ctx = document.getElementById('tempChart').getContext('2d');
-            const grad = ctx.createLinearGradient(0, 0, 0, 300);
-            grad.addColorStop(0, 'rgba(217,119,6,0.18)');
-            grad.addColorStop(1, 'rgba(217,119,6,0)');
-            const chartData = {
-                labels,
-                datasets: [
-                    { label: 'Observed', data: current, borderColor: '#d97706', backgroundColor: grad, borderWidth: 1.5, pointRadius: 0, fill: true, tension: 0.3 },
-                    { label: 'Forecast', data: predicted, borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4, 5], pointRadius: 0, fill: false, tension: 0.3 },
-                    { label: 'YoY', data: historical, borderColor: '#db2777', borderWidth: 1, borderDash: [2, 4], pointRadius: 0, fill: false, tension: 0.3 }
-                ]
-            };
-            const opts = { ...chartOpts, plugins: { ...chartOpts.plugins, pulsingDot: { index: currentIndex, color: '#d97706' } } };
-            if (tempChartInstance) { tempChartInstance.data = chartData; tempChartInstance.options = opts; tempChartInstance.update('none'); }
-            else { tempChartInstance = new Chart(ctx, { type: 'line', data: chartData, options: opts }); }
+            const grad = ctx.createLinearGradient(0, 0, 0, 240);
+            grad.addColorStop(0, 'rgba(245, 158, 11, 0.24)');
+            grad.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
+
+            const datasets = [
+                { label: 'Observed', data: current, borderColor: '#f59e0b', backgroundColor: grad, borderWidth: 2, pointRadius: 0, fill: true, tension: 0.32 }
+            ];
+
+            if (ensemble) {
+                datasets.push(
+                    { label: 'Linear Forecast', data: ensemble.linear.fTemp, borderColor: '#10b981', borderWidth: 1.8, borderDash: [4, 4], pointRadius: 0, tension: 0.32 },
+                    { label: 'SMA Forecast', data: ensemble.sma.fTemp, borderColor: '#38bdf8', borderWidth: 1.6, borderDash: [3, 3], pointRadius: 0, tension: 0.32 },
+                    { label: 'EMA Forecast', data: ensemble.ema.fTemp, borderColor: '#c084fc', borderWidth: 1.6, borderDash: [2, 3], pointRadius: 0, tension: 0.32 }
+                );
+            } else {
+                datasets.push(
+                    { label: 'Forecast (' + currentModel.toUpperCase() + ')', data: predicted, borderColor: '#10b981', borderWidth: 2, borderDash: [5, 4], pointRadius: 0, tension: 0.32 }
+                );
+            }
+
+            datasets.push({ label: 'YoY −1yr', data: historical, borderColor: '#f43f5e', borderWidth: 1.2, borderDash: [2, 4], pointRadius: 0, tension: 0.32 });
+
+            const opts = { ...baseChartOpts, plugins: { ...baseChartOpts.plugins, nowMeridian: { index: nowIndex, color: '#f59e0b' } } };
+            if (tempChartInstance) {
+                tempChartInstance.data = { labels, datasets };
+                tempChartInstance.options = opts;
+                tempChartInstance.update('none');
+            } else {
+                tempChartInstance = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: opts });
+            }
         }
 
-        function renderWindChart(labels, current, predicted, historical, currentIndex) {
+        function renderWindChart(labels, current, predicted, historical, nowIndex, ensemble) {
             const ctx = document.getElementById('windChart').getContext('2d');
-            const chartData = {
-                labels,
-                datasets: [
-                    { label: 'Observed', type: 'bar', data: current, backgroundColor: 'rgba(59,108,244,0.55)', borderRadius: 1, barPercentage: 0.8, categoryPercentage: 0.9 },
-                    { label: 'Forecast', type: 'line', data: predicted, borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4, 5], pointRadius: 0, tension: 0.3 },
-                    { label: 'YoY', type: 'line', data: historical, borderColor: '#db2777', borderWidth: 1, borderDash: [2, 4], pointRadius: 0, tension: 0.3 }
-                ]
-            };
-            const opts = { ...chartOpts, plugins: { ...chartOpts.plugins, pulsingDot: { index: currentIndex, color: '#3b6cf4' } } };
-            if (windChartInstance) { windChartInstance.data = chartData; windChartInstance.options = opts; windChartInstance.update('none'); }
-            else { windChartInstance = new Chart(ctx, { type: 'bar', data: chartData, options: opts }); }
+            const datasets = [
+                { label: 'Observed', type: 'bar', data: current, backgroundColor: 'rgba(56, 189, 248, 0.42)', borderColor: 'rgba(56, 189, 248, 0.75)', borderWidth: 1, borderRadius: 2, barPercentage: 0.82, categoryPercentage: 0.9 }
+            ];
+
+            if (ensemble) {
+                datasets.push(
+                    { label: 'Linear Forecast', type: 'line', data: ensemble.linear.fWind, borderColor: '#10b981', borderWidth: 1.8, borderDash: [4, 4], pointRadius: 0, tension: 0.32 },
+                    { label: 'SMA Forecast', type: 'line', data: ensemble.sma.fWind, borderColor: '#fbbf24', borderWidth: 1.6, borderDash: [3, 3], pointRadius: 0, tension: 0.32 },
+                    { label: 'EMA Forecast', type: 'line', data: ensemble.ema.fWind, borderColor: '#c084fc', borderWidth: 1.6, borderDash: [2, 3], pointRadius: 0, tension: 0.32 }
+                );
+            } else {
+                datasets.push(
+                    { label: 'Forecast (' + currentModel.toUpperCase() + ')', type: 'line', data: predicted, borderColor: '#10b981', borderWidth: 2, borderDash: [5, 4], pointRadius: 0, tension: 0.32 }
+                );
+            }
+
+            datasets.push({ label: 'YoY −1yr', type: 'line', data: historical, borderColor: '#f43f5e', borderWidth: 1.2, borderDash: [2, 4], pointRadius: 0, tension: 0.32 });
+
+            const opts = { ...baseChartOpts, plugins: { ...baseChartOpts.plugins, nowMeridian: { index: nowIndex, color: '#38bdf8' } } };
+            if (windChartInstance) {
+                windChartInstance.data = { labels, datasets };
+                windChartInstance.options = opts;
+                windChartInstance.update('none');
+            } else {
+                windChartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets }, options: opts });
+            }
         }
 
-        // ── Init ───────────────────────────────────────────────
+        // ── Initialize ─────────────────────────────────────────
         fetchData();
         setInterval(fetchData, 10000);
         animateCharts();
