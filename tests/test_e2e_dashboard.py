@@ -105,23 +105,8 @@ def test_temperature_and_wind_charts_render(page):
     assert chart_instances == [True, True]
 
 
-def test_view_switcher_cycles_bento_views(page):
-    """The mode switcher (and 1-4 keyboard shortcuts) should toggle which bento view is visible."""
-    assert page.evaluate("document.getElementById('view-overview').classList.contains('active')")
-    assert not page.evaluate("document.getElementById('view-feed').classList.contains('active')")
-
-    page.click("button.mode-btn[data-view='feed']")
-    assert page.evaluate("document.getElementById('view-feed').classList.contains('active')")
-    assert not page.evaluate("document.getElementById('view-overview').classList.contains('active')")
-
-    page.keyboard.press("1")
-    assert page.evaluate("document.getElementById('view-overview').classList.contains('active')")
-
-
 def test_switching_temperature_unit_updates_label_and_stat(page):
-    """Clicking °F (in the Feed view's settings tile) should flip the unit label and current-temperature readout."""
-    page.click("button.mode-btn[data-view='feed']")
-
+    """Clicking °F should flip the unit label and current-temperature readout without a page reload."""
     assert page.inner_text("#tempUnitLabel") == "°C"
     celsius_reading = page.inner_text("#currentTemp")
 
@@ -138,9 +123,7 @@ def test_switching_temperature_unit_updates_label_and_stat(page):
 
 
 def test_switching_theme_updates_root_attribute(page):
-    """Selecting the Nord Frost theme (in the Feed view) should set data-theme="nord" on <html>."""
-    page.click("button.mode-btn[data-view='feed']")
-
+    """Selecting the Nord Frost theme should set data-theme="nord" on <html> and mark that button active."""
     page.click("#theme-nord")
     page.wait_for_function("document.documentElement.getAttribute('data-theme') === 'nord'")
 
@@ -149,12 +132,10 @@ def test_switching_theme_updates_root_attribute(page):
 
 
 def test_changing_location_updates_station_name(page):
-    """Clicking the Tokyo station card (in the Stations view) should update the selected-station label."""
-    page.click("button.mode-btn[data-view='stations']")
+    """Picking Tokyo from the station dropdown should update the topbar location label."""
     assert "Berlin" in page.inner_text("#topbar-location")
 
-    page.click("button.station-card[data-location='Tokyo']")
+    page.select_option("#locationSelect", "Tokyo")
     page.wait_for_function("document.getElementById('topbar-location').textContent.includes('Tokyo')")
 
     assert "Tokyo" in page.inner_text("#topbar-location")
-    assert page.evaluate("document.querySelector(\"button.station-card[data-location='Tokyo']\").classList.contains('active')")
