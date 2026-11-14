@@ -4,15 +4,15 @@ live dashboard and interacting with it, across the three major rendering engines
 (Chromium, Firefox/Gecko, WebKit/Safari) via Playwright. Unlike the unit/smoke/
 integration tests, this is the only layer that exercises the frontend JavaScript
 and Chart.js rendering pipeline — nothing else in the suite touches
-`dashboard/index.html`.
+`docs/index.html`.
 
 Every test in this file runs once per engine (parametrized through the `page`
 fixture), so a bug that only shows up in one browser (a CSS quirk, a JS API gap)
 fails that one combination instead of being invisible.
 
-The dashboard is served from the static `dashboard/` folder (the same files the
-live GitHub Pages site serves) over a local HTTP server, so no network access or
-live Open-Meteo API call is required — these tests work fully offline.
+The dashboard is served from the static `docs/` folder (the same folder GitHub
+Pages deploys as the live site) over a local HTTP server, so no network access
+or live Open-Meteo API call is required — these tests work fully offline.
 
 Requires the Playwright browser binaries to be installed once:
     playwright install chromium firefox webkit
@@ -27,7 +27,7 @@ import pytest
 from playwright.sync_api import sync_playwright
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DASHBOARD_DIR = os.path.join(PROJECT_ROOT, "dashboard")
+DASHBOARD_DIR = os.path.join(PROJECT_ROOT, "docs")
 
 BROWSER_ENGINES = ["chromium", "firefox", "webkit"]
 
@@ -54,7 +54,7 @@ class _QuietHandler(http.server.SimpleHTTPRequestHandler):
 
 @pytest.fixture(scope="module")
 def dashboard_url():
-    """Serve the static dashboard/ folder on a free local port for the duration of the module."""
+    """Serve the static docs/ folder on a free local port for the duration of the module."""
     handler = lambda *args, **kwargs: _QuietHandler(*args, directory=DASHBOARD_DIR, **kwargs)
     socketserver.TCPServer.allow_reuse_address = True
     server = socketserver.TCPServer(("127.0.0.1", 0), handler)

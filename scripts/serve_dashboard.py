@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 socketserver.TCPServer.allow_reuse_address = True
 
 PORT = 8000
-DIRECTORY = "dashboard"
+DIRECTORY = "docs"
 
 class CustomHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
