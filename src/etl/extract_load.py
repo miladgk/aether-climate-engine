@@ -197,21 +197,21 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
     total_rows_processed = 0
     
     # Save a local copy for the serverless dashboard
-    dashboard_file = os.path.join("dashboard", "sample_telemetry.json")
-    
+    dashboard_file = os.path.join("docs", "sample_telemetry.json")
+
     try:
         # Sort all clean records by time to ensure proper rendering
         all_clean_records.sort(key=lambda x: x['time'])
-        
+
         # Write clean data to dashboard file
-        if os.path.exists("dashboard"):
+        if os.path.exists("docs"):
             with open(dashboard_file, 'w') as f:
                 for r in all_clean_records:
                     f.write(json.dumps(r) + "\n")
             logger.info(f"Updated {dashboard_file} with {len(all_clean_records)} aggregate records.")
-            
+
             if all_predictions:
-                pred_file = os.path.join("dashboard", "predictions.json")
+                pred_file = os.path.join("docs", "predictions.json")
                 with open(pred_file, 'w') as f:
                     for p in all_predictions:
                         f.write(json.dumps(p) + "\n")

@@ -89,16 +89,15 @@ flowchart TD
 ├── config.json                 # Station coordinates, ML horizons & pipeline configuration
 ├── dags/                       # Apache Airflow workflow DAG definitions
 │   └── telemetry_pipeline.py   # Airflow daily ingestion & transformation DAG
-├── dashboard/                  # Aether Command Center Web Interface
-│   ├── index.html              # Custom Field Station interface & Chart.js engine
-│   ├── sample_telemetry.json   # Live & Historical station telemetry cache
-│   └── predictions.json        # Precomputed multi-model ML forecast output
 ├── dbt_telemetry/              # dbt Core dimensional models & staging SQL
 │   ├── dbt_project.yml
 │   └── models/
 │       ├── staging/            # Data cleansing & column casting
 │       └── marts/              # Fact & dimension aggregate tables
-├── docs/                       # Architectural documentation & Data Dictionary
+├── docs/                       # Aether Command Center Web Interface — also the live GitHub Pages site
+│   ├── index.html              # Custom Field Station interface & Chart.js engine
+│   ├── sample_telemetry.json   # Live & Historical station telemetry cache
+│   ├── predictions.json        # Precomputed multi-model ML forecast output
 │   ├── data_dictionary.md      # Schema definitions & metric types
 │   └── runbook.md              # Operational runbook & troubleshooting
 ├── scripts/                    # Utility scripts & dashboard server

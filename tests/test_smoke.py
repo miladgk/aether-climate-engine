@@ -77,6 +77,6 @@ def test_ml_predictor_runs_end_to_end_for_every_model():
 
 def test_dashboard_static_assets_exist():
     """The dashboard's critical static files must be present for the live site to render."""
-    dashboard_dir = os.path.join(PROJECT_ROOT, "dashboard")
+    dashboard_dir = os.path.join(PROJECT_ROOT, "docs")
     for filename in ["index.html", "favicon.svg"]:
-        assert os.path.exists(os.path.join(dashboard_dir, filename)), f"dashboard/{filename} is missing"
+        assert os.path.exists(os.path.join(dashboard_dir, filename)), f"docs/{filename} is missing"
