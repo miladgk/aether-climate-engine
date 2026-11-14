@@ -10,7 +10,11 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Pinned instead of ubuntu-latest: GitHub recently moved "latest" to a
+    # brand-new Ubuntu release whose package names (libicu74, libxml2, etc.)
+    # playwright's --with-deps installer doesn't know yet, breaking browser
+    # install. ubuntu-24.04 is a stable LTS Playwright 1.48 fully supports.
+    runs-on: ubuntu-24.04
     
     services:
       postgres:
