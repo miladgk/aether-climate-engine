@@ -215,18 +215,20 @@ The CI workflow (`.github/workflows/ci.yml`) spins up a real Postgres service co
 Running the scan surfaced a real, pre-existing dependency conflict and a set of outdated/vulnerable pins. Here's what was fixed and what's structurally blocked:
 
 **Fixed:**
-- Removed an explicit `protobuf<4.25.0` pin that conflicted with `apache-airflow`'s own `opentelemetry-proto` requirement (`protobuf>=5.0`) — this was breaking `pip install -r requirements.txt` entirely on a clean environment. Letting pip's resolver pick the version itself (`protobuf==5.29.6`) resolves it.
+- Removed an explicit `protobuf<4.25.0` pin that conflicted with `apache-airflow`'s own `opentelemetry-proto` requirement (`protobuf>=5.0`) — this was breaking `pip install -r requirements.txt` entirely on a clean environment.
+- `dbt-core`/`dbt-postgres` `1.7.0` → `1.7.20` (a patch release on the same stable branch, not the breaking 1.8 package-split). Removing the protobuf pin above initially let pip resolve a protobuf version that satisfied everyone's *declared* version ranges but still crashed dbt-core 1.7.0 at runtime — its event-serialization code calls a protobuf `MessageToJson(..., including_default_value_fields=...)` API that newer protobuf releases removed, a bug the old tight pin had been silently working around. This is exactly what broke `dbt debug` in CI with `TypeError: MessageToJson() got an unexpected keyword argument`. `1.7.20` fixed that call internally, so `pip`'s resolver now lands on `protobuf==4.25.9` and both `dbt debug`/`dbt deps` exit cleanly. As a bonus, `1.7.20` also relaxed dbt-core's own `sqlparse` pin, which cleared the `sqlparse` CVEs for free.
 - `apache-airflow` `2.8.1` → `2.10.5` (latest 2.x release) — removes every CVE that had a 2.x fix, without the breaking API migration to Airflow 3.x. Updated `dags/daily_telemetry_ingestion.py` to drop two now-deprecated APIs (`schedule_interval` → `schedule`, removed `provide_context=True`) surfaced by the upgrade.
 - `pytest` `8.0.0` → `9.0.3` — verified against the full suite (30 tests, including E2E across 3 browsers and the Postgres integration tests) on Python 3.10, matching CI exactly.
 - `pip`/`setuptools` are now upgraded explicitly in the CI install step.
+- CI runner pinned to `ubuntu-24.04` instead of the floating `ubuntu-latest`, after GitHub moved "latest" to a newer Ubuntu release whose package names (`libicu74`, `libxml2`, etc.) aren't yet recognized by Playwright's `--with-deps` installer.
 
 **Structurally blocked (verified by actually attempting each, not guessed):**
 - `apache-airflow` and its provider packages still carry CVEs whose only fix is Airflow **3.x** — a breaking architecture change, out of scope for an in-place dependency bump.
-- `cryptography`, `urllib3`, `sqlparse` can't be upgraded past their vulnerable versions because `dbt-core==1.7.0` hard-pins `cffi<2.0.0` and `urllib3~=1.0`; every patched release of those libraries requires newer versions than that. Unblocking this needs a `dbt-core` 1.8+ upgrade (a package-split architecture change in dbt itself) that hasn't been validated against this project's `dbt_telemetry/` models.
+- `cryptography`, `urllib3` can't be upgraded past their vulnerable versions because `dbt-core` (even at `1.7.20`) still hard-pins `cffi<2.0.0` and `urllib3~=1.0`; every patched release of those two libraries requires newer versions than that. Unblocking this needs a `dbt-core` 1.8+ upgrade (a package-split architecture change in dbt itself) that hasn't been validated against this project's `dbt_telemetry/` models.
 - `flask`, `werkzeug`, `flask-appbuilder` are version-capped by Airflow 2.x's own webserver compatibility requirements, not by anything in this project.
 - `dnspython`, `filelock` only ship CVE fixes in releases that require **Python 3.11+**, while CI runs Python 3.10.
 
-The dependency scan step stays advisory (reports, doesn't fail the build) so these known, upstream-blocked findings don't turn CI red on every push.
+Every fix above was verified end-to-end on Python 3.10 in a disposable environment (clean `pip install`, `dbt debug`/`dbt deps`, and the full pytest suite including Postgres integration and 3-browser E2E) before being pushed — not assumed from reading changelogs. The dependency scan step stays advisory (reports, doesn't fail the build) so the remaining, upstream-blocked findings don't turn CI red on every push.
 
 ---
 

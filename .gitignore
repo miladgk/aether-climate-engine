@@ -59,6 +59,7 @@ dbt_telemetry/target/
 dbt_telemetry/dbt_packages/
 dbt_telemetry/dbt_modules/
 dbt_telemetry/logs/
+dbt_telemetry/.user.yml
 
 # Terraform
 terraform/.terraform/

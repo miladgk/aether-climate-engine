@@ -7,4 +7,4 @@ pytest==9.0.3
 pytest-mock==3.12.0
 moto==5.0.0
 playwright==1.48.0
-dbt-postgres==1.7.0
+dbt-postgres==1.7.20
