@@ -9,11 +9,13 @@
 [![Terraform](https://img.shields.io/badge/terraform-1.5+-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Aether** is an enterprise-grade, end-to-end meteorological and climate telemetry analytics platform. It ingests high-frequency atmospheric data across global stations, applies automated statistical anomaly detection, runs multi-model machine learning forecasting engines, and delivers real-time Year-over-Year (YoY) comparative analytics through a custom field-station command dashboard.
+**Aether** is an enterprise-grade, end-to-end meteorological and climate telemetry analytics platform. It ingests high-frequency atmospheric data across global stations, applies automated statistical anomaly detection, runs multi-model machine learning forecasting engines, and delivers real-time Year-over-Year (YoY) comparative analytics through a single-viewport **Bento Studio** command dashboard.
 
 <div align="center">
-  <img src="docs/dashboard_preview.jpg" alt="Aether Command Center Dashboard Preview" width="100%">
+  <img src="docs/dashboard_preview.jpg" alt="Aether Bento Studio Dashboard Preview" width="100%">
 </div>
+
+The dashboard is a single locked viewport (no page scrolling) with four bento-grid views — **Overview**, **Forecast**, **Stations**, **Feed** — switched via the top pill selector or the `1`–`4` / arrow-key shortcuts, each laid out as an asymmetric grid of glassmorphic tiles.
 
 **Live dashboard:** [miladgk.github.io/aether-climate-engine](https://miladgk.github.io/aether-climate-engine/)
 
