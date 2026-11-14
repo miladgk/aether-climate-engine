@@ -38,20 +38,38 @@ jobs:
       
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools
           pip install -r requirements.txt
-      
+
+      - name: Install Playwright Browsers (for E2E + cross-browser compatibility tests)
+        run: |
+          playwright install --with-deps chromium firefox webkit
+
       - name: Run Pytest
         env:
           AWS_ACCESS_KEY_ID: mock
           AWS_SECRET_ACCESS_KEY: mock
+          INTEGRATION_POSTGRES_HOST: localhost
+          INTEGRATION_POSTGRES_PORT: 5432
+          INTEGRATION_POSTGRES_USER: aether_user
+          INTEGRATION_POSTGRES_PASSWORD: aether_password
+          INTEGRATION_POSTGRES_DB: aether_warehouse
         run: |
           pytest tests/ -v
           
       - name: Run Static Security Scan
         run: |
           python3 scripts/custom_bandit.py
-      
+
+      - name: Run Dependency Vulnerability Scan
+        # Advisory only: reports known CVEs in pinned dependencies without failing
+        # the build, since bumping a pinned major framework version (e.g. Airflow)
+        # is a deliberate, separate decision, not something a CI gate should force
+        # on every push.
+        run: |
+          pip install pip-audit
+          pip-audit || true
+
       - name: Validate dbt Project
         env:
           POSTGRES_HOST: localhost
