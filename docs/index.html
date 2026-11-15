@@ -355,17 +355,18 @@
             -webkit-backdrop-filter: blur(18px);
             border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 20px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             min-height: 0;
-            overflow: hidden;
+            overflow-y: auto;
+            scrollbar-width: thin;
         }
 
         .hud-station-header {
             border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
+            padding-bottom: 8px;
         }
 
         .hud-kicker {
@@ -394,9 +395,9 @@
         .primary-gauges {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 10px;
             margin: auto 0;
-            padding: 10px 0;
+            padding: 6px 0;
         }
 
         .gauge-block {
@@ -423,7 +424,7 @@
         }
 
         .gauge-giant {
-            font-size: 48px;
+            font-size: 38px;
             font-weight: 300;
             letter-spacing: -0.04em;
             line-height: 1;
@@ -463,7 +464,7 @@
             background: rgba(0, 0, 0, 0.22);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 11px 13px;
+            padding: 9px 11px;
         }
 
         .bench-title {
@@ -472,7 +473,7 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--muted);
-            margin-bottom: 7px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
         }
@@ -480,7 +481,7 @@
         .bench-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
+            gap: 6px;
             font-family: var(--mono);
             font-size: 10.5px;
             font-variant-numeric: tabular-nums;
@@ -488,7 +489,7 @@
 
         .bench-cell {
             background: rgba(255, 255, 255, 0.02);
-            padding: 6px 8px;
+            padding: 5px 7px;
             border-radius: 7px;
             border: 1px solid var(--border);
         }
@@ -505,8 +506,8 @@
         }
 
         .bench-winner {
-            margin-top: 8px;
-            padding: 7px 10px;
+            margin-top: 6px;
+            padding: 6px 9px;
             border-radius: 8px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.35);
