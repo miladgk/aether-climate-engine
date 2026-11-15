@@ -24,8 +24,7 @@ variable "db_username" {
 }
 
 variable "db_password" {
-  description = "The master password for the RDS instance."
+  description = "The master password for the RDS instance. Must be supplied via TF_VAR_db_password or a .tfvars file that is never committed - no default is set so a plan/apply fails loudly instead of silently using a known password."
   type        = string
   sensitive   = true
-  default     = "SuperSecretPassword123!"
 }
