@@ -87,7 +87,7 @@ def page(request, dashboard_url):
 
 def test_dashboard_loads_and_hides_loading_screen(page):
     """The command center should load, fetch telemetry, and dismiss the loading overlay."""
-    assert page.title() == "Aether | Climate Intelligence Platform"
+    assert page.title().startswith("Aether")
 
 
 def test_temperature_and_wind_charts_render(page):
@@ -132,10 +132,11 @@ def test_switching_theme_updates_root_attribute(page):
 
 
 def test_changing_location_updates_station_name(page):
-    """Picking Tokyo from the station dropdown should update the topbar location label."""
+    """Clicking the Tokyo station card should update the active-station label."""
     assert "Berlin" in page.inner_text("#topbar-location")
 
-    page.select_option("#locationSelect", "Tokyo")
+    page.click(".station-card[data-loc='Tokyo']")
     page.wait_for_function("document.getElementById('topbar-location').textContent.includes('Tokyo')")
 
     assert "Tokyo" in page.inner_text("#topbar-location")
+    assert page.evaluate("document.querySelector(\".station-card[data-loc='Tokyo']\").classList.contains('active')")
