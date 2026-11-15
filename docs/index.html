@@ -355,18 +355,19 @@
             -webkit-backdrop-filter: blur(18px);
             border: 1px solid var(--border);
             border-radius: 18px;
-            padding: 16px 20px;
+            padding: clamp(8px, 2cqh, 16px) 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             min-height: 0;
-            overflow-y: auto;
-            scrollbar-width: thin;
+            overflow: hidden;
+            container-type: size;
+            container-name: hud;
         }
 
         .hud-station-header {
             border-bottom: 1px solid var(--border);
-            padding-bottom: 8px;
+            padding-bottom: clamp(3px, 1cqh, 8px);
         }
 
         .hud-kicker {
@@ -375,29 +376,29 @@
             text-transform: uppercase;
             letter-spacing: 0.14em;
             color: var(--amber);
-            margin-bottom: 4px;
+            margin-bottom: clamp(1px, 0.5cqh, 4px);
         }
 
         .hud-city-title {
-            font-size: 24px;
+            font-size: clamp(15px, 2.4cqh, 24px);
             font-weight: 600;
             letter-spacing: -0.03em;
-            line-height: 1.15;
+            line-height: 1.1;
         }
 
         .hud-coords-sub {
             font-family: var(--mono);
             font-size: 10.5px;
             color: var(--muted);
-            margin-top: 3px;
+            margin-top: clamp(1px, 0.4cqh, 3px);
         }
 
         .primary-gauges {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: clamp(2px, 1.2cqh, 10px);
             margin: auto 0;
-            padding: 6px 0;
+            padding: clamp(1px, 0.8cqh, 6px) 0;
         }
 
         .gauge-block {
@@ -419,12 +420,12 @@
             display: flex;
             align-items: baseline;
             gap: 6px;
-            margin: 2px 0 4px;
+            margin: clamp(0px, 0.4cqh, 2px) 0 clamp(1px, 0.6cqh, 4px);
             font-variant-numeric: tabular-nums;
         }
 
         .gauge-giant {
-            font-size: 38px;
+            font-size: clamp(20px, 4cqh, 38px);
             font-weight: 300;
             letter-spacing: -0.04em;
             line-height: 1;
@@ -443,7 +444,7 @@
             gap: 5px;
             font-family: var(--mono);
             font-size: 10px;
-            padding: 3px 8px;
+            padding: clamp(1px, 0.6cqh, 3px) 8px;
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.04);
             color: var(--muted);
@@ -464,7 +465,7 @@
             background: rgba(0, 0, 0, 0.22);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 9px 11px;
+            padding: clamp(4px, 1.1cqh, 9px) 11px;
         }
 
         .bench-title {
@@ -473,7 +474,7 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--muted);
-            margin-bottom: 6px;
+            margin-bottom: clamp(2px, 0.8cqh, 6px);
             display: flex;
             justify-content: space-between;
         }
@@ -481,7 +482,7 @@
         .bench-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
+            gap: clamp(2px, 0.8cqh, 6px);
             font-family: var(--mono);
             font-size: 10.5px;
             font-variant-numeric: tabular-nums;
@@ -489,7 +490,7 @@
 
         .bench-cell {
             background: rgba(255, 255, 255, 0.02);
-            padding: 5px 7px;
+            padding: clamp(1px, 0.6cqh, 5px) 7px;
             border-radius: 7px;
             border: 1px solid var(--border);
         }
@@ -506,8 +507,8 @@
         }
 
         .bench-winner {
-            margin-top: 6px;
-            padding: 6px 9px;
+            margin-top: clamp(2px, 0.8cqh, 6px);
+            padding: clamp(2px, 0.8cqh, 6px) 9px;
             border-radius: 8px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.35);
