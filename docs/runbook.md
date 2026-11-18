@@ -1,45 +1,84 @@
 # Project Aether: Operations Runbook
 
-This Standard Operating Procedure (SOP) outlines the incident response and maintenance protocols for the ETL pipeline.
+How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and dashboard.
 
 ## 1. Pipeline Overview
-- **Orchestration**: Apache Airflow
-- **Ingestion**: Python `boto3` stream to Postgres
-- **Transformation**: dbt
 
-## 2. Common Failure Modes & Troubleshooting
+| Stage | What actually runs | Code |
+| --- | --- | --- |
+| Ingestion | Python `urllib.request` calls to the Open-Meteo **forecast** API (live, hourly) and **archive** API (a 15-day window one year earlier, `today − 372 d` → `today − 358 d`), for the 5 stations in `config.json`. All timestamps are UTC | `src/etl/extract_load.py` |
+| Caching | Each API response is cached on disk in `/tmp/aether_cache/` (MD5 of the URL) for `cache_ttl_seconds` (1800s) | `src/etl/cache_manager.py` |
+| Validation | Data contract: `time` (string), `temperature_2m` and `wind_speed_10m` (numeric) must be present | `src/etl/validator.py` |
+| Anomaly filter | ±`anomaly_sigma_threshold` (2.0σ) filter on **live temperature only**; historical records are not filtered | `src/etl/anomaly_detector.py` |
+| Forecasting | Linear, SMA, and EMA forecasts for `ml_prediction_hours` (48h) per station, trained on the **first 72** clean live rows and starting the hour after the 72nd row | `src/ml/predictor.py` |
+| Outputs | `docs/sample_telemetry.json` (clean live + historical records) and `docs/predictions.json` (forecasts), both JSON Lines; best-effort batch insert into PostgreSQL table `raw_telemetry` | `src/etl/extract_load.py`, `src/infrastructure/postgres_connector.py` |
+| Orchestration | Airflow DAG `daily_telemetry_ingestion` (`@daily`, 3 retries, 5-minute delay, `catchup=False`). Defined but not deployed anywhere | `dags/daily_telemetry_ingestion.py` |
+| Public site | GitHub Pages serves `docs/` as static files. It never runs the Python pipeline; the browser shifts the cached timestamps to the viewer's current hour | `.github/workflows/pages.yml`, `docs/index.html` |
 
-### Incident: Airflow DAG Failure (`daily_telemetry_ingestion`)
-**Symptom**: You receive an alert that the DAG has failed after 3 retries.
-**Potential Causes**:
-- S3 Bucket is unreachable (AWS networking issue).
-- Postgres Database is rejecting connections (Pool exhausted or credentials rotated).
+Not part of the running pipeline:
+- **AWS S3:** `src/infrastructure/s3_connector.py` exists but is never called.
+- **dbt:** `dbt_telemetry/` models a user-clickstream schema, not weather data, so it cannot transform what the pipeline writes. See [`data_dictionary.md`](data_dictionary.md).
 
-**Response Steps**:
-1. Check the Airflow UI logs for the specific `ingest_telemetry_data` task.
-2. If it's a `DatabaseError`, verify the connection string in `.env` or check the Postgres instance health.
-3. If it's a transient network issue, you can manually trigger a retry:
-   - Navigate to the Airflow UI -> `daily_telemetry_ingestion`.
-   - Click the failed task instance and select "Clear" to reset its state, allowing the scheduler to retry it immediately.
+## 2. Routine Operations
 
-### Incident: dbt Data Quality Test Failure
-**Symptom**: The downstream `dbt test` job fails and halts materialization.
-**Potential Causes**:
-- A new `event_type` was introduced by the frontend team but not added to the `accepted_values` list in `schema.yml`.
-- Duplicate `event_id`s bypassed the uniqueness constraint.
-
-**Response Steps**:
-1. Run `dbt test` locally or view the CI logs to identify which constraint failed.
-2. If a new event type was intentionally added, update the `accepted_values` array in `dbt_telemetry/models/staging/schema.yml` and commit the change.
-
-## 3. Backfill Procedures
-If a day's payload was missed or the ingestion script was modified to fix a bug, you must backfill historical data.
-
-**Command to Backfill a Specific Date**:
-Since the Airflow DAG is parameterized by `ds` (execution date), you can run a manual backfill via the Airflow CLI:
+### Refresh the data and run the dashboard locally
 ```bash
-airflow dags backfill daily_telemetry_ingestion \
-  --start-date 2026-08-20 \
-  --end-date 2026-08-24
+pip install -r requirements.txt
+docker compose up -d postgres        # optional: without it, the DB step is skipped with a warning
+
+PYTHONPATH=. python3 src/etl/extract_load.py
+python3 scripts/serve_dashboard.py   # also re-runs the ETL on startup, then serves docs/ on http://localhost:8000
 ```
-Ensure that `catchup=False` in the DAG definition does not prevent CLI backfills (it only prevents automatic scheduling catchups).
+Both commands **overwrite `docs/sample_telemetry.json` and `docs/predictions.json`** in your working tree.
+
+Nothing in the code loads a `.env` file (there is no `python-dotenv`). Database settings come from exported `POSTGRES_*` environment variables, or from the code defaults when none are set (see "PostgreSQL connection problems" below).
+
+### Update the public dashboard data
+The public site only changes when those files are committed and pushed. Any push to `main` that touches `docs/**` triggers the "Deploy Aether dashboard" workflow. Before you commit regenerated data, check the record counts:
+```bash
+wc -l docs/sample_telemetry.json docs/predictions.json   # predictions should be 5 stations × 3 methods × 48h = 720
+```
+The holdout-MAE figures and the "Best in …" badge on the dashboard are hard-coded in `STATION_META` inside `docs/index.html`. Regenerating the data does **not** update them.
+
+## 3. Failure Modes & Troubleshooting
+
+### The ETL says "success", but data is missing or stale
+The pipeline is deliberately forgiving. It reports `status: success` even when:
+- **An Open-Meteo request fails** (network error, HTTP 429, timeout). The error is logged as `Error fetching live/historical data for <station>`, and that station is simply missing from the output.
+- **PostgreSQL is unreachable.** The log shows `Skipping Postgres bulk insert due to unavailable container`, and only the JSON files are updated.
+
+**Response steps:**
+1. Search the run's log for `Error fetching` and `Skipping Postgres`.
+2. Check how many records each station got: `grep -c '"location": "Berlin"' docs/sample_telemetry.json` (repeat per station).
+3. If the API was rate-limited, wait and re-run. Responses that already succeeded come from cache for 30 minutes, so a re-run only re-requests what failed.
+4. To force fresh data, clear the cache: `rm -rf /tmp/aether_cache`.
+
+### The ETL returns `status: failed`
+The pipeline only returns `failed` if something raises while it is writing outputs, for example `docs/` is not writable or a record is malformed while sorting. Read the `Ingestion failed for <date>: <error>` log line. When this happens under Airflow, the wrapper raises, so the task retries 3 times before the DAG run fails.
+
+### Records in the Dead Letter Queue
+`dead_letter_queue.dlq` (repo root, git-ignored, append-only) holds two kinds of lines:
+- **Schema failures:** `{"reason": "Schema Validation Failure", "record": {...}}`. Usually an upstream API format change; check the Open-Meteo response.
+- **Anomalies:** the raw record itself, with no `reason` field. A live temperature reading outside ±2.0σ of that station's window mean. These may be real weather extremes, not just sensor faults. Review them before changing `anomaly_sigma_threshold`.
+
+The file is never rotated. Truncate it manually once it has been reviewed.
+
+### PostgreSQL connection problems
+- The connection string is built from `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`. Code defaults (`aether_user` / `aether_password` / `aether_warehouse` on `localhost:5432`) match `docker-compose.yml`.
+- **Watch out:** `.env.example` uses different values (`POSTGRES_USER=postgres`, `POSTGRES_DB=telemetry_db`). If you copy it to `.env` and export it, the pipeline won't match the Docker Compose database. Either edit `.env` to the Compose values or skip it.
+- Every column of `raw_telemetry` is created as `TEXT`. Cast `temperature_2m` / `wind_speed_10m` when querying.
+
+### Airflow DAG failure (`daily_telemetry_ingestion`)
+Airflow is not installed or deployed in this project. This applies only if you run the DAG yourself.
+1. Open the logs for the `ingest_telemetry_data` task.
+2. Look for the `Ingestion failed:` exception raised by the wrapper and handle it as described under "The ETL returns `status: failed`" above.
+3. To retry, clear the failed task instance in the Airflow UI.
+
+### dbt failures
+`dbt debug` and `dbt deps` run in CI and pass. `dbt run` / `dbt test` against a `raw_telemetry` table filled by this pipeline **will fail**, because the staging model selects clickstream columns (`event_id`, `user_id`, `device_type`, …) that the weather table doesn't have. This is a known design gap, not an incident.
+
+## 4. Backfills
+
+**There is currently no working backfill.** `run_daily_ingestion(execution_date)` (and `--date` on the CLI) only uses the date for logging. The live window is always "now" from the forecast API, and the historical window is always computed from today's UTC date. So `airflow dags backfill daily_telemetry_ingestion --start-date … --end-date …` would just re-fetch today's data once per date.
+
+A real backfill would need `extract_load.py` to derive the archive (and live) date range from `execution_date`. Until then, the only way to recover a missed day is to re-run the pipeline on a later day. That gives you the current window, not the missed one.
