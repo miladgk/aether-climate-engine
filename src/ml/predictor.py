@@ -61,8 +61,11 @@ def generate_predictions(records: List[Dict[str, Any]], hours_to_predict: int = 
         logger.warning("Not enough data to train ML model.")
         return []
 
-    # Use the last 72 hours for training
-    training_data = records[:72]
+    # Train on exactly the window the caller passes in. The pipeline passes the
+    # station's most recent observed hours, so the forecast starts right after "now".
+    # Timestamps are station-local wall-clock time, so `hour_of_day` below is the
+    # local hour and the 14:00 / 16:00 diurnal peaks are local-time peaks.
+    training_data = records
     n = len(training_data)
     
     # Extract independent variables
@@ -148,3 +151,34 @@ def generate_predictions(records: List[Dict[str, Any]], hours_to_predict: int = 
         
     logger.info(f"Generated {hours_to_predict} hours of dual-metric ML predictions using {method} engine.")
     return predictions
+
+
+def evaluate_holdout(records: List[Dict[str, Any]], holdout_hours: int = 24, method: str = "linear") -> Dict[str, Any]:
+    """
+    Backtests one model: trains on everything except the last `holdout_hours`
+    records, forecasts those hours, and compares the forecast with what was
+    actually observed.
+
+    Returns {"temp_mae", "wind_mae", "n"}, or {} when there is not enough data
+    (the model needs at least 24 training hours).
+    """
+    if len(records) < holdout_hours + 24:
+        return {}
+    train, test = records[:-holdout_hours], records[-holdout_hours:]
+    predicted = {p["time"]: p for p in generate_predictions(train, hours_to_predict=holdout_hours, method=method)}
+
+    temp_errors, wind_errors = [], []
+    for actual in test:
+        p = predicted.get(datetime.datetime.fromisoformat(actual["time"]).isoformat())
+        if p is None:
+            continue
+        temp_errors.append(abs(p["predicted_temperature_2m"] - actual["temperature_2m"]))
+        wind_errors.append(abs(p["predicted_wind_speed_10m"] - actual["wind_speed_10m"]))
+
+    if not temp_errors:
+        return {}
+    return {
+        "temp_mae": round(sum(temp_errors) / len(temp_errors), 2),
+        "wind_mae": round(sum(wind_errors) / len(wind_errors), 2),
+        "n": len(temp_errors),
+    }

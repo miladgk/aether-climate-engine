@@ -28,5 +28,10 @@
     ],
     "cache_ttl_seconds": 1800,
     "anomaly_sigma_threshold": 2.0,
-    "ml_prediction_hours": 48
+    "anomaly_window_hours": 3,
+    "anomaly_min_deviation_c": 2.5,
+    "anomaly_min_deviation_wind_kmh": 12.0,
+    "ml_prediction_hours": 48,
+    "observed_window_hours": 96,
+    "holdout_hours": 24
 }

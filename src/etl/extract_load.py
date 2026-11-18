@@ -74,7 +74,16 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
         
     locations = config.get("locations", [])
     sigma_threshold = config.get("anomaly_sigma_threshold", 2.0)
+    anomaly_window_hours = config.get("anomaly_window_hours", 3)
+    anomaly_min_deviation = config.get("anomaly_min_deviation_c", 2.5)
+    anomaly_min_deviation_wind = config.get("anomaly_min_deviation_wind_kmh", 12.0)
     ml_hours = config.get("ml_prediction_hours", 48)
+    # How many of the most recent observed hours per station are kept, shown on the
+    # dashboard, and used to train the models. 96 observed + 48 forecast = 2/3 : 1/3.
+    observed_hours = config.get("observed_window_hours", 96)
+    holdout_hours = config.get("holdout_hours", 24)
+    past_days = -(-observed_hours // 24) + 1  # ceil, plus one day of margin for anomaly drops
+    station_summary = {}
     
     postgres_host = os.getenv('POSTGRES_HOST', 'localhost')
     postgres_port = os.getenv('POSTGRES_PORT', '5432')
@@ -92,8 +101,8 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
         lat = loc["latitude"]
         lon = loc["longitude"]
         
-        forecast_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,wind_speed_10m"
-        archive_url = f"https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={historical_start.isoformat()}&end_date={historical_end.isoformat()}&hourly=temperature_2m,wind_speed_10m"
+        forecast_url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,wind_speed_10m&timezone=auto&past_days={past_days}&forecast_days=1"
+        archive_url = f"https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={historical_start.isoformat()}&end_date={historical_end.isoformat()}&hourly=temperature_2m,wind_speed_10m&timezone=auto"
         
         from src.etl.cache_manager import get_cached_response, set_cached_response
         
@@ -131,14 +140,18 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
             except Exception as e:
                 logger.error(f"Error fetching historical data for {loc_name}: {e}")
 
-        # Process Live Data
+        # Process Live Data. With timezone=auto, Open-Meteo returns station-local
+        # wall-clock times, so "now" is computed in the station's local time and
+        # only hours that have already happened are kept as observed data.
+        utc_offset_seconds = forecast_data.get('utc_offset_seconds', 0)
+        local_now = (datetime.utcnow() + timedelta(seconds=utc_offset_seconds)).replace(minute=0, second=0, microsecond=0)
         raw_records = []
         if 'hourly' in forecast_data:
             times = forecast_data['hourly']['time']
             temps = forecast_data['hourly']['temperature_2m']
             winds = forecast_data['hourly']['wind_speed_10m']
             for t, temp, wind in zip(times, temps, winds):
-                if temp is not None and wind is not None:
+                if temp is not None and wind is not None and datetime.fromisoformat(t) <= local_now:
                     raw_records.append({"time": t, "temperature_2m": temp, "wind_speed_10m": wind, "location": loc_name, "period": "live"})
         
         # Process Historical Data
@@ -169,25 +182,56 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
         live_valid = [r for r in valid_records if r.get('period') == 'live']
         hist_valid = [r for r in valid_records if r.get('period') == 'historical']
         
-        clean_live, anomalous_live = filter_anomalies(live_valid, target_key="temperature_2m", sigma_threshold=sigma_threshold)
+        # Spike filter on both metrics, each with its own minimum deviation. A record is
+        # removed when either metric is anomalous; the DLQ entry says which one(s).
+        _, temp_anomalies = filter_anomalies(
+            live_valid, target_key="temperature_2m", sigma_threshold=sigma_threshold,
+            window_hours=anomaly_window_hours, min_deviation=anomaly_min_deviation)
+        _, wind_anomalies = filter_anomalies(
+            live_valid, target_key="wind_speed_10m", sigma_threshold=sigma_threshold,
+            window_hours=anomaly_window_hours, min_deviation=anomaly_min_deviation_wind)
+        flagged_metrics = {}
+        for metric, flagged in (("temperature_2m", temp_anomalies), ("wind_speed_10m", wind_anomalies)):
+            for r in flagged:
+                flagged_metrics.setdefault(id(r), []).append(metric)
+        clean_live = [r for r in live_valid if id(r) not in flagged_metrics]
+        anomalous_live = [r for r in live_valid if id(r) in flagged_metrics]
         
-        all_clean_records.extend(clean_live)
+        # Keep only the most recent observed window: it is what the dashboard shows
+        # as "Observed" and exactly what the models are trained on.
+        observed = clean_live[-observed_hours:]
+        all_clean_records.extend(observed)
         all_clean_records.extend(hist_valid) # Append historical without strict filtering
         
-        # Run ML Predictions for all supported models
-        if clean_live:
-            from src.ml.predictor import generate_predictions
+        # Run ML Predictions for all supported models, plus a holdout backtest
+        # (train on the window minus its last `holdout_hours`, score on those hours)
+        # so the dashboard's model ranking comes from data, not hard-coded numbers.
+        if observed:
+            from src.ml.predictor import generate_predictions, evaluate_holdout
+            holdout = {}
             for model_type in ["linear", "sma", "ema"]:
-                loc_predictions = generate_predictions(clean_live, hours_to_predict=ml_hours, method=model_type)
+                loc_predictions = generate_predictions(observed, hours_to_predict=ml_hours, method=model_type)
                 for p in loc_predictions:
                     p["location"] = loc_name
                 all_predictions.extend(loc_predictions)
+                metrics = evaluate_holdout(observed, holdout_hours=holdout_hours, method=model_type)
+                if metrics:
+                    holdout[model_type] = metrics
+            station_summary[loc_name] = {
+                "utc_offset_seconds": utc_offset_seconds,
+                "timezone": forecast_data.get('timezone', 'GMT'),
+                "timezone_abbreviation": forecast_data.get('timezone_abbreviation', 'GMT'),
+                "observed_hours": len(observed),
+                "observed_until": observed[-1]["time"],
+                "holdout_hours": holdout_hours,
+                "holdout_mae": holdout,
+            }
         
         if anomalous_live:
             dlq_path = "dead_letter_queue.dlq"
             with open(dlq_path, 'a') as f:
                 for r in anomalous_live:
-                    f.write(json.dumps(r) + "\n")
+                    f.write(json.dumps({"reason": "Anomaly: " + " + ".join(flagged_metrics[id(r)]) + " spike", "record": r}) + "\n")
             logger.info(f"Routed {len(anomalous_live)} anomalies for {loc_name} to {dlq_path}")
     
     # Initialize Postgres client (still expecting connection refused in this environment)
@@ -216,6 +260,13 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
                     for p in all_predictions:
                         f.write(json.dumps(p) + "\n")
                 logger.info(f"Exported aggregate ML predictions to {pred_file}")
+
+            if station_summary:
+                summary_file = os.path.join("docs", "station_summary.json")
+                with open(summary_file, 'w') as f:
+                    json.dump({"generated_at_utc": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+                               "stations": station_summary}, f, indent=2)
+                logger.info(f"Exported per-station time zones and holdout MAE to {summary_file}")
         
         # Stream clean JSON records (flattening)
         for raw_record in all_clean_records:

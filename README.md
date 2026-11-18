@@ -9,7 +9,7 @@
 [![Terraform](https://img.shields.io/badge/terraform-1.5+-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Aether** is an enterprise-grade, end-to-end meteorological and climate telemetry analytics platform. It ingests high-frequency atmospheric data across global stations, applies automated statistical anomaly detection, runs multi-model machine learning forecasting engines, and delivers real-time Year-over-Year (YoY) comparative analytics through a custom field-station command dashboard.
+**Aether** is an end-to-end weather-telemetry pipeline and dashboard. It pulls hourly temperature and wind data for five cities from the Open-Meteo APIs, validates it, filters statistical outliers into a dead-letter queue, produces 48-hour forecasts with three simple models, and compares everything against the same hours one year earlier in a static Chart.js dashboard published on GitHub Pages.
 
 <div align="center">
   <img src="docs/dashboard_preview.jpg" alt="Aether Command Center Dashboard Preview" width="100%">
@@ -21,24 +21,24 @@
 
 ## 🌟 Key Features
 
-- **🌐 Multi-Station Global Ingestion**: Real-time atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney) via the Open-Meteo forecast & archive HTTP APIs, with a local TTL response cache. (An AWS S3 streaming connector exists in `src/infrastructure/s3_connector.py` but is not wired into the current pipeline.)
-- **🔍 Statistical Anomaly Detection**: Real-time $\pm 2.0\sigma$ Z-score anomaly filtering with automated Dead Letter Queue (`.dlq`) isolation and routing.
+- **🌐 Multi-Station Global Ingestion**: Hourly atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney) via the Open-Meteo forecast & archive HTTP APIs, with a local TTL response cache. (An AWS S3 streaming connector exists in `src/infrastructure/s3_connector.py` but is not wired into the current pipeline.)
+- **🔍 Statistical Anomaly Detection**: A local spike filter on live temperature and wind (per station): each hour is compared with a robust line fitted through the 3 hours on either side, and flagged only if it is more than 2.0 robust σ *and* more than 2.5 °C (temperature) or 12 km/h (wind) off. Normal daily peaks and gradual weather changes pass; sudden jumps are routed, with schema failures, to a Dead Letter Queue (`dead_letter_queue.dlq`).
 - **🤖 Multi-Model Machine Learning Engine**:
   - **Linear Regression**: Diurnal harmonic trend forecasting with graceful pure-Python fallback.
   - **Simple Moving Average (SMA)**: Rolling window baseline trend smoothing.
   - **Exponential Moving Average (EMA)**: Exponential decay memory modeling for high-responsiveness.
-- **📈 Full-Timeline YoY Comparative Analytics**: Aligns 365-day historical baselines against live and forecasted horizons for climate variance insights.
+- **📈 Full-Timeline YoY Comparative Analytics**: Pulls the same calendar window from one year earlier (Open-Meteo archive API), shifts it forward 365 days, and overlays it on the live and forecast curves.
 - **🎛️ Field Research Station Dashboard**:
   - Live animated telemetry plotting with Chart.js.
   - Dynamic unit conversion on the fly ($^\circ\text{C} \leftrightarrow ^\circ\text{F}$, $\text{km/h} \leftrightarrow \text{m/s}$) with auto-scaling delta thresholds.
   - Interactive multi-theme engine (*Ember*, *Nord*, *Stone*).
   - A "NOW" meridian (dashed line, label, and pulsing beacon) marking the boundary between observed data and the forecast.
   - Per-station YoY anomaly badges, with the biggest warming outlier glowing red and the biggest cooling outlier glowing blue.
-  - A "Compare All" ensemble view (default) that shades the min/max band across the three models, and a badge that stars the model with the lowest holdout error for the selected station.
-  - 12h / 24h / 48h forecast horizon switching.
+  - A "Compare All" ensemble view (default) that shades the min/max band across the three models, and a badge that stars the model with the lowest holdout MAE for the selected station. The MAE is computed by the pipeline (each model forecasts the last 24 observed hours from the hours before them) and published in `docs/station_summary.json`.
+  - 12h / 24h / 48h forecast horizon switching. The chart always shows twice as many observed hours as forecast hours (96 + 48, 48 + 24, 24 + 12), on a real hourly time axis in the station's local time.
 - **🏗️ Data Warehouse & Orchestration**: Clean readings are batch-loaded into a PostgreSQL `raw_telemetry` table (with graceful fallback when the DB is down), and an **Apache Airflow** DAG wraps the daily ingestion. The **dbt Core** project (staging + core models) currently models a separate user-clickstream schema, not the weather data — see **Known Limitations** below.
 - **☁️ Infrastructure as Code (IaC)**: **Terraform** configurations for an AWS S3 bucket (with a 30-day Glacier lifecycle rule) and an RDS PostgreSQL 15 instance. Not provisioned against a live AWS account; the DB password has no default and must be supplied via `TF_VAR_db_password`.
-- **🧪 Robust Testing & Security**: Unit, smoke, integration (real PostgreSQL), E2E + cross-browser compatibility (Chromium/Firefox/WebKit via Playwright) and regression test layers via Pytest (`pytest-mock`, `moto`), Bandit SAST scanning, `pip-audit` dependency/CVE scanning, and a GitHub Actions CI workflow that runs them all on every push/PR.
+- **🧪 Robust Testing & Security**: Unit, smoke, integration (real PostgreSQL), E2E + cross-browser compatibility (Chromium/Firefox/WebKit via Playwright) and regression test layers via Pytest (`pytest-mock`, `moto`), a custom AST security scan (`scripts/custom_bandit.py`; Bandit itself runs as a pre-commit hook), `pip-audit` dependency/CVE scanning, and a GitHub Actions CI workflow that runs them all on every push/PR.
 
 ---
 
@@ -47,16 +47,16 @@
 ```mermaid
 flowchart TD
     subgraph Ingestion ["1. Ingestion & Storage"]
-        API[Open-Meteo Global APIs] -->|HTTP / Cache Layer| ETL[Python Ingestion Engine]
+        API[Open-Meteo Forecast & Archive APIs] -->|HTTP / TTL cache| ETL[Python Ingestion Engine]
         S3[AWS S3 Connector<br/>not wired in] -.->|boto3 stream| ETL
-        ETL -->|Validation & Hashing| VAL[Schema Validator]
+        ETL --> VAL[Schema Validator]
     end
 
     subgraph Processing ["2. Data Quality & ML"]
-        VAL --> AD{Anomaly Detector<br/>±2.0σ Filter}
+        VAL --> AD{Anomaly Detector<br/>local spike filter}
         AD -->|Anomalous| DLQ[Dead Letter Queue<br/>dead_letter_queue.dlq]
-        AD -->|Clean Data| ML[ML Predictor Engine<br/>Linear / SMA / EMA]
-        ML --> ARCHIVE[Historical YoY Engine<br/>-365d Synchronizer]
+        AD -->|Latest 96 observed hours| ML[ML Predictor Engine<br/>Linear / SMA / EMA<br/>+ 24h holdout MAE]
+        VAL -->|Archive rows, +365d shift| ARCHIVE[Historical YoY Baseline]
     end
 
     subgraph Warehouse ["3. Warehouse & Transformation"]
@@ -65,8 +65,10 @@ flowchart TD
     end
 
     subgraph Visualization ["4. Intelligence Delivery"]
-        ML --> DASH[Aether Command Center<br/>Real-Time UI & Canvas Charts]
-        ARCHIVE --> DASH
+        ML --> JSON[Static JSON snapshot<br/>docs/*.json]
+        ARCHIVE --> JSON
+        AD -->|Clean live rows| JSON
+        JSON --> DASH[Aether Dashboard<br/>GitHub Pages / localhost:8000]
         DBT --> BI[Downstream Analytics / BI]
     end
 
@@ -79,6 +81,7 @@ flowchart TD
 
     class S3,PG database;
     class ETL,VAL,AD,ML,ARCHIVE,DBT process;
+    class JSON storage;
     class DLQ error;
     class DASH,BI dashboard;
 ```
@@ -89,7 +92,11 @@ flowchart TD
 
 ```
 .
+├── .github/workflows/          # ci.yml (tests, scans, dbt checks) & pages.yml (GitHub Pages deploy)
 ├── config.json                 # Station coordinates, ML horizons & pipeline configuration
+├── docker-compose.yml          # Local PostgreSQL 15 + Metabase
+├── Makefile                    # Shortcuts: data-pipeline, test, dashboard, up/down, dbt-run …
+├── sample_telemetry.json       # 5,000 synthetic clickstream events (not weather data)
 ├── dags/                       # Apache Airflow workflow DAG definitions
 │   └── daily_telemetry_ingestion.py  # Airflow daily ingestion DAG
 ├── dbt_telemetry/              # dbt Core dimensional models & staging SQL
@@ -101,6 +108,8 @@ flowchart TD
 │   ├── index.html              # Custom Field Station interface & Chart.js engine
 │   ├── sample_telemetry.json   # Live & Historical station telemetry cache
 │   ├── predictions.json        # Precomputed multi-model ML forecast output
+│   ├── station_summary.json    # Per-station time zone & holdout MAE (drives the model ranking)
+│   ├── favicon.svg / dashboard_preview.jpg
 │   ├── data_dictionary.md      # Schema definitions & metric types
 │   └── runbook.md              # Operational runbook & troubleshooting
 ├── scripts/                    # Utility scripts & dashboard server
@@ -110,7 +119,7 @@ flowchart TD
 │   └── profile_data.py         # Quick data profiling helper
 ├── src/                        # Core Python package
 │   ├── etl/
-│   │   ├── anomaly_detector.py # Statistical variance & anomaly filtering
+│   │   ├── anomaly_detector.py # Local spike filter (robust line fit ±3h)
 │   │   ├── cache_manager.py    # Local filesystem TTL caching
 │   │   ├── extract_load.py     # Main ingestion orchestrator
 │   │   ├── utils.py            # PII hashing & JSON flattening
@@ -123,11 +132,12 @@ flowchart TD
 ├── terraform/                  # Infrastructure as Code
 │   ├── main.tf                 # S3 bucket (Glacier lifecycle) & RDS PostgreSQL
 │   └── variables.tf            # Inputs; db_password has no default
-└── tests/                      # Automated test suite (unit, smoke, integration)
+└── tests/                      # Automated test suite (unit, smoke, integration, E2E)
     ├── conftest.py             # Mock fixtures (AWS, Postgres)
     ├── test_extract_load.py    # Unit: ETL logic
     ├── test_predictor.py       # Unit: ML forecasting models
     ├── test_pii.py             # Unit: PII hashing
+    ├── test_anomaly_detector.py  # Unit: spike filter (peaks/fronts kept, faults flagged)
     ├── test_smoke.py           # Smoke: fast end-to-end sanity pass
     ├── test_integration_postgres.py  # Integration: real PostgreSQL round-trip
     └── test_e2e_dashboard.py   # E2E + Compatibility: live dashboard across 3 browser engines
@@ -154,20 +164,20 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Environment Configuration
+### 3. Environment Configuration (optional)
+The pipeline reads `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB` from the environment. Nothing loads a `.env` file automatically, and the code defaults already match `docker-compose.yml`, so you can skip this step. If you use `.env.example`, note that its `POSTGRES_USER`/`POSTGRES_DB` values (`postgres` / `telemetry_db`) do **not** match the Compose database (`aether_user` / `aether_warehouse`). Edit them before exporting:
 ```bash
-cp .env.example .env
-# Edit .env with your PostgreSQL credentials if running locally
+docker compose up -d postgres   # optional; without it the DB insert is skipped with a warning
 ```
 
 ### 4. Run the ETL & Machine Learning Pipeline
-Execute the ingestion script to fetch real-time station metrics, run anomaly detection, and compute multi-model forecasts:
+Execute the ingestion script to fetch station data, run anomaly detection, and compute multi-model forecasts. It overwrites `docs/sample_telemetry.json`, `docs/predictions.json` and `docs/station_summary.json`:
 ```bash
 PYTHONPATH=. python3 src/etl/extract_load.py
 ```
 
 ### 5. Launch the Command Center Dashboard
-Start the local dashboard server:
+Start the local dashboard server (it re-runs the ETL once on startup, then serves `docs/`):
 ```bash
 python3 scripts/serve_dashboard.py
 ```
@@ -181,7 +191,7 @@ This project exercises several layers of the testing pyramid, each catching a di
 
 | Layer | Files | What it catches |
 |---|---|---|
-| **Unit** | `test_extract_load.py`, `test_predictor.py`, `test_pii.py` | Logic bugs in a single function (flattening, anomaly math, PII hashing), fully mocked — no network, no DB. |
+| **Unit** | `test_extract_load.py`, `test_predictor.py`, `test_pii.py`, `test_anomaly_detector.py` | Logic bugs in a single function (JSON flattening, mocked Open-Meteo ingestion, observed-window/local-time handling, DB graceful fallback, trend/amplitude math, holdout MAE, spike filter, PII hashing), fully mocked — no network, no DB. |
 | **Smoke** | `test_smoke.py` | Fast, shallow sanity pass over the whole build: do core modules import, is `config.json` valid, do the ETL/ML stages run end-to-end on a tiny dataset? |
 | **Integration** | `test_integration_postgres.py` | `PostgresClient` against a **real** PostgreSQL instance (table creation, bulk insert via `execute_values`, round-tripped reads) — the SQL path that mocks can't verify. Auto-skips if no database is reachable. |
 | **E2E** | `test_e2e_dashboard.py` | Drives the actual dashboard with Playwright: page loads, Chart.js renders both charts, unit/theme toggles update the UI, station switching updates the topbar — the only layer that touches the frontend JS at all. |
@@ -193,6 +203,7 @@ This project exercises several layers of the testing pyramid, each catching a di
 Run everything:
 ```bash
 # Full suite (unit + smoke + integration where a DB is reachable + E2E where a browser is installed)
+# Always pass tests/: a bare `pytest` also collects the vendored bandit/ checkout and errors out.
 pytest tests/ -v
 
 # Just the integration tests, against a local Postgres container:
@@ -260,6 +271,12 @@ dbt docs generate && dbt docs serve
 - **No cloud deployment:** the Terraform config has not been applied to a live AWS account.
 - **Leap years:** the YoY baseline uses a fixed 365-day offset.
 - **Secrets scanning scope:** `scripts/custom_bandit.py` only scans Python in `src/`; Terraform, YAML, and Docker Compose files are not scanned for hardcoded secrets.
+- **"Observed" means Open-Meteo's past-hours data:** observed hours come from the forecast API's `past_days` output (Open-Meteo's best-estimate weather for hours that have already happened), not raw readings from a physical station.
+- **Single UTC offset per station:** each station's current UTC offset (from Open-Meteo) is used to place "now". A daylight-saving change inside the window can shift the NOW line by an hour.
+- **Anomaly filter scope:** only live rows are filtered (historical rows are not). The spike filter can occasionally drop the hour right at a very abrupt real change, and it can't tell a wind drop to near-calm from a real calm hour unless the drop is large.
+- **PII hashing not applied:** `_hash_pii` (`src/etl/utils.py`) is imported by the ETL but never called. It is written for the synthetic clickstream shape, which has PII; the weather data has none.
+- **No working backfill:** the `--date` / Airflow `ds` argument is only logged. Every run fetches the current window.
+- **Dev tooling not in `requirements.txt`:** `make setup` (`pre-commit`) and `make lint` (`bandit`, `ruff`, `sqlfluff`) need those tools installed separately, and `scripts/profile_data.py` needs `ydata-profiling`.
 
 ---
 

@@ -918,7 +918,7 @@
             <div class="telemetry-pills">
                 <div class="status-badge">
                     <span class="pulse-led"></span>
-                    <span id="streamStatusText">Edge Telemetry Stream · 72h Observed + 48h Horizon</span>
+                    <span id="streamStatusText">Edge Telemetry Stream · 96h Observed + 48h Horizon</span>
                 </div>
                 <div class="status-badge" id="topbar-ts">Synchronized</div>
                 <button class="drawer-toggle" onclick="toggleDrawer()">
@@ -1042,15 +1042,14 @@
                         </div>
                         <div class="bench-cell">
                             <span class="bench-lbl">TEMP HOLDOUT MAE</span>
-                            <span class="bench-val" id="diagTempMae" style="color:var(--forecast-green);">±0.79
-                                °C</span>
+                            <span class="bench-val" id="diagTempMae" style="color:var(--forecast-green);">—</span>
                         </div>
                         <div class="bench-cell">
                             <span class="bench-lbl">WIND HOLDOUT MAE</span>
-                            <span class="bench-val" id="diagWindMae" style="color:var(--wind-blue);">±3.22 km/h</span>
+                            <span class="bench-val" id="diagWindMae" style="color:var(--wind-blue);">—</span>
                         </div>
                     </div>
-                    <div class="bench-winner" id="benchWinner">★ Best in Berlin: EMA (±0.75°C)</div>
+                    <div class="bench-winner" id="benchWinner">★ Computing holdout ranking…</div>
                 </div>
             </aside>
 
@@ -1061,7 +1060,7 @@
                     <div class="horizon-card-header">
                         <div class="horizon-title-cluster">
                             <span class="horizon-tag" id="tempChartLabel">Temperature °C</span>
-                            <span class="horizon-range-badge">72h Observed ← [NOW] → Forecast Horizon</span>
+                            <span class="horizon-range-badge" id="horizonRangeBadge">96h Observed ← [NOW] → 48h Forecast</span>
                         </div>
                         <div class="legend-cluster">
                             <span class="leg-pill">
@@ -1169,13 +1168,13 @@
     </aside>
 
     <script>
-        // ── Station Metadata & Validated Holdout MAE Lookup ────
+        // ── Station Metadata (holdout MAE comes from station_summary.json) ──
         const STATION_META = {
-            'Berlin': { full: 'Berlin, Germany', coords: '52.5200° N, 13.4050° E · Elev 34m', mae: { linear: [0.79, 3.22], sma: [0.77, 3.53], ema: [0.75, 4.45] } },
-            'Tokyo': { full: 'Tokyo, Japan', coords: '35.6762° N, 139.6503° E · Elev 40m', mae: { linear: [3.58, 2.54], sma: [3.89, 1.68], ema: [4.23, 1.98] } },
-            'New York': { full: 'New York, USA', coords: '40.7128° N, 74.0060° W · Elev 10m', mae: { linear: [3.08, 9.16], sma: [3.19, 7.45], ema: [3.37, 9.33] } },
-            'London': { full: 'London, UK', coords: '51.5074° N, 0.1278° W · Elev 11m', mae: { linear: [5.04, 4.48], sma: [3.65, 4.34], ema: [3.36, 4.45] } },
-            'Sydney': { full: 'Sydney, AU', coords: '33.8688° S, 151.2093° E · Elev 19m', mae: { linear: [5.10, 8.64], sma: [4.42, 10.61], ema: [4.69, 10.51] } }
+            'Berlin': { full: 'Berlin, Germany', coords: '52.5200° N, 13.4050° E · Elev 34m' },
+            'Tokyo': { full: 'Tokyo, Japan', coords: '35.6762° N, 139.6503° E · Elev 40m' },
+            'New York': { full: 'New York, USA', coords: '40.7128° N, 74.0060° W · Elev 10m' },
+            'London': { full: 'London, UK', coords: '51.5074° N, 0.1278° W · Elev 11m' },
+            'Sydney': { full: 'Sydney, AU', coords: '33.8688° S, 151.2093° E · Elev 19m' }
         };
 
         // ── Chart.js Defaults ──────────────────────────────────
@@ -1200,6 +1199,23 @@
         let currentModel = 'ensemble'; // 'linear' | 'sma' | 'ema' | 'ensemble'
         let units = { temp: 'C', wind: 'kmh' };
         let currentWindSpeedKmh = 6.0;
+        // Per-station time zone + holdout MAE, computed by the pipeline (docs/station_summary.json).
+        let stationSummary = {};
+
+        // ── Time helpers ───────────────────────────────────────
+        // Record times are station-local wall-clock strings ("2026-11-18T14:00").
+        // They are handled as UTC instants and always formatted with timeZone 'UTC',
+        // so labels show the station's own local time regardless of the viewer's zone.
+        const HOUR_MS = 3600000;
+        function wallMs(t) { return Date.parse(/(Z|[+-]\d\d:\d\d)$/.test(t) ? t : t + 'Z'); }
+        function fmtWall(ms) {
+            const d = new Date(ms);
+            return d.toLocaleDateString('en', { month: 'short', day: 'numeric', timeZone: 'UTC' }) + ' ' +
+                d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
+        }
+        function observedFor(loc) {
+            return globalLiveRecords.filter(r => (r.location || 'Berlin') === loc && r.period !== 'historical');
+        }
 
         // ── Synesthetic Atmospheric Wind-Flow Particle Canvas ──
         const bgCanvas = document.getElementById('atmoBackdrop');
@@ -1308,54 +1324,40 @@
 
         // ── Per-Station Timeline Normalization (Fixes Multi-City Offset Bug) ──
         function normalizeTimelinePerLocation(liveRecords, predRecords) {
+            // The site serves a static snapshot, so each station's timeline is shifted so its
+            // last observed hour lands on the station's *current local hour* (now + UTC offset).
             const now = new Date();
-            const currentHour = new Date(now);
-            currentHour.setMinutes(0, 0, 0);
-
             const locations = [...new Set(liveRecords.map(r => r.location || 'Berlin'))];
             locations.forEach(loc => {
-                const locObserved = liveRecords
-                    .filter(r => (r.location || 'Berlin') === loc && r.period !== 'historical')
-                    .slice(0, 72);
-                if (!locObserved.length) return;
-
-                const lastObsMs = new Date(locObserved[locObserved.length - 1].time).getTime();
-                const offset = currentHour.getTime() - lastObsMs;
-
-                liveRecords.filter(r => (r.location || 'Berlin') === loc).forEach(r => {
-                    if (r.time) r.time = new Date(new Date(r.time).getTime() + offset).toISOString();
-                });
-                predRecords.filter(r => (r.location || 'Berlin') === loc).forEach(r => {
-                    if (r.time) r.time = new Date(new Date(r.time).getTime() + offset).toISOString();
-                });
+                const obs = liveRecords.filter(r => (r.location || 'Berlin') === loc && r.period !== 'historical');
+                if (!obs.length) return;
+                const offsetSec = (stationSummary[loc] && stationSummary[loc].utc_offset_seconds) || 0;
+                const localNowHour = Math.floor((now.getTime() + offsetSec * 1000) / HOUR_MS) * HOUR_MS;
+                const shift = localNowHour - wallMs(obs[obs.length - 1].time);
+                const move = r => { if (r.time) r.time = new Date(wallMs(r.time) + shift).toISOString(); };
+                liveRecords.filter(r => (r.location || 'Berlin') === loc).forEach(move);
+                predRecords.filter(r => (r.location || 'Berlin') === loc).forEach(move);
             });
             return now;
         }
 
         // ── YoY Anomaly: latest observed temp vs the matching hour one year back ──
         function computeStationYoyDelta(loc) {
-            const locLive = globalLiveRecords.filter(r => (r.location || 'Berlin') === loc);
-            const currentYear = locLive.filter(r => r.period !== 'historical').slice(0, 72);
-            const lastYear = locLive.filter(r => r.period === 'historical');
-            if (!currentYear.length || !lastYear.length) return null;
+            const obs = observedFor(loc);
+            const lastYear = globalLiveRecords.filter(r => (r.location || 'Berlin') === loc && r.period === 'historical');
+            if (!obs.length || !lastYear.length) return null;
 
-            const startMs = new Date(currentYear[0].time).getTime();
-            const histByDiff = {};
+            // Compare the latest observed hour with the closest YoY reading at or before it (within a day).
+            const latest = obs[obs.length - 1];
+            const latestMs = wallMs(latest.time);
+            let best = null, bestMs = -Infinity;
             lastYear.forEach(hr => {
-                const diff = Math.round((new Date(hr.time).getTime() - startMs) / 3600000);
-                histByDiff[diff] = hr.temperature_2m;
+                const m = wallMs(hr.time);
+                if (m <= latestMs && m > bestMs) { best = hr; bestMs = m; }
             });
-
-            const latestIdx = currentYear.length - 1;
-            const latestTempRaw = currentYear[latestIdx].temperature_2m;
-            // Walk backward from the latest observed hour to find the closest aligned YoY reading.
-            for (let i = latestIdx; i >= 0; i--) {
-                if (histByDiff[i] !== undefined) {
-                    const deltaC = latestTempRaw - histByDiff[i];
-                    return units.temp === 'C' ? deltaC : deltaC * 9 / 5;
-                }
-            }
-            return null;
+            if (!best || latestMs - bestMs > 24 * HOUR_MS) return null;
+            const deltaC = latest.temperature_2m - best.temperature_2m;
+            return units.temp === 'C' ? deltaC : deltaC * 9 / 5;
         }
 
         function updateStationCards() {
@@ -1364,9 +1366,7 @@
             let minNegLoc = null, minNeg = Infinity;
 
             STATIONS.forEach(loc => {
-                const recs = globalLiveRecords
-                    .filter(r => (r.location || 'Berlin') === loc && r.period !== 'historical')
-                    .slice(0, 72);
+                const recs = observedFor(loc);
                 if (!recs.length) return;
                 const latest = recs[recs.length - 1];
                 const tVal = units.temp === 'C' ? latest.temperature_2m : (latest.temperature_2m * 9 / 5 + 32);
@@ -1400,10 +1400,14 @@
         // ── Fetch Telemetry & Predictions ──────────────────────
         async function fetchData() {
             try {
-                const [liveRes, predRes] = await Promise.all([
+                const [liveRes, predRes, summaryRes] = await Promise.all([
                     fetch('sample_telemetry.json?t=' + Date.now()),
-                    fetch('predictions.json?t=' + Date.now()).catch(() => null)
+                    fetch('predictions.json?t=' + Date.now()).catch(() => null),
+                    fetch('station_summary.json?t=' + Date.now()).catch(() => null)
                 ]);
+                if (summaryRes && summaryRes.ok) {
+                    try { stationSummary = (await summaryRes.json()).stations || {}; } catch (e) { stationSummary = {}; }
+                }
                 const liveText = await liveRes.text();
                 globalLiveRecords = liveText.trim().split('\n')
                     .map(r => { try { return JSON.parse(r); } catch (e) { return null; } })
@@ -1447,57 +1451,54 @@
         // ── Process & Render Active Station ────────────────────
         function processData(liveRecords, predRecords) {
             const locLive = liveRecords.filter(r => (r.location || 'Berlin') === currentLocation);
-            const currentYear = locLive.filter(r => r.period !== 'historical').slice(0, 72);
+            const observedAll = locLive.filter(r => r.period !== 'historical');
             const lastYear = locLive.filter(r => r.period === 'historical');
 
-            if (!currentYear.length) return;
+            if (!observedAll.length) return;
+
+            // Hourly time axis: 2× horizon observed hours ending at NOW, then `horizon` forecast
+            // hours, so the chart is always two-thirds observed and one-third forecast.
+            // Values are placed by timestamp, so hours dropped by the anomaly filter show as gaps
+            // instead of silently shifting everything after them.
+            const obsHours = currentHorizon * 2;
+            const totalHours = obsHours + currentHorizon;
+            const nowIndex = obsHours - 1;
+            const nowMs = wallMs(observedAll[observedAll.length - 1].time);
+            const startMs = nowMs - nowIndex * HOUR_MS;
+            const slotOf = t => Math.round((wallMs(t) - startMs) / HOUR_MS);
+            const currentYear = observedAll.filter(r => { const i = slotOf(r.time); return i >= 0 && i <= nowIndex; });
 
             const primaryMethod = currentModel === 'ensemble' ? 'linear' : currentModel;
-            const locPredPrimary = predRecords
-                .filter(r => (r.location || 'Berlin') === currentLocation && (r.method || 'linear') === primaryMethod)
-                .slice(0, currentHorizon);
 
-            const totalHours = currentYear.length + locPredPrimary.length;
-            const nowIndex = currentYear.length - 1;
-
-            const labels = [];
-            const temps = [];
-            const winds = [];
+            const labels = Array.from({ length: totalHours }, (_, i) => fmtWall(startMs + i * HOUR_MS));
+            const temps = Array(totalHours).fill(null);
+            const winds = Array(totalHours).fill(null);
             const histTemps = Array(totalHours).fill(null);
             const histWinds = Array(totalHours).fill(null);
 
             currentYear.forEach(r => {
-                const d = new Date(r.time);
-                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' +
-                    d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
-                temps.push(units.temp === 'C' ? r.temperature_2m : (r.temperature_2m * 9 / 5 + 32));
-                winds.push(units.wind === 'kmh' ? r.wind_speed_10m : (r.wind_speed_10m / 3.6));
-            });
-
-            locPredPrimary.forEach(r => {
-                const d = new Date(r.time);
-                labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' +
-                    d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }));
-                temps.push(null);
-                winds.push(null);
+                const i = slotOf(r.time);
+                temps[i] = units.temp === 'C' ? r.temperature_2m : (r.temperature_2m * 9 / 5 + 32);
+                winds[i] = units.wind === 'kmh' ? r.wind_speed_10m : (r.wind_speed_10m / 3.6);
             });
 
             // Helper to build forecast array for a given method
             function buildForecastSeries(methodName) {
                 const recs = predRecords
-                    .filter(r => (r.location || 'Berlin') === currentLocation && (r.method || 'linear') === methodName)
-                    .slice(0, currentHorizon);
+                    .filter(r => (r.location || 'Berlin') === currentLocation && (r.method || 'linear') === methodName);
                 const fTemp = Array(totalHours).fill(null);
                 const fWind = Array(totalHours).fill(null);
-                if (currentYear.length && recs.length) {
+                if (recs.length) {
                     fTemp[nowIndex] = temps[nowIndex];
                     fWind[nowIndex] = winds[nowIndex];
                 }
-                recs.forEach((r, idx) => {
-                    fTemp[currentYear.length + idx] = units.temp === 'C'
+                recs.forEach(r => {
+                    const i = slotOf(r.time);
+                    if (i <= nowIndex || i >= totalHours) return;
+                    fTemp[i] = units.temp === 'C'
                         ? r.predicted_temperature_2m
                         : (r.predicted_temperature_2m * 9 / 5 + 32);
-                    fWind[currentYear.length + idx] = units.wind === 'kmh'
+                    fWind[i] = units.wind === 'kmh'
                         ? r.predicted_wind_speed_10m
                         : (r.predicted_wind_speed_10m / 3.6);
                 });
@@ -1506,26 +1507,29 @@
 
             const primarySeries = buildForecastSeries(primaryMethod);
 
-            // Build YoY arrays aligned by hour index
-            if (lastYear.length > 0 && currentYear.length > 0) {
-                const startMs = new Date(currentYear[0].time).getTime();
-                lastYear.forEach(hr => {
-                    const diff = Math.round((new Date(hr.time).getTime() - startMs) / 3600000);
-                    if (diff >= 0 && diff < totalHours) {
-                        histTemps[diff] = units.temp === 'C' ? hr.temperature_2m : (hr.temperature_2m * 9 / 5 + 32);
-                        histWinds[diff] = units.wind === 'kmh' ? hr.wind_speed_10m : (hr.wind_speed_10m / 3.6);
-                    }
-                });
-            }
+            // YoY baseline on the same time axis
+            lastYear.forEach(hr => {
+                const i = slotOf(hr.time);
+                if (i >= 0 && i < totalHours) {
+                    histTemps[i] = units.temp === 'C' ? hr.temperature_2m : (hr.temperature_2m * 9 / 5 + 32);
+                    histWinds[i] = units.wind === 'kmh' ? hr.wind_speed_10m : (hr.wind_speed_10m / 3.6);
+                }
+            });
+
+            const tzLabel = (stationSummary[currentLocation] && stationSummary[currentLocation].timezone_abbreviation) || 'UTC';
+            const rangeBadge = document.getElementById('horizonRangeBadge');
+            if (rangeBadge) rangeBadge.textContent = `${obsHours}h Observed ← [NOW] → ${currentHorizon}h Forecast · local time (${tzLabel})`;
+            const streamStatus = document.getElementById('streamStatusText');
+            if (streamStatus) streamStatus.textContent = `Edge Telemetry Stream · ${obsHours}h Observed + ${currentHorizon}h Horizon`;
 
             // Update Editorial HUD Readings
-            const latestRaw = currentYear[currentYear.length - 1];
+            const latestRaw = observedAll[observedAll.length - 1];
             currentWindSpeedKmh = latestRaw.wind_speed_10m || 5.0;
 
             const latestTemp = temps[nowIndex];
             const latestWind = winds[nowIndex];
-            const lastHistTemp = histTemps.slice(0, currentYear.length).filter(v => v !== null).pop();
-            const lastHistWind = histWinds.slice(0, currentYear.length).filter(v => v !== null).pop();
+            const lastHistTemp = histTemps.slice(0, nowIndex + 1).filter(v => v !== null).pop();
+            const lastHistWind = histWinds.slice(0, nowIndex + 1).filter(v => v !== null).pop();
 
             document.getElementById('currentTemp').textContent = latestTemp != null ? latestTemp.toFixed(1) : '--';
             document.getElementById('currentWind').textContent = latestWind != null ? latestWind.toFixed(1) : '--';
@@ -1559,27 +1563,36 @@
                 document.getElementById('diagTempPeak').textContent = `${minPred}° → ${maxPred}°${units.temp}`;
             }
 
-            const meta = STATION_META[currentLocation] || STATION_META['Berlin'];
-            const maePair = meta.mae[primaryMethod] || meta.mae['linear'];
-            const tMae = units.temp === 'C' ? maePair[0] : (maePair[0] * 1.8);
-            const wMae = units.wind === 'kmh' ? maePair[1] : (maePair[1] / 3.6);
+            // Holdout MAE: computed by the pipeline (train on the observed window minus its last
+            // N hours, score the forecast against those N observed hours).
+            const summary = stationSummary[currentLocation] || {};
+            const holdout = summary.holdout_mae || {};
+            const holdoutHours = summary.holdout_hours || 24;
+            const activeMae = holdout[primaryMethod];
             document.getElementById('activeModelTag').textContent = currentModel.toUpperCase();
-            document.getElementById('diagTempMae').textContent = `±${tMae.toFixed(2)} °${units.temp}`;
-            document.getElementById('diagWindMae').textContent = `±${wMae.toFixed(2)} ${units.wind === 'kmh' ? 'km/h' : 'm/s'}`;
+            document.getElementById('diagTempMae').textContent = activeMae
+                ? `±${(units.temp === 'C' ? activeMae.temp_mae : activeMae.temp_mae * 1.8).toFixed(2)} °${units.temp}` : '—';
+            document.getElementById('diagWindMae').textContent = activeMae
+                ? `±${(units.wind === 'kmh' ? activeMae.wind_mae : activeMae.wind_mae / 3.6).toFixed(2)} ${units.wind === 'kmh' ? 'km/h' : 'm/s'}` : '—';
 
             // Auto-highlight the best-performing model (lowest temperature holdout MAE) for this station.
-            const candidates = ['linear', 'sma', 'ema'];
-            let winnerModel = candidates[0];
+            const candidates = ['linear', 'sma', 'ema'].filter(m => holdout[m]);
+            let winnerModel = null;
             candidates.forEach(m => {
-                if (meta.mae[m][0] < meta.mae[winnerModel][0]) winnerModel = m;
+                if (!winnerModel || holdout[m].temp_mae < holdout[winnerModel].temp_mae) winnerModel = m;
             });
-            const winnerMaeC = meta.mae[winnerModel][0];
-            const winnerMaeDisplay = units.temp === 'C' ? winnerMaeC : winnerMaeC * 1.8;
             const benchWinnerEl = document.getElementById('benchWinner');
             if (benchWinnerEl) {
-                benchWinnerEl.textContent = `★ Best in ${currentLocation}: ${winnerModel.toUpperCase()} (±${winnerMaeDisplay.toFixed(2)}°${units.temp})`;
+                if (winnerModel) {
+                    const w = holdout[winnerModel].temp_mae;
+                    const wDisplay = units.temp === 'C' ? w : w * 1.8;
+                    benchWinnerEl.textContent = `★ Best in ${currentLocation}: ${winnerModel.toUpperCase()} (±${wDisplay.toFixed(2)}°${units.temp})`;
+                    benchWinnerEl.title = `Lowest temperature MAE when forecasting the last ${holdoutHours} observed hours from the hours before them`;
+                } else {
+                    benchWinnerEl.textContent = '★ Holdout scores unavailable';
+                }
             }
-            candidates.forEach(m => {
+            ['linear', 'sma', 'ema'].forEach(m => {
                 const star = document.getElementById('star-' + m);
                 if (star) star.style.display = m === winnerModel ? 'inline' : 'none';
             });
@@ -1591,9 +1604,7 @@
                 [...currentYear].reverse().slice(0, 15).forEach(rec => {
                     const row = document.createElement('div');
                     row.className = 'feed-row';
-                    const t = new Date(rec.time);
-                    const ts = t.toLocaleDateString('en', { month: 'short', day: 'numeric' }) + ' ' +
-                        t.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+                    const ts = fmtWall(wallMs(rec.time));
                     const tTemp = units.temp === 'C' ? rec.temperature_2m : (rec.temperature_2m * 9 / 5 + 32);
                     const tWind = units.wind === 'kmh' ? rec.wind_speed_10m : (rec.wind_speed_10m / 3.6);
                     row.innerHTML = `

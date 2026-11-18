@@ -35,7 +35,7 @@ def ingestion_wrapper(**kwargs):
 with DAG(
     'daily_telemetry_ingestion',
     default_args=default_args,
-    description='A daily DAG to ingest telemetry JSON logs from S3 to PostgreSQL',
+    description='Daily Open-Meteo weather ingestion: validate, filter anomalies, forecast, write docs/*.json and PostgreSQL',
     schedule='@daily',
     start_date=datetime(2026, 8, 20), # arbitrary start date in the past
     catchup=False,
