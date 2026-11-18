@@ -6,7 +6,7 @@ How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and 
 
 | Stage | What actually runs | Code |
 | --- | --- | --- |
-| Ingestion | Python `urllib.request` calls to the Open-Meteo **forecast** API (live, hourly) and **archive** API (a 15-day window one year earlier, `today − 372 d` → `today − 358 d`), for the 5 stations in `config.json`. All timestamps are UTC | `src/etl/extract_load.py` |
+| Ingestion | Python `urllib.request` calls to the Open-Meteo **forecast** API (live, hourly) and **archive** API (a 15-day window one year earlier, `today − 372 d` → `today − 358 d`), for the 5 stations in `config.json`. Both requests use `timezone=auto`, so timestamps are station-local wall-clock time; the archive date range is computed from today's UTC date | `src/etl/extract_load.py` |
 | Caching | Each API response is cached on disk in `/tmp/aether_cache/` (MD5 of the URL) for `cache_ttl_seconds` (1800s) | `src/etl/cache_manager.py` |
 | Validation | Data contract: `time` (string), `temperature_2m` and `wind_speed_10m` (numeric) must be present | `src/etl/validator.py` |
 | Anomaly filter | Local spike filter on **live temperature and wind**: flags an hour that is > `anomaly_sigma_threshold` (2.0) robust σ and more than `anomaly_min_deviation_c` (2.5 °C) / `anomaly_min_deviation_wind_kmh` (12 km/h) off a robust line through the ±`anomaly_window_hours` (3) neighbouring hours. A flag on either metric removes the whole hour. Historical records are not filtered | `src/etl/anomaly_detector.py` |
