@@ -1,10 +1,10 @@
 # Aether — Climate Intelligence & Telemetry Analytics Engine
 
-[![CI Pipeline](https://github.com/your-org/aether/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/aether/actions)
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![CI Pipeline](https://github.com/miladgk/aether-climate-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/miladgk/aether-climate-engine/actions)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
 [![PostgreSQL 15](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![dbt Core](https://img.shields.io/badge/dbt-1.7.0-orange.svg)](https://www.getdbt.com/)
+[![dbt Core](https://img.shields.io/badge/dbt-1.7.20-orange.svg)](https://www.getdbt.com/)
 [![Apache Airflow](https://img.shields.io/badge/airflow-2.10.5-teal.svg)](https://airflow.apache.org/)
 [![Terraform](https://img.shields.io/badge/terraform-1.5+-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,7 +21,7 @@
 
 ## 🌟 Key Features
 
-- **🌐 Multi-Station Global Ingestion**: Real-time atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney, etc.) via Open-Meteo & AWS S3.
+- **🌐 Multi-Station Global Ingestion**: Real-time atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney) via the Open-Meteo forecast & archive HTTP APIs, with a local TTL response cache. (An AWS S3 streaming connector exists in `src/infrastructure/s3_connector.py` but is not wired into the current pipeline.)
 - **🔍 Statistical Anomaly Detection**: Real-time $\pm 2.0\sigma$ Z-score anomaly filtering with automated Dead Letter Queue (`.dlq`) isolation and routing.
 - **🤖 Multi-Model Machine Learning Engine**:
   - **Linear Regression**: Diurnal harmonic trend forecasting with graceful pure-Python fallback.
@@ -31,10 +31,13 @@
 - **🎛️ Field Research Station Dashboard**:
   - Live animated telemetry plotting with Chart.js.
   - Dynamic unit conversion on the fly ($^\circ\text{C} \leftrightarrow ^\circ\text{F}$, $\text{km/h} \leftrightarrow \text{m/s}$) with auto-scaling delta thresholds.
-  - Interactive multi-theme engine (*Dark Station*, *Nord Frost*, *Stone Paper*).
-  - Real-time blinking radar indicators marking the exact current-time horizon.
-- **🏗️ Modern Data Warehouse & Modeling**: PostgreSQL raw layer paired with **dbt Core** dimensional models (staging, marts, facts) and **Apache Airflow** orchestration.
-- **☁️ Infrastructure as Code (IaC)**: Modular **Terraform** configurations for AWS S3, IAM policies, and cloud storage lifecycle management.
+  - Interactive multi-theme engine (*Ember*, *Nord*, *Stone*).
+  - A "NOW" meridian (dashed line, label, and pulsing beacon) marking the boundary between observed data and the forecast.
+  - Per-station YoY anomaly badges, with the biggest warming outlier glowing red and the biggest cooling outlier glowing blue.
+  - A "Compare All" ensemble view (default) that shades the min/max band across the three models, and a badge that stars the model with the lowest holdout error for the selected station.
+  - 12h / 24h / 48h forecast horizon switching.
+- **🏗️ Data Warehouse & Orchestration**: Clean readings are batch-loaded into a PostgreSQL `raw_telemetry` table (with graceful fallback when the DB is down), and an **Apache Airflow** DAG wraps the daily ingestion. The **dbt Core** project (staging + core models) currently models a separate user-clickstream schema, not the weather data — see **Known Limitations** below.
+- **☁️ Infrastructure as Code (IaC)**: **Terraform** configurations for an AWS S3 bucket (with a 30-day Glacier lifecycle rule) and an RDS PostgreSQL 15 instance. Not provisioned against a live AWS account; the DB password has no default and must be supplied via `TF_VAR_db_password`.
 - **🧪 Robust Testing & Security**: Unit, smoke, integration (real PostgreSQL), E2E + cross-browser compatibility (Chromium/Firefox/WebKit via Playwright) and regression test layers via Pytest (`pytest-mock`, `moto`), Bandit SAST scanning, `pip-audit` dependency/CVE scanning, and a GitHub Actions CI workflow that runs them all on every push/PR.
 
 ---
@@ -45,7 +48,7 @@
 flowchart TD
     subgraph Ingestion ["1. Ingestion & Storage"]
         API[Open-Meteo Global APIs] -->|HTTP / Cache Layer| ETL[Python Ingestion Engine]
-        S3[AWS S3 Raw Buckets] -->|boto3 stream| ETL
+        S3[AWS S3 Connector<br/>not wired in] -.->|boto3 stream| ETL
         ETL -->|Validation & Hashing| VAL[Schema Validator]
     end
 
@@ -58,7 +61,7 @@ flowchart TD
 
     subgraph Warehouse ["3. Warehouse & Transformation"]
         AD -->|Clean Data| PG[(PostgreSQL<br/>raw_telemetry)]
-        PG --> DBT[dbt Core Models<br/>Staging & Dimensional Marts]
+        PG -.->|schema not yet aligned| DBT[dbt Core Models<br/>Staging & Core]
     end
 
     subgraph Visualization ["4. Intelligence Delivery"]
@@ -88,12 +91,12 @@ flowchart TD
 .
 ├── config.json                 # Station coordinates, ML horizons & pipeline configuration
 ├── dags/                       # Apache Airflow workflow DAG definitions
-│   └── telemetry_pipeline.py   # Airflow daily ingestion & transformation DAG
+│   └── daily_telemetry_ingestion.py  # Airflow daily ingestion DAG
 ├── dbt_telemetry/              # dbt Core dimensional models & staging SQL
 │   ├── dbt_project.yml
 │   └── models/
 │       ├── staging/            # Data cleansing & column casting
-│       └── marts/              # Fact & dimension aggregate tables
+│       └── core/               # Fact table (fct_user_events)
 ├── docs/                       # Aether Command Center Web Interface — also the live GitHub Pages site
 │   ├── index.html              # Custom Field Station interface & Chart.js engine
 │   ├── sample_telemetry.json   # Live & Historical station telemetry cache
@@ -102,7 +105,9 @@ flowchart TD
 │   └── runbook.md              # Operational runbook & troubleshooting
 ├── scripts/                    # Utility scripts & dashboard server
 │   ├── serve_dashboard.py      # Lightweight local telemetry server
-│   └── custom_bandit.py        # Static security analyzer script
+│   ├── custom_bandit.py        # Static security analyzer script
+│   ├── generate_mock_data.py   # Synthetic clickstream data generator
+│   └── profile_data.py         # Quick data profiling helper
 ├── src/                        # Core Python package
 │   ├── etl/
 │   │   ├── anomaly_detector.py # Statistical variance & anomaly filtering
@@ -111,12 +116,13 @@ flowchart TD
 │   │   ├── utils.py            # PII hashing & JSON flattening
 │   │   └── validator.py        # Schema validation
 │   ├── infrastructure/
-│   │   └── postgres_connector.py # SQLAlchemy / Psycopg2 connection pooler
+│   │   ├── postgres_connector.py # SQLAlchemy / Psycopg2 batch loader
+│   │   └── s3_connector.py     # boto3 S3 streaming connector (not wired into the pipeline)
 │   └── ml/
 │       └── predictor.py        # Linear, SMA, and EMA forecasting models
 ├── terraform/                  # Infrastructure as Code
-│   ├── main.tf                 # S3 buckets & AWS IAM policies
-│   └── variables.tf
+│   ├── main.tf                 # S3 bucket (Glacier lifecycle) & RDS PostgreSQL
+│   └── variables.tf            # Inputs; db_password has no default
 └── tests/                      # Automated test suite (unit, smoke, integration)
     ├── conftest.py             # Mock fixtures (AWS, Postgres)
     ├── test_extract_load.py    # Unit: ETL logic
@@ -137,8 +143,8 @@ flowchart TD
 
 ### 2. Clone and Setup Environment
 ```bash
-git clone https://github.com/your-username/aether.git
-cd aether
+git clone https://github.com/miladgk/aether-climate-engine.git
+cd aether-climate-engine
 
 # Create and activate virtual environment
 python3 -m venv venv
@@ -233,6 +239,8 @@ Every fix above was verified end-to-end on Python 3.10 in a disposable environme
 
 ## 📊 dbt Dimensional Modeling
 
+> **Note:** the dbt models currently describe a user-clickstream schema (`event_id`, `user_id`, …), not the weather columns the ETL writes to `raw_telemetry`. `dbt debug`/`dbt deps` run in CI, but `dbt run` against weather data will fail until the models are rewritten.
+
 To compile and execute the dbt transformation models:
 ```bash
 cd dbt_telemetry
@@ -241,6 +249,17 @@ dbt run
 dbt test
 dbt docs generate && dbt docs serve
 ```
+
+---
+
+## ⚠️ Known Limitations
+
+- **dbt ↔ pipeline mismatch:** the dbt models and `docs/data_dictionary.md` describe clickstream events, not weather telemetry.
+- **S3 connector unused:** ingestion goes straight to Open-Meteo over HTTP; `s3_connector.py` is legacy code.
+- **Static live site:** the GitHub Pages dashboard serves precomputed JSON snapshots and shifts their timestamps to the viewer's current hour in the browser; it does not run the Python ETL/ML on each visit.
+- **No cloud deployment:** the Terraform config has not been applied to a live AWS account.
+- **Leap years:** the YoY baseline uses a fixed 365-day offset.
+- **Secrets scanning scope:** `scripts/custom_bandit.py` only scans Python in `src/`; Terraform, YAML, and Docker Compose files are not scanned for hardcoded secrets.
 
 ---
 
