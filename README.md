@@ -6,7 +6,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![dbt Core](https://img.shields.io/badge/dbt-1.7.20-orange.svg)](https://www.getdbt.com/)
 [![Apache Airflow](https://img.shields.io/badge/airflow-2.10.5-teal.svg)](https://airflow.apache.org/)
-[![Terraform](https://img.shields.io/badge/terraform-1.5+-purple.svg)](https://www.terraform.io/)
+[![Terraform](https://img.shields.io/badge/terraform-AWS%20provider%205.x-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Aether** is an end-to-end weather-telemetry pipeline and dashboard. It pulls hourly temperature and wind data for five cities from the Open-Meteo APIs, validates it, filters statistical outliers into a dead-letter queue, produces 48-hour forecasts with three simple models, and compares everything against the same hours one year earlier in a static Chart.js dashboard published on GitHub Pages.
@@ -29,7 +29,7 @@
   - **Exponential Moving Average (EMA)**: Exponential decay memory modeling for high-responsiveness.
 - **📈 Full-Timeline YoY Comparative Analytics**: Pulls the same calendar window from one year earlier (Open-Meteo archive API), shifts it forward 365 days, and overlays it on the live and forecast curves.
 - **🎛️ Field Research Station Dashboard**:
-  - Live animated telemetry plotting with Chart.js.
+  - Animated Chart.js plots of observed, forecast and last-year data (from a static snapshot, see **Known Limitations**).
   - Dynamic unit conversion on the fly ($^\circ\text{C} \leftrightarrow ^\circ\text{F}$, $\text{km/h} \leftrightarrow \text{m/s}$) with auto-scaling delta thresholds.
   - Interactive multi-theme engine (*Ember*, *Nord*, *Stone*).
   - A "NOW" meridian (dashed line, label, and pulsing beacon) marking the boundary between observed data and the forecast.
@@ -165,9 +165,11 @@ pip install -r requirements.txt
 ```
 
 ### 3. Environment Configuration (optional)
-The pipeline reads `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB` from the environment. Nothing loads a `.env` file automatically, and the code defaults already match `docker-compose.yml`, so you can skip this step. If you use `.env.example`, note that its `POSTGRES_USER`/`POSTGRES_DB` values (`postgres` / `telemetry_db`) do **not** match the Compose database (`aether_user` / `aether_warehouse`). Edit them before exporting:
+The pipeline reads `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` and `POSTGRES_DB` from the environment. Nothing loads a `.env` file automatically, and the code defaults already match `docker-compose.yml`, so you can skip this step. If you use `.env.example`, note that its `POSTGRES_USER`/`POSTGRES_DB` values (`postgres` / `telemetry_db`) do **not** match the Compose database (`aether_user` / `aether_warehouse`). Edit them before exporting.
+
+To load the data into PostgreSQL as well, start the Compose database first. Without it the pipeline still runs and skips the DB insert with a warning:
 ```bash
-docker compose up -d postgres   # optional; without it the DB insert is skipped with a warning
+docker compose up -d postgres
 ```
 
 ### 4. Run the ETL & Machine Learning Pipeline
@@ -197,7 +199,7 @@ This project exercises several layers of the testing pyramid, each catching a di
 | **E2E** | `test_e2e_dashboard.py` | Drives the actual dashboard with Playwright: page loads, Chart.js renders both charts, unit/theme toggles update the UI, station switching updates the topbar — the only layer that touches the frontend JS at all. |
 | **Compatibility** | `test_e2e_dashboard.py` (parametrized) | Every E2E test above runs once per rendering engine — **Chromium, Firefox, WebKit/Safari** — so a browser-specific CSS/JS quirk fails on that one engine instead of going unnoticed. Any engine not installed is skipped individually. |
 | **Regression** | the full suite, run in CI on every push/PR | Re-runs everything above automatically so a change can't silently break a previously-working feature. |
-| **Security (SAST)** | `scripts/custom_bandit.py` | Static scan for insecure patterns in *our own code* (hardcoded secrets, unsafe deserialization, etc.). |
+| **Security (SAST)** | `scripts/custom_bandit.py` | Small AST check on Python under `src/` only: string literals assigned to names containing `password`/`secret`/`key`, and calls to `eval`/`exec`. Terraform, YAML and Compose files are not scanned. |
 | **Dependency / SCA Scanning** | `pip-audit` (CI step) | Scans every *third-party* package actually installed (`apache-airflow`, `protobuf`, `pytest`, etc.) against the PyPA Advisory Database for known CVEs — catches vulnerable dependencies that SAST never looks at. Advisory only: reports findings in the CI log without failing the build, since upgrading a pinned framework version (e.g. Airflow) is a deliberate decision, not something a gate should force on every push. |
 
 Run everything:
@@ -234,7 +236,7 @@ Running the scan surfaced a real, pre-existing dependency conflict and a set of 
 - Removed an explicit `protobuf<4.25.0` pin that conflicted with `apache-airflow`'s own `opentelemetry-proto` requirement (`protobuf>=5.0`) — this was breaking `pip install -r requirements.txt` entirely on a clean environment.
 - `dbt-core`/`dbt-postgres` `1.7.0` → `1.7.20` (a patch release on the same stable branch, not the breaking 1.8 package-split). Removing the protobuf pin above initially let pip resolve a protobuf version that satisfied everyone's *declared* version ranges but still crashed dbt-core 1.7.0 at runtime — its event-serialization code calls a protobuf `MessageToJson(..., including_default_value_fields=...)` API that newer protobuf releases removed, a bug the old tight pin had been silently working around. This is exactly what broke `dbt debug` in CI with `TypeError: MessageToJson() got an unexpected keyword argument`. `1.7.20` fixed that call internally, so `pip`'s resolver now lands on `protobuf==4.25.9` and both `dbt debug`/`dbt deps` exit cleanly. As a bonus, `1.7.20` also relaxed dbt-core's own `sqlparse` pin, which cleared the `sqlparse` CVEs for free.
 - `apache-airflow` `2.8.1` → `2.10.5` (latest 2.x release) — removes every CVE that had a 2.x fix, without the breaking API migration to Airflow 3.x. Updated `dags/daily_telemetry_ingestion.py` to drop two now-deprecated APIs (`schedule_interval` → `schedule`, removed `provide_context=True`) surfaced by the upgrade.
-- `pytest` `8.0.0` → `9.0.3` — verified against the full suite (30 tests, including E2E across 3 browsers and the Postgres integration tests) on Python 3.10, matching CI exactly.
+- `pytest` `8.0.0` → `9.0.3` — verified against the full suite at the time (30 tests, including E2E across 3 browsers and the Postgres integration tests) on Python 3.10, matching CI exactly.
 - `pip`/`setuptools` are now upgraded explicitly in the CI install step.
 - CI runner pinned to `ubuntu-24.04` instead of the floating `ubuntu-latest`, after GitHub moved "latest" to a newer Ubuntu release whose package names (`libicu74`, `libxml2`, etc.) aren't yet recognized by Playwright's `--with-deps` installer.
 
