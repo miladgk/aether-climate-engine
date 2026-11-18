@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: stg_raw_telemetry
-    description: "Cleansed and standardized raw telemetry data from S3."
+    description: "Cleansed and standardized user-clickstream events from raw_telemetry. Not compatible with the weather rows the ETL writes to that table."
     columns:
       - name: event_id
         description: "Unique identifier for the telemetry event."

@@ -9,9 +9,11 @@ How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and 
 | Ingestion | Python `urllib.request` calls to the Open-Meteo **forecast** API (live, hourly) and **archive** API (a 15-day window one year earlier, `today − 372 d` → `today − 358 d`), for the 5 stations in `config.json`. All timestamps are UTC | `src/etl/extract_load.py` |
 | Caching | Each API response is cached on disk in `/tmp/aether_cache/` (MD5 of the URL) for `cache_ttl_seconds` (1800s) | `src/etl/cache_manager.py` |
 | Validation | Data contract: `time` (string), `temperature_2m` and `wind_speed_10m` (numeric) must be present | `src/etl/validator.py` |
-| Anomaly filter | ±`anomaly_sigma_threshold` (2.0σ) filter on **live temperature only**; historical records are not filtered | `src/etl/anomaly_detector.py` |
-| Forecasting | Linear, SMA, and EMA forecasts for `ml_prediction_hours` (48h) per station, trained on the **first 72** clean live rows and starting the hour after the 72nd row | `src/ml/predictor.py` |
-| Outputs | `docs/sample_telemetry.json` (clean live + historical records) and `docs/predictions.json` (forecasts), both JSON Lines; best-effort batch insert into PostgreSQL table `raw_telemetry` | `src/etl/extract_load.py`, `src/infrastructure/postgres_connector.py` |
+| Anomaly filter | Local spike filter on **live temperature and wind**: flags an hour that is > `anomaly_sigma_threshold` (2.0) robust σ and more than `anomaly_min_deviation_c` (2.5 °C) / `anomaly_min_deviation_wind_kmh` (12 km/h) off a robust line through the ±`anomaly_window_hours` (3) neighbouring hours. A flag on either metric removes the whole hour. Historical records are not filtered | `src/etl/anomaly_detector.py` |
+| Observed window | Forecast API called with `timezone=auto` and `past_days`; only hours up to the station's current local hour are kept, and after filtering, the latest `observed_window_hours` (96) | `src/etl/extract_load.py` |
+| Forecasting | Linear, SMA, and EMA forecasts for `ml_prediction_hours` (48h) per station, trained on the observed window and starting the hour after "now". The daily cycle uses station-local hours | `src/ml/predictor.py` |
+| Model scoring | Holdout MAE per model (train on the window minus its last `holdout_hours` (24), score those hours), written to `docs/station_summary.json` with each station's time zone | `src/ml/predictor.py` (`evaluate_holdout`) |
+| Outputs | `docs/sample_telemetry.json` (clean live + historical records), `docs/predictions.json` (forecasts), both JSON Lines, and `docs/station_summary.json`; best-effort batch insert into PostgreSQL table `raw_telemetry` | `src/etl/extract_load.py`, `src/infrastructure/postgres_connector.py` |
 | Orchestration | Airflow DAG `daily_telemetry_ingestion` (`@daily`, 3 retries, 5-minute delay, `catchup=False`). Defined but not deployed anywhere | `dags/daily_telemetry_ingestion.py` |
 | Public site | GitHub Pages serves `docs/` as static files. It never runs the Python pipeline; the browser shifts the cached timestamps to the viewer's current hour | `.github/workflows/pages.yml`, `docs/index.html` |
 
@@ -29,7 +31,7 @@ docker compose up -d postgres        # optional: without it, the DB step is skip
 PYTHONPATH=. python3 src/etl/extract_load.py
 python3 scripts/serve_dashboard.py   # also re-runs the ETL on startup, then serves docs/ on http://localhost:8000
 ```
-Both commands **overwrite `docs/sample_telemetry.json` and `docs/predictions.json`** in your working tree.
+Both commands **overwrite `docs/sample_telemetry.json`, `docs/predictions.json` and `docs/station_summary.json`** in your working tree.
 
 Nothing in the code loads a `.env` file (there is no `python-dotenv`). Database settings come from exported `POSTGRES_*` environment variables, or from the code defaults when none are set (see "PostgreSQL connection problems" below).
 
@@ -38,7 +40,7 @@ The public site only changes when those files are committed and pushed. Any push
 ```bash
 wc -l docs/sample_telemetry.json docs/predictions.json   # predictions should be 5 stations × 3 methods × 48h = 720
 ```
-The holdout-MAE figures and the "Best in …" badge on the dashboard are hard-coded in `STATION_META` inside `docs/index.html`. Regenerating the data does **not** update them.
+Commit all three files together: the dashboard uses `station_summary.json` for time zones and the MAE ranking, so mixing files from different runs mislabels the chart. If you change `observed_window_hours`, the chart still shows `2 × horizon` observed hours, so keep it ≥ 96 for the 48h view.
 
 ## 3. Failure Modes & Troubleshooting
 
@@ -59,7 +61,7 @@ The pipeline only returns `failed` if something raises while it is writing outpu
 ### Records in the Dead Letter Queue
 `dead_letter_queue.dlq` (repo root, git-ignored, append-only) holds two kinds of lines:
 - **Schema failures:** `{"reason": "Schema Validation Failure", "record": {...}}`. Usually an upstream API format change; check the Open-Meteo response.
-- **Anomalies:** the raw record itself, with no `reason` field. A live temperature reading outside ±2.0σ of that station's window mean. These may be real weather extremes, not just sensor faults. Review them before changing `anomaly_sigma_threshold`.
+- **Anomalies:** `{"reason": "Anomaly: <metric(s)> spike", "record": {...}}`, a live hour whose temperature and/or wind jumped away from its neighbouring hours (see the filter row in §1). Most are sensor or data faults, but a very sharp real change (e.g. a thunderstorm outflow, sea-breeze or wind front) can also be flagged. Review them before changing `anomaly_sigma_threshold`, `anomaly_window_hours`, `anomaly_min_deviation_c` or `anomaly_min_deviation_wind_kmh`. Lines written before 2026-11-18 are bare records with no `reason`.
 
 The file is never rotated. Truncate it manually once it has been reviewed.
 

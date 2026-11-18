@@ -9,42 +9,51 @@ JSON Lines, one hourly reading per line, written by `src/etl/extract_load.py` an
 
 | Field | Type | Unit | Definition |
 | --- | --- | --- | --- |
-| `time` | string (ISO-8601, no timezone) | — | Hour of the reading in **UTC/GMT** (Open-Meteo's default; the pipeline does not send a `timezone` parameter). For `historical` rows this is the original timestamp **shifted forward 365 days**, so it lines up with the current timeline. |
+| `time` | string (ISO-8601, no timezone) | — | Hour of the reading in the **station's local time** (requested with `timezone=auto`; the station's UTC offset is in `station_summary.json`). For `historical` rows this is the original timestamp **shifted forward 365 days**, so it lines up with the current timeline. |
 | `temperature_2m` | number | °C | Air temperature 2 m above ground. |
 | `wind_speed_10m` | number | km/h | Wind speed 10 m above ground. |
 | `location` | string | — | Station name from `config.json`: `Berlin`, `Tokyo`, `New York`, `London`, `Sydney`. |
-| `period` | string | — | `live`: from the Open-Meteo **forecast** API, which returns 7 days of hourly values starting at 00:00 today. That mixes today's elapsed hours with Open-Meteo's own forecast for the coming days, so a `live` row is not necessarily a measured observation. `historical`: from the archive API, used as the Year-over-Year baseline. The archive request covers `today − 372 d` → `today − 358 d` (15 calendar days, 360 hourly rows per station), which after the +365-day shift spans `today − 7 d` → `today + 7 d`. |
+| `period` | string | — | `live`: an hour that has **already happened**, taken from the Open-Meteo forecast API's `past_days` output (Open-Meteo's best-estimate weather for past hours, not a raw station reading). Future hours are discarded. `historical`: from the archive API, used as the Year-over-Year baseline. The archive request covers `today − 372 d` → `today − 358 d` (15 calendar days, 360 hourly rows per station), which after the +365-day shift spans `today − 7 d` → `today + 7 d`. |
 
 Quality rules applied before a row is written:
 - **Schema contract** (`src/etl/validator.py`): `time` must be a string; `temperature_2m` and `wind_speed_10m` must be numeric. Hours where Open-Meteo returned `null` are dropped during parsing.
-- **Anomaly filter** (`src/etl/anomaly_detector.py`): `live` rows whose `temperature_2m` is outside ±2.0σ of that station's window mean are removed and sent to `dead_letter_queue.dlq`. Wind speed is not filtered, and neither are `historical` rows.
+- **Anomaly filter** (`src/etl/anomaly_detector.py`): a `live` row is removed and sent to `dead_letter_queue.dlq` when its `temperature_2m` **or** its `wind_speed_10m` is more than `anomaly_sigma_threshold` (2.0) robust σ **and** more than a minimum deviation (`anomaly_min_deviation_c` = 2.5 °C for temperature, `anomaly_min_deviation_wind_kmh` = 12 km/h for wind; both doubled for the first/last 3 hours) away from a robust line fitted through the `anomaly_window_hours` (3) hours on either side. This catches sudden spikes and drops but keeps normal daily peaks, gusty wind, and gradual weather changes. It can occasionally flag the hour right at a very abrupt real change (the 2026-11-18 run flagged one London wind hour at a front). Drops of wind to near-calm are only caught when large, because a real calm hour looks the same. `historical` rows are not filtered.
 
-**Only the first 72 `live` rows per station are used.** The forecaster trains on `records[:72]` (`src/ml/predictor.py`), and the dashboard shows the same `.slice(0, 72)` as its "Observed" series (`docs/index.html`). The remaining ~80–95 `live` rows per station are written to the file but not displayed or modelled. Because the forecast API starts at 00:00 UTC today, those 72 rows run from 00:00 today to 23:00 two days later, so most of the "Observed" curve near the NOW line is Open-Meteo's own forecast, not a measurement.
+**Observed window.** After filtering, only the latest `observed_window_hours` (96) clean `live` rows per station are written, ending at the station's current local hour. That window is exactly what the models are trained on and what the dashboard plots as "Observed". The chart always shows twice as many observed hours as forecast hours (96 + 48 by default), so it is two-thirds observed and one-third forecast. An hour dropped by the anomaly filter leaves a gap (the dashboard draws it as a break in the line). With the local spike filter this is rare; the 2026-11-18 snapshot has none.
 
 ### 1.2 `docs/predictions.json`: model forecasts
 JSON Lines, one forecast hour per station per model. Expected size: 5 stations × 3 methods × 48 hours = 720 rows.
 
 | Field | Type | Unit | Definition |
 | --- | --- | --- | --- |
-| `time` | string (ISO-8601, UTC) | — | Forecast hour. Starts the hour after the station's **72nd** clean `live` row (the end of the training window), not after its last `live` row. |
-| `predicted_temperature_2m` | number | °C | Forecast temperature (trend + 24h cosine cycle peaking at 14:00 **UTC** + decaying boundary residual). |
-| `predicted_wind_speed_10m` | number | km/h | Forecast wind speed (same method, cycle peaking at 16:00 **UTC**, clamped to ≥ 0). |
+| `time` | string (ISO-8601, station-local) | — | Forecast hour. Starts the hour after the station's last observed (`live`) row, i.e. right after "now". |
+| `predicted_temperature_2m` | number | °C | Forecast temperature (trend + 24h cosine cycle peaking at 14:00 **station-local time** + decaying boundary residual). |
+| `predicted_wind_speed_10m` | number | km/h | Forecast wind speed (same method, cycle peaking at 16:00 **station-local time**, clamped to ≥ 0). |
 | `method` | string | — | `linear` (least-squares trend), `sma` (12-hour simple moving average), or `ema` (exponential moving average, α = 0.3). |
 | `location` | string | — | Station name, as above. |
 
-The dashboard's "Compare All" view, ensemble fan (min/max across the three methods), and YoY delta badges are computed in the browser from these two files and are not stored anywhere. The **holdout MAE** values and the winning-model badge are different: they come from a hard-coded `STATION_META` table in `docs/index.html`, not from these files. No code in the repository produces or re-checks those MAE numbers, so they do not change when the data is regenerated.
+The dashboard's "Compare All" view, ensemble fan (min/max across the three methods), and YoY delta badges are computed in the browser from these files and are not stored anywhere.
 
-### 1.3 PostgreSQL `raw_telemetry`
+### 1.3 `docs/station_summary.json`: time zones and holdout MAE
+One JSON object written on every pipeline run: `generated_at_utc`, plus `stations.<name>` with:
+
+| Field | Definition |
+| --- | --- |
+| `utc_offset_seconds`, `timezone`, `timezone_abbreviation` | Station time zone as reported by Open-Meteo (`timezone=auto`). The dashboard uses the offset to put NOW at the station's current local hour and labels the chart in local time. |
+| `observed_hours`, `observed_until` | How many observed rows were kept and the local time of the last one. |
+| `holdout_hours` | Size of the backtest window (`config.json` → `holdout_hours`, default 24). |
+| `holdout_mae.<linear\|sma\|ema>` | `temp_mae` (°C), `wind_mae` (km/h) and `n` (hours scored). Each model is trained on the observed window minus its last `holdout_hours`, then its forecast is compared with those observed hours. `n` < `holdout_hours` when the anomaly filter removed some of them. The dashboard's MAE cells and "★ Best in …" badge (lowest `temp_mae`) come from here. |
+
+### 1.4 PostgreSQL `raw_telemetry`
 Best-effort copy of the rows in 1.1, batch-inserted by `src/infrastructure/postgres_connector.py`. Columns are `time`, `temperature_2m`, `wind_speed_10m`, `location`, `period`. All are created as **`TEXT`**, so cast them before doing numeric or time operations. There is no primary key and no de-duplication: each pipeline run appends a full copy of the current window.
 
-### 1.4 `dead_letter_queue.dlq`
-JSON Lines, append-only, git-ignored. Holds either `{"reason": "Schema Validation Failure", "record": {...}}` or a raw anomalous `live` record (no `reason` field). See [`runbook.md`](runbook.md).
+### 1.5 `dead_letter_queue.dlq`
+JSON Lines, append-only, git-ignored. Every line is `{"reason": ..., "record": {...}}`. `reason` is `"Schema Validation Failure"` or `"Anomaly: <metric(s)> spike"`, e.g. `"Anomaly: wind_speed_10m spike"` or `"Anomaly: temperature_2m + wind_speed_10m spike"`. (Before 2026-11-18, anomaly lines were the bare record with no `reason`.) See [`runbook.md`](runbook.md).
 
 ### Caveats
-- **Freshness:** the public GitHub Pages site serves the last committed snapshot. The browser shifts all timestamps so the newest reading lines up with the viewer's current hour, which means displayed times are not the original observation times.
-- **Committed snapshot age:** the files in `docs/` were last committed 2026-11-10 (`ec73769`); their `live` rows start 2026-11-09 00:00 UTC. Each station's forecasts start right after its 72nd clean `live` row (Berlin: 2026-11-12 00:00 → 2026-11-13 23:00), which is what a single pipeline run produces. The two files are consistent with each other.
+- **Freshness:** the public GitHub Pages site serves the last committed snapshot. The browser shifts each station's timestamps so its last observed hour lines up with that station's current local hour, which means displayed times are not the original observation times once the snapshot is old. `generated_at_utc` in `station_summary.json` shows when the snapshot was made.
 - **Leap years:** the YoY baseline uses a fixed 365-day offset, so it is one calendar day off across a 29 February.
-- **Station time zones:** timestamps stay in UTC and are never converted to station-local time. The forecast's diurnal cycle is therefore phased to 14:00/16:00 **UTC** for every station. That is roughly right for Berlin and London, but the snapshot's own historical data peaks around 04:00 UTC in Tokyo, 02:00 UTC in Sydney and 19:00 UTC in New York.
+- **Daylight saving:** one UTC offset per station (the current one) is used to place NOW. If a DST change falls inside the window, NOW can be off by an hour.
 
 ## 2. Clickstream Models (`dbt_telemetry/`, not connected)
 
