@@ -15,7 +15,7 @@ How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and 
 | Model scoring | Holdout MAE per model (train on the window minus its last `holdout_hours` (24), score those hours), written to `docs/station_summary.json` with each station's time zone | `src/ml/predictor.py` (`evaluate_holdout`) |
 | Outputs | `docs/sample_telemetry.json` (clean live + historical records), `docs/predictions.json` (forecasts), both JSON Lines, and `docs/station_summary.json`; best-effort batch insert into PostgreSQL table `raw_telemetry` | `src/etl/extract_load.py`, `src/infrastructure/postgres_connector.py` |
 | Orchestration | Airflow DAG `daily_telemetry_ingestion` (`@daily`, 3 retries, 5-minute delay, `catchup=False`). Defined but not deployed anywhere | `dags/daily_telemetry_ingestion.py` |
-| Public site | GitHub Pages serves `docs/` as static files. It never runs the Python pipeline; the browser shifts the cached timestamps to the viewer's current hour | `.github/workflows/pages.yml`, `docs/index.html` |
+| Public site | The Pages workflow builds the React app in `web/` (`npm run build`, which copies the three `docs/*.json` files into `web/dist/`) and deploys `web/dist/`. It never runs the Python pipeline. Data times are the real observation times, shown in Central European Time; the header shows `generated_at_utc` and its age, and only the station-card clocks are live | `.github/workflows/pages.yml`, `web/` |
 
 Not part of the running pipeline:
 - **AWS S3:** `src/infrastructure/s3_connector.py` exists but is never called.
@@ -29,14 +29,15 @@ pip install -r requirements.txt
 docker compose up -d postgres        # optional: without it, the DB step is skipped with a warning
 
 PYTHONPATH=. python3 src/etl/extract_load.py
-python3 scripts/serve_dashboard.py   # also re-runs the ETL on startup, then serves docs/ on http://localhost:8000
+(cd web && npm ci && npm run build)  # once, and after any change under web/
+python3 scripts/serve_dashboard.py   # also re-runs the ETL on startup, then serves web/dist + docs/*.json on http://localhost:8000
 ```
 Both commands **overwrite `docs/sample_telemetry.json`, `docs/predictions.json` and `docs/station_summary.json`** in your working tree.
 
 Nothing in the code loads a `.env` file (there is no `python-dotenv`). Database settings come from exported `POSTGRES_*` environment variables, or from the code defaults when none are set (see "PostgreSQL connection problems" below).
 
 ### Update the public dashboard data
-The public site only changes when those files are committed and pushed. Any push to `main` that touches `docs/**` triggers the "Deploy Aether dashboard" workflow. Before you commit regenerated data, check the record counts:
+The public site only changes when those files are committed and pushed. Any push to `main` that touches `docs/*.json` or `web/**` triggers the "Deploy Aether dashboard" workflow, which type-checks, unit-tests and builds `web/` before deploying. Before you commit regenerated data, check the record counts:
 ```bash
 wc -l docs/sample_telemetry.json docs/predictions.json   # predictions should be 5 stations × 3 methods × 48h = 720
 ```
@@ -54,6 +55,12 @@ The pipeline is deliberately forgiving. It reports `status: success` even when:
 2. Check how many records each station got: `grep -c '"location": "Berlin"' docs/sample_telemetry.json` (repeat per station).
 3. If the API was rate-limited, wait and re-run. Responses that already succeeded come from cache for 30 minutes, so a re-run only re-requests what failed.
 4. To force fresh data, clear the cache: `rm -rf /tmp/aether_cache`.
+
+### The dashboard says "Data as of …" in amber or red
+The header badge compares `generated_at_utc` with the viewer's clock: amber after 26 h, red after 72 h. Nothing is broken in the page; the committed snapshot is old. Re-run the pipeline and commit the three `docs/*.json` files (see "Update the public dashboard data"). "Data time unknown" means `station_summary.json` has no `generated_at_utc`, i.e. it was not written by the current pipeline.
+
+### The Pages deploy fails at "Build dashboard"
+`npm run build` reads `docs/sample_telemetry.json`, `docs/predictions.json` and `docs/station_summary.json`; a missing file fails the build. Type errors fail the earlier `npm run typecheck` step, and `npm test` runs the UI unit tests against the committed data. Reproduce locally with `cd web && npm ci && npm run typecheck && npm test && npm run build`.
 
 ### The ETL returns `status: failed`
 The pipeline only returns `failed` if something raises while it is writing outputs, for example `docs/` is not writable or a record is malformed while sorting. Read the `Ingestion failed for <date>: <error>` log line. When this happens under Airflow, the wrapper raises, so the task retries 3 times before the DAG run fails.
