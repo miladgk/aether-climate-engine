@@ -186,3 +186,45 @@ def test_wind_spike_removes_record_and_dlq_names_the_metric(mocker):
     written = "".join(c.args[0] for c in mocked_open().write.call_args_list)
     dlq_lines = [json.loads(l) for l in written.splitlines() if '"reason": "Anomaly' in l]
     assert [(d["reason"], d["record"]["time"]) for d in dlq_lines] == [("Anomaly: wind_speed_10m spike", times[20])]
+
+
+def test_station_summary_records_open_meteo_grid_cell_and_elevation(mocker):
+    """station_summary.json carries the grid-cell coordinates and elevation Open-Meteo returned."""
+    from datetime import datetime, timedelta
+
+    local_now = datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+    times = [(local_now - timedelta(hours=47 - h)).strftime("%Y-%m-%dT%H:%M") for h in range(48)]
+    mock_urlopen = mocker.patch('urllib.request.urlopen')
+    mock_response = MagicMock()
+    mock_response.status = 200
+    mock_response.read.return_value = json.dumps({
+        "latitude": 52.52, "longitude": 13.419998, "elevation": 38.0,
+        "utc_offset_seconds": 3600, "timezone": "Europe/Berlin", "timezone_abbreviation": "GMT+1",
+        "hourly": {
+            "time": times,
+            "temperature_2m": [10.0 + (h % 24) * 0.1 for h in range(48)],
+            "wind_speed_10m": [8.0 + (h % 24) * 0.2 for h in range(48)],
+        },
+    }).encode('utf-8')
+    mock_response.__enter__.return_value = mock_response
+    mock_urlopen.return_value = mock_response
+    mocker.patch('json.load', return_value={
+        "locations": [{"name": "Berlin", "latitude": 52.52, "longitude": 13.41}],
+        "ml_prediction_hours": 12, "observed_window_hours": 48, "holdout_hours": 12,
+    })
+    mock_dump = mocker.patch('json.dump')
+    mocker.patch('builtins.open', mocker.mock_open(read_data='{}'))
+    mocker.patch('src.etl.extract_load.PostgresClient')
+    mocker.patch('src.etl.cache_manager.get_cached_response', return_value=None)
+    mocker.patch('src.etl.cache_manager.set_cached_response')
+    mocker.patch('src.ml.predictor.generate_predictions', return_value=[])
+    mocker.patch('src.ml.predictor.evaluate_holdout', return_value={"temp_mae": 1.0, "wind_mae": 1.0, "n": 12})
+
+    run_daily_ingestion("2026-08-24")
+
+    summaries = [c.args[0] for c in mock_dump.call_args_list if isinstance(c.args[0], dict) and "stations" in c.args[0]]
+    assert len(summaries) == 1
+    berlin = summaries[0]["stations"]["Berlin"]
+    assert (berlin["latitude"], berlin["longitude"], berlin["elevation"]) == (52.52, 13.419998, 38.0)
+    assert berlin["timezone"] == "Europe/Berlin"
+    assert summaries[0]["generated_at_utc"].endswith("Z")

@@ -45,6 +45,22 @@ jobs:
           python -m pip install --upgrade pip setuptools
           pip install -r requirements.txt
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # Build the React dashboard so tests/test_e2e_dashboard.py exercises the real bundle.
+      - name: Type-check, unit-test and build dashboard
+        working-directory: web
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+
       - name: Install Playwright Browsers (for E2E + cross-browser compatibility tests)
         run: |
           playwright install --with-deps chromium firefox webkit

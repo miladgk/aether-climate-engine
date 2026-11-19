@@ -31,7 +31,7 @@ First off, thank you for considering contributing to Aether! It's people like yo
    ```bash
    pytest tests/
    ```
-   Always pass `tests/`. A bare `pytest` also collects the vendored `bandit/` checkout and fails with import errors. The PostgreSQL integration tests skip automatically unless a database is reachable (`docker compose up -d postgres`), and each E2E browser engine is skipped if it isn't installed. CI runs all 43 tests.
+   Always pass `tests/`. A bare `pytest` also collects the vendored `bandit/` checkout and fails with import errors. The PostgreSQL integration tests skip automatically unless a database is reachable (`docker compose up -d postgres`), and each E2E browser engine is skipped if it isn't installed. CI runs all 50 tests (plus the UI unit tests via `npm test` in `web/`).
 4. Run the custom static security check (it scans Python under `src/` only):
    ```bash
    python3 scripts/custom_bandit.py
@@ -46,7 +46,8 @@ First off, thank you for considering contributing to Aether! It's people like yo
 
 - Ensure your code follows PEP 8 style guidelines.
 - Update `README.md`, `docs/runbook.md` and `docs/data_dictionary.md` if you are adding or changing functionality or data fields.
-- If you regenerate `docs/sample_telemetry.json` / `docs/predictions.json` / `docs/station_summary.json`, commit all three files from the same run. Pushing anything under `docs/` redeploys the public GitHub Pages site.
+- If you regenerate `docs/sample_telemetry.json` / `docs/predictions.json` / `docs/station_summary.json`, commit all three files from the same run. Pushing those files, or anything under `web/`, redeploys the public GitHub Pages site.
+- For dashboard changes (`web/`), run `npm run typecheck && npm test && npm run build` in `web/` before `pytest tests/`, so the E2E tests run against your build instead of being skipped.
 - Provide a clear description in your Pull Request detailing the changes made and the problem they solve.
 
 Thanks again for your contributions!

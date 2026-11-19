@@ -226,6 +226,11 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
                 "holdout_hours": holdout_hours,
                 "holdout_mae": holdout,
             }
+            # Open-Meteo snaps each request to a model grid cell; record the cell it
+            # actually used (and its elevation) so the dashboard shows real coordinates.
+            for key in ("latitude", "longitude", "elevation"):
+                if isinstance(forecast_data.get(key), (int, float)):
+                    station_summary[loc_name][key] = forecast_data[key]
         
         if anomalous_live:
             dlq_path = "dead_letter_queue.dlq"
