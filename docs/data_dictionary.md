@@ -32,17 +32,18 @@ JSON Lines, one forecast hour per station per model. Expected size: 5 stations �
 | `method` | string | — | `linear` (least-squares trend), `sma` (12-hour simple moving average), or `ema` (exponential moving average, α = 0.3). |
 | `location` | string | — | Station name, as above. |
 
-The dashboard's "Compare All" view, ensemble fan (min/max across the three methods), and YoY delta badges are computed in the browser from these files and are not stored anywhere.
+The dashboard's "Compare All" view, ensemble fan (min/max across the three methods), model spread, observation status tags and YoY delta badges are computed in the browser (`web/src/utils/telemetry.ts`) from these files and are not stored anywhere.
 
 ### 1.3 `docs/station_summary.json`: time zones and holdout MAE
-One JSON object written on every pipeline run: `generated_at_utc`, plus `stations.<name>` with:
+One JSON object written on every pipeline run: `generated_at_utc` (when the snapshot was made; the dashboard header shows it with its age), plus `stations.<name>` with:
 
 | Field | Definition |
 | --- | --- |
-| `utc_offset_seconds`, `timezone`, `timezone_abbreviation` | Station time zone as reported by Open-Meteo (`timezone=auto`). The dashboard uses the offset to put NOW at the station's current local hour and labels the chart in local time. |
-| `observed_hours`, `observed_until` | How many observed rows were kept and the local time of the last one. |
+| `utc_offset_seconds`, `timezone`, `timezone_abbreviation` | Station time zone as reported by Open-Meteo (`timezone=auto`). The pipeline uses the offset to cut the observed window at the station's current local hour. The dashboard uses `utc_offset_seconds` to convert every station-local timestamp to Central European Time for display, and `timezone` for each card's live local clock and day/night marker. |
+| `observed_hours`, `observed_until` | How many observed rows were kept and the local time of the last one. Both are shown in the dashboard's station panel (`observed_until` converted to CET). |
+| `latitude`, `longitude`, `elevation` | The Open-Meteo grid cell the request was snapped to and its elevation (m). Optional: snapshots written before 2026-11-19 lack them, and the dashboard then shows the coordinates from `config.json` with a fixed per-station elevation. |
 | `holdout_hours` | Size of the backtest window (`config.json` → `holdout_hours`, default 24). |
-| `holdout_mae.<linear\|sma\|ema>` | `temp_mae` (°C), `wind_mae` (km/h) and `n` (hours scored). Each model is trained on the observed window minus its last `holdout_hours`, then its forecast is compared with those observed hours. `n` < `holdout_hours` when the anomaly filter removed some of them. The dashboard's MAE cells and "★ Best in …" badge (lowest `temp_mae`) come from here. |
+| `holdout_mae.<linear\|sma\|ema>` | `temp_mae` (°C), `wind_mae` (km/h) and `n` (hours scored). Each model is trained on the observed window minus its last `holdout_hours`, then its forecast is compared with those observed hours. `n` < `holdout_hours` when the anomaly filter removed some of them. The dashboard's MAE cells, "★ Best in …" badge (lowest `temp_mae`) and holdout breakdown (which also shows `n`) come from here. |
 
 ### 1.4 PostgreSQL `raw_telemetry`
 Best-effort copy of the rows in 1.1, batch-inserted by `src/infrastructure/postgres_connector.py`. Columns are `time`, `temperature_2m`, `wind_speed_10m`, `location`, `period`. All are created as **`TEXT`**, so cast them before doing numeric or time operations. There is no primary key and no de-duplication: each pipeline run appends a full copy of the current window.
@@ -51,9 +52,9 @@ Best-effort copy of the rows in 1.1, batch-inserted by `src/infrastructure/postg
 JSON Lines, append-only, git-ignored. Every line is `{"reason": ..., "record": {...}}`. `reason` is `"Schema Validation Failure"` or `"Anomaly: <metric(s)> spike"`, e.g. `"Anomaly: wind_speed_10m spike"` or `"Anomaly: temperature_2m + wind_speed_10m spike"`. (Before 2026-11-18, anomaly lines were the bare record with no `reason`.) See [`runbook.md`](runbook.md).
 
 ### Caveats
-- **Freshness:** the public GitHub Pages site serves the last committed snapshot. The browser shifts each station's timestamps so its last observed hour lines up with that station's current local hour, which means displayed times are not the original observation times once the snapshot is old. `generated_at_utc` in `station_summary.json` shows when the snapshot was made.
+- **Freshness:** the public GitHub Pages site serves the last committed snapshot. Timestamps are the recorded ones, shown in Central European Time, and the header badge shows `generated_at_utc` and how old it is (amber after 26 h, red after 72 h).
 - **Leap years:** the YoY baseline uses a fixed 365-day offset, so it is one calendar day off across a 29 February.
-- **Daylight saving:** one UTC offset per station (the current one) is used to place NOW. If a DST change falls inside the window, NOW can be off by an hour.
+- **Daylight saving:** one UTC offset per station (the current one) is used to cut the observed window at the station's current hour. If a DST change falls inside the window, NOW can be off by an hour.
 
 ## 2. Clickstream Models (`dbt_telemetry/`, not connected)
 

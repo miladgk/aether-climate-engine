@@ -9,7 +9,7 @@
 [![Terraform](https://img.shields.io/badge/terraform-AWS%20provider%205.x-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Aether** is an end-to-end weather-telemetry pipeline and dashboard. It pulls hourly temperature and wind data for five cities from the Open-Meteo APIs, validates it, filters statistical outliers into a dead-letter queue, produces 48-hour forecasts with three simple models, and compares everything against the same hours one year earlier in a static Chart.js dashboard published on GitHub Pages.
+**Aether** is an end-to-end weather-telemetry pipeline and dashboard. It pulls hourly temperature and wind data for five cities from the Open-Meteo APIs, validates it, filters statistical outliers into a dead-letter queue, produces 48-hour forecasts with three simple models, and compares everything against the same hours one year earlier in a static React + Chart.js dashboard (`web/`) published on GitHub Pages.
 
 <div align="center">
   <img src="docs/dashboard_preview.jpg" alt="Aether Command Center Dashboard Preview" width="100%">
@@ -28,13 +28,20 @@
   - **Simple Moving Average (SMA)**: Rolling window baseline trend smoothing.
   - **Exponential Moving Average (EMA)**: Exponential decay memory modeling for high-responsiveness.
 - **📈 Full-Timeline YoY Comparative Analytics**: Pulls the same calendar window from one year earlier (Open-Meteo archive API), shifts it forward 365 days, and overlays it on the live and forecast curves.
-- **🎛️ Field Research Station Dashboard**:
-  - Animated Chart.js plots of observed, forecast and last-year data (from a static snapshot, see **Known Limitations**).
+- **🎛️ Field Research Station Dashboard** (React + Vite + Chart.js, in `web/`):
+  - Animated Chart.js plots of observed, forecast and last-year data (from a static snapshot, see **Known Limitations**), with local-night shading and reference lines (0 °C / 32 °F freeze, last-year mean, 20 km/h · Beaufort 4).
+  - All data timestamps (chart axes, tooltips, observation tape, last observation, CSV export, snapshot time) are shown in **Central European Time** (CET/CEST), converted from each station's local time with its UTC offset. Nothing is shifted to "now". Night shading on the charts still marks night *at the station* (19:00–05:59 local).
+  - A header badge that says how old the data is: `generated_at_utc` from `docs/station_summary.json` with its age (e.g. "Data as of Nov 18, 17:02 CET · 29h ago"). It turns amber after 26 h and red after 72 h.
+  - Station cards with a 48 h temperature sparkline and a live clock: the station's current local time (CET, JST, EST, GMT, AEDT) with a ☀/☾ marker for whether it is day or night there right now.
+  - Per-station provenance: last real observation (`observed_until`), observed-window size (`observed_hours`), IANA time zone, and coordinates with elevation (Open-Meteo's grid cell when the pipeline recorded it, otherwise `config.json` plus a fixed elevation).
   - Dynamic unit conversion on the fly ($^\circ\text{C} \leftrightarrow ^\circ\text{F}$, $\text{km/h} \leftrightarrow \text{m/s}$) with auto-scaling delta thresholds.
   - Interactive multi-theme engine (*Ember*, *Nord*, *Stone*).
   - A "NOW" meridian (dashed line, label, and pulsing beacon) marking the boundary between observed data and the forecast.
   - Per-station YoY anomaly badges, with the biggest warming outlier glowing red and the biggest cooling outlier glowing blue.
   - A "Compare All" ensemble view (default) that shades the min/max band across the three models, and a badge that stars the model with the lowest holdout MAE for the selected station. The MAE is computed by the pipeline (each model forecasts the last 24 observed hours from the hours before them) and published in `docs/station_summary.json`.
+  - A holdout MAE breakdown (click the "★ Best in …" badge) comparing all three models, with the number of scored hours (`n`), and a model-spread readout (half the gap between the highest and lowest model at the end of the horizon).
+  - An observation tape (last 15 hours) that tags each hour as normal / elevated / severe / freezing with the reason, plus a CSV export of the whole chart window (each row stamped with `snapshot_generated_utc`).
+  - Shareable URLs (`?station=…&model=…&horizon=…&temp=…&wind=…&theme=…`) and keyboard shortcuts (press `?`).
   - 12h / 24h / 48h forecast horizon switching. The chart always shows twice as many observed hours as forecast hours (96 + 48, 48 + 24, 24 + 12), on a real hourly time axis in the station's local time.
 - **🏗️ Data Warehouse & Orchestration**: Clean readings are batch-loaded into a PostgreSQL `raw_telemetry` table (with graceful fallback when the DB is down), and an **Apache Airflow** DAG wraps the daily ingestion. The **dbt Core** project (staging + core models) currently models a separate user-clickstream schema, not the weather data — see **Known Limitations** below.
 - **☁️ Infrastructure as Code (IaC)**: **Terraform** configurations for an AWS S3 bucket (with a 30-day Glacier lifecycle rule) and an RDS PostgreSQL 15 instance. Not provisioned against a live AWS account; the DB password has no default and must be supplied via `TF_VAR_db_password`.
@@ -68,7 +75,7 @@ flowchart TD
         ML --> JSON[Static JSON snapshot<br/>docs/*.json]
         ARCHIVE --> JSON
         AD -->|Clean live rows| JSON
-        JSON --> DASH[Aether Dashboard<br/>GitHub Pages / localhost:8000]
+        JSON --> DASH[Aether Dashboard<br/>web/ React build<br/>GitHub Pages / localhost:8000]
         DBT --> BI[Downstream Analytics / BI]
     end
 
@@ -92,7 +99,7 @@ flowchart TD
 
 ```
 .
-├── .github/workflows/          # ci.yml (tests, scans, dbt checks) & pages.yml (GitHub Pages deploy)
+├── .github/workflows/          # ci.yml (tests, scans, dbt checks) & pages.yml (builds web/ and deploys it to GitHub Pages)
 ├── config.json                 # Station coordinates, ML horizons & pipeline configuration
 ├── docker-compose.yml          # Local PostgreSQL 15 + Metabase
 ├── Makefile                    # Shortcuts: data-pipeline, test, dashboard, up/down, dbt-run …
@@ -104,16 +111,22 @@ flowchart TD
 │   └── models/
 │       ├── staging/            # Data cleansing & column casting
 │       └── core/               # Fact table (fct_user_events)
-├── docs/                       # Aether Command Center Web Interface — also the live GitHub Pages site
-│   ├── index.html              # Custom Field Station interface & Chart.js engine
+├── docs/                       # Pipeline outputs (loaded by the dashboard) & documentation
 │   ├── sample_telemetry.json   # Live & Historical station telemetry cache
 │   ├── predictions.json        # Precomputed multi-model ML forecast output
-│   ├── station_summary.json    # Per-station time zone & holdout MAE (drives the model ranking)
-│   ├── favicon.svg / dashboard_preview.jpg
+│   ├── station_summary.json    # Snapshot time, per-station time zone, coordinates & holdout MAE
 │   ├── data_dictionary.md      # Schema definitions & metric types
 │   └── runbook.md              # Operational runbook & troubleshooting
+├── web/                        # Dashboard UI: React 19 + Vite + Chart.js (TypeScript)
+│   ├── index.html / vite.config.ts  # vite.config.ts serves/copies docs/*.json next to the app
+│   ├── public/favicon.svg
+│   └── src/
+│       ├── App.tsx             # Data loading, URL state, keyboard shortcuts
+│       ├── components/         # Station deck, HUD, charts, dock, observation drawer, shortcuts
+│       ├── types/telemetry.ts  # Data-file and view-model types
+│       └── utils/              # Pure data logic + node:test unit tests (*.test.ts)
 ├── scripts/                    # Utility scripts & dashboard server
-│   ├── serve_dashboard.py      # Lightweight local telemetry server
+│   ├── serve_dashboard.py      # Serves web/dist + docs/*.json on :8000 (re-runs the ETL first)
 │   ├── custom_bandit.py        # Static security analyzer script
 │   ├── generate_mock_data.py   # Synthetic clickstream data generator
 │   └── profile_data.py         # Quick data profiling helper
@@ -140,7 +153,7 @@ flowchart TD
     ├── test_anomaly_detector.py  # Unit: spike filter (peaks/fronts kept, faults flagged)
     ├── test_smoke.py           # Smoke: fast end-to-end sanity pass
     ├── test_integration_postgres.py  # Integration: real PostgreSQL round-trip
-    └── test_e2e_dashboard.py   # E2E + Compatibility: live dashboard across 3 browser engines
+    └── test_e2e_dashboard.py   # E2E + Compatibility: built dashboard across 3 browser engines
 ```
 
 ---
@@ -149,6 +162,7 @@ flowchart TD
 
 ### 1. Prerequisites
 - Python 3.10+
+- Node.js 22+ (to build the dashboard)
 - (Optional) Docker & Docker Compose (for PostgreSQL)
 
 ### 2. Clone and Setup Environment
@@ -179,11 +193,14 @@ PYTHONPATH=. python3 src/etl/extract_load.py
 ```
 
 ### 5. Launch the Command Center Dashboard
-Start the local dashboard server (it re-runs the ETL once on startup, then serves `docs/`):
+Build the UI once, then start the local server. It re-runs the ETL on startup, then serves the built app from `web/dist/` and the data straight from `docs/`:
 ```bash
-python3 scripts/serve_dashboard.py
+cd web && npm ci && npm run build && cd ..
+python3 scripts/serve_dashboard.py      # or: make dashboard
 ```
 Open **[http://localhost:8000](http://localhost:8000)** in your browser.
+
+For UI work with hot reload, run `cd web && npm run dev` (http://localhost:3000). The dev server also reads the JSON files from `docs/`.
 
 ---
 
@@ -196,7 +213,8 @@ This project exercises several layers of the testing pyramid, each catching a di
 | **Unit** | `test_extract_load.py`, `test_predictor.py`, `test_pii.py`, `test_anomaly_detector.py` | Logic bugs in a single function (JSON flattening, mocked Open-Meteo ingestion, observed-window/local-time handling, DB graceful fallback, trend/amplitude math, holdout MAE, spike filter, PII hashing), fully mocked — no network, no DB. |
 | **Smoke** | `test_smoke.py` | Fast, shallow sanity pass over the whole build: do core modules import, is `config.json` valid, do the ETL/ML stages run end-to-end on a tiny dataset? |
 | **Integration** | `test_integration_postgres.py` | `PostgresClient` against a **real** PostgreSQL instance (table creation, bulk insert via `execute_values`, round-tripped reads) — the SQL path that mocks can't verify. Auto-skips if no database is reachable. |
-| **E2E** | `test_e2e_dashboard.py` | Drives the actual dashboard with Playwright: page loads, Chart.js renders both charts, unit/theme toggles update the UI, station switching updates the topbar — the only layer that touches the frontend JS at all. |
+| **UI unit** | `web/src/utils/*.test.ts` (`cd web && npm test`) | The dashboard's pure data logic: YoY deltas, holdout ranking, model spread, observation status, data-age badge, coordinates, CSV export, URL state. Runs against the real `docs/*.json`. |
+| **E2E** | `test_e2e_dashboard.py` | Drives the built dashboard (`web/dist`, so run `npm run build` first; the module is skipped otherwise) with Playwright: page loads, both charts paint, unit/theme toggles, station switching, and that the header shows the snapshot time and the cards show the real last-observation times. |
 | **Compatibility** | `test_e2e_dashboard.py` (parametrized) | Every E2E test above runs once per rendering engine — **Chromium, Firefox, WebKit/Safari** — so a browser-specific CSS/JS quirk fails on that one engine instead of going unnoticed. Any engine not installed is skipped individually. |
 | **Regression** | the full suite, run in CI on every push/PR | Re-runs everything above automatically so a change can't silently break a previously-working feature. |
 | **Security (SAST)** | `scripts/custom_bandit.py` | Small AST check on Python under `src/` only: string literals assigned to names containing `password`/`secret`/`key`, and calls to `eval`/`exec`. Terraform, YAML and Compose files are not scanned. |
@@ -269,7 +287,7 @@ dbt docs generate && dbt docs serve
 
 - **dbt ↔ pipeline mismatch:** the dbt models and `docs/data_dictionary.md` describe clickstream events, not weather telemetry.
 - **S3 connector unused:** ingestion goes straight to Open-Meteo over HTTP; `s3_connector.py` is legacy code.
-- **Static live site:** the GitHub Pages dashboard serves precomputed JSON snapshots and shifts their timestamps to the viewer's current hour in the browser; it does not run the Python ETL/ML on each visit.
+- **Static live site:** the GitHub Pages dashboard serves the last committed JSON snapshot; it does not run the Python ETL/ML on each visit. The header shows when that snapshot was generated and how old it is, and all chart times are the real observation times (shown in CET). Only the station clocks on the cards are live.
 - **No cloud deployment:** the Terraform config has not been applied to a live AWS account.
 - **Leap years:** the YoY baseline uses a fixed 365-day offset.
 - **Secrets scanning scope:** `scripts/custom_bandit.py` only scans Python in `src/`; Terraform, YAML, and Docker Compose files are not scanned for hardcoded secrets.
