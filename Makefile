@@ -1,4 +1,4 @@
-.PHONY: setup data-pipeline test lint format dbt-run dbt-test dashboard up down
+.PHONY: setup data-pipeline test lint format dbt-run dbt-test web-install web-build web-dev web-test dashboard up down
 
 setup:
 	python3 -m venv venv
@@ -26,7 +26,19 @@ dbt-run:
 dbt-test:
 	cd dbt_telemetry && dbt test
 
-dashboard:
+web-install:
+	cd web && npm ci
+
+web-build:
+	cd web && npm run build
+
+web-dev:
+	cd web && npm run dev
+
+web-test:
+	cd web && npm run typecheck && npm test
+
+dashboard: web-build
 	python3 scripts/serve_dashboard.py
 
 up:

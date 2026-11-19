@@ -75,8 +75,9 @@ def test_ml_predictor_runs_end_to_end_for_every_model():
         assert len(predictions) > 0
 
 
-def test_dashboard_static_assets_exist():
-    """The dashboard's critical static files must be present for the live site to render."""
-    dashboard_dir = os.path.join(PROJECT_ROOT, "docs")
-    for filename in ["index.html", "favicon.svg"]:
-        assert os.path.exists(os.path.join(dashboard_dir, filename)), f"docs/{filename} is missing"
+def test_dashboard_sources_and_data_exist():
+    """The React dashboard sources (web/) and the pipeline data it loads (docs/) must be present."""
+    for rel in ["web/index.html", "web/package.json", "web/package-lock.json",
+                "web/public/favicon.svg", "web/src/main.tsx",
+                "docs/sample_telemetry.json", "docs/predictions.json", "docs/station_summary.json"]:
+        assert os.path.exists(os.path.join(PROJECT_ROOT, rel)), f"{rel} is missing"
