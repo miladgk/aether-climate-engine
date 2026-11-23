@@ -71,10 +71,11 @@ export default function App() {
   const loadTelemetry = useCallback(async () => {
     try {
       setErrorMessage(null);
+      const cacheBuster = `?t=${Date.now()}`;
       const [liveRes, predRes, summaryRes] = await Promise.all([
-        fetch(TELEMETRY_URL),
-        fetch(PREDICTIONS_URL).catch(() => null),
-        fetch(SUMMARY_URL).catch(() => null),
+        fetch(`${TELEMETRY_URL}${cacheBuster}`, { cache: 'no-store' }),
+        fetch(`${PREDICTIONS_URL}${cacheBuster}`, { cache: 'no-store' }).catch(() => null),
+        fetch(`${SUMMARY_URL}${cacheBuster}`, { cache: 'no-store' }).catch(() => null),
       ]);
 
       if (!liveRes.ok) {
@@ -117,6 +118,10 @@ export default function App() {
 
   useEffect(() => {
     void loadTelemetry();
+    const pollInterval = window.setInterval(() => {
+      void loadTelemetry();
+    }, 60_000);
+    return () => window.clearInterval(pollInterval);
   }, [loadTelemetry]);
 
   // Keep the "N hours ago" label honest while the tab stays open.
