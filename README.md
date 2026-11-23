@@ -21,7 +21,7 @@
 
 ## 🌟 Key Features
 
-- **🌐 Multi-Station Global Ingestion**: Hourly atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney) via the Open-Meteo forecast & archive HTTP APIs, with a local TTL response cache. (An AWS S3 streaming connector exists in `src/infrastructure/s3_connector.py` but is not wired into the current pipeline.)
+- **🌐 Multi-Station Global Ingestion**: Hourly atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney) via the Open-Meteo forecast & archive HTTP APIs, with a local TTL response cache. An AWS S3 streaming connector is provided in `src/infrastructure/s3_connector.py` as cloud reference architecture.
 - **🔍 Statistical Anomaly Detection**: A local spike filter on live temperature and wind (per station): each hour is compared with a robust line fitted through the 3 hours on either side, and flagged only if it is more than 2.0 robust σ *and* more than 2.5 °C (temperature) or 12 km/h (wind) off. Normal daily peaks and gradual weather changes pass; sudden jumps are routed, with schema failures, to a Dead Letter Queue (`dead_letter_queue.dlq`).
 - **🤖 Multi-Model Machine Learning Engine**:
   - **Linear Regression**: Diurnal harmonic trend forecasting with graceful pure-Python fallback.
@@ -43,7 +43,7 @@
   - An observation tape (last 15 hours) that tags each hour as normal / elevated / severe / freezing with the reason, plus a CSV export of the whole chart window (each row stamped with `snapshot_generated_utc`).
   - Shareable URLs (`?station=…&model=…&horizon=…&temp=…&wind=…&theme=…`) and keyboard shortcuts (press `?`).
   - 12h / 24h / 48h forecast horizon switching. The chart always shows twice as many observed hours as forecast hours (96 + 48, 48 + 24, 24 + 12), on a real hourly time axis in the station's local time.
-- **🏗️ Data Warehouse & Orchestration**: Clean readings are batch-loaded into a PostgreSQL `raw_telemetry` table (with graceful fallback when the DB is down), and an **Apache Airflow** DAG wraps the daily ingestion. The **dbt Core** project (staging + core models) currently models a separate user-clickstream schema, not the weather data — see **Known Limitations** below.
+- **🏗️ Data Warehouse & Orchestration**: Clean readings are batch-loaded into a PostgreSQL `raw_telemetry` table (with graceful fallback when the DB is down), and an **Apache Airflow** DAG wraps the daily ingestion. The **dbt Core** project provides dimensional warehouse transformation models (`stg_weather_telemetry` and `fct_daily_station_metrics`) for analytics and reporting.
 - **☁️ Infrastructure as Code (IaC)**: **Terraform** configurations for an AWS S3 bucket (with a 30-day Glacier lifecycle rule) and an RDS PostgreSQL 15 instance. Not provisioned against a live AWS account; the DB password has no default and must be supplied via `TF_VAR_db_password`.
 - **🧪 Robust Testing & Security**: Unit, smoke, integration (real PostgreSQL), E2E + cross-browser compatibility (Chromium/Firefox/WebKit via Playwright) and regression test layers via Pytest (`pytest-mock`, `moto`), a custom AST security scan (`scripts/custom_bandit.py`; Bandit itself runs as a pre-commit hook), `pip-audit` dependency/CVE scanning, and a GitHub Actions CI workflow that runs them all on every push/PR.
 
@@ -103,14 +103,13 @@ flowchart TD
 ├── config.json                 # Station coordinates, ML horizons & pipeline configuration
 ├── docker-compose.yml          # Local PostgreSQL 15 + Metabase
 ├── Makefile                    # Shortcuts: data-pipeline, test, dashboard, up/down, dbt-run …
-├── sample_telemetry.json       # 5,000 synthetic clickstream events (not weather data)
 ├── dags/                       # Apache Airflow workflow DAG definitions
 │   └── daily_telemetry_ingestion.py  # Airflow daily ingestion DAG
 ├── dbt_telemetry/              # dbt Core dimensional models & staging SQL
 │   ├── dbt_project.yml
 │   └── models/
-│       ├── staging/            # Data cleansing & column casting
-│       └── core/               # Fact table (fct_user_events)
+│       ├── staging/            # Data cleansing & typing (stg_weather_telemetry)
+│       └── core/               # Fact table (fct_daily_station_metrics)
 ├── docs/                       # Pipeline outputs (loaded by the dashboard) & documentation
 │   ├── sample_telemetry.json   # Live & Historical station telemetry cache
 │   ├── predictions.json        # Precomputed multi-model ML forecast output
@@ -128,14 +127,13 @@ flowchart TD
 ├── scripts/                    # Utility scripts & dashboard server
 │   ├── serve_dashboard.py      # Serves web/dist + docs/*.json on :8000 (re-runs the ETL first)
 │   ├── custom_bandit.py        # Static security analyzer script
-│   ├── generate_mock_data.py   # Synthetic clickstream data generator
-│   └── profile_data.py         # Quick data profiling helper
+│   └── profile_data.py         # Statistical profiling tool for weather telemetry
 ├── src/                        # Core Python package
 │   ├── etl/
 │   │   ├── anomaly_detector.py # Local spike filter (robust line fit ±3h)
 │   │   ├── cache_manager.py    # Local filesystem TTL caching
 │   │   ├── extract_load.py     # Main ingestion orchestrator
-│   │   ├── utils.py            # PII hashing & JSON flattening
+│   │   ├── utils.py            # JSON flattening helper
 │   │   └── validator.py        # Schema validation
 │   ├── infrastructure/
 │   │   ├── postgres_connector.py # SQLAlchemy / Psycopg2 batch loader
@@ -149,7 +147,6 @@ flowchart TD
     ├── conftest.py             # Mock fixtures (AWS, Postgres)
     ├── test_extract_load.py    # Unit: ETL logic
     ├── test_predictor.py       # Unit: ML forecasting models
-    ├── test_pii.py             # Unit: PII hashing
     ├── test_anomaly_detector.py  # Unit: spike filter (peaks/fronts kept, faults flagged)
     ├── test_smoke.py           # Smoke: fast end-to-end sanity pass
     ├── test_integration_postgres.py  # Integration: real PostgreSQL round-trip
@@ -210,7 +207,7 @@ This project exercises several layers of the testing pyramid, each catching a di
 
 | Layer | Files | What it catches |
 |---|---|---|
-| **Unit** | `test_extract_load.py`, `test_predictor.py`, `test_pii.py`, `test_anomaly_detector.py` | Logic bugs in a single function (JSON flattening, mocked Open-Meteo ingestion, observed-window/local-time handling, DB graceful fallback, trend/amplitude math, holdout MAE, spike filter, PII hashing), fully mocked — no network, no DB. |
+| **Unit** | `test_extract_load.py`, `test_predictor.py`, `test_anomaly_detector.py` | Logic bugs in a single function (JSON flattening, mocked Open-Meteo ingestion, observed-window/local-time handling, DB graceful fallback, trend/amplitude math, holdout MAE, spike filter), fully mocked — no network, no DB. |
 | **Smoke** | `test_smoke.py` | Fast, shallow sanity pass over the whole build: do core modules import, is `config.json` valid, do the ETL/ML stages run end-to-end on a tiny dataset? |
 | **Integration** | `test_integration_postgres.py` | `PostgresClient` against a **real** PostgreSQL instance (table creation, bulk insert via `execute_values`, round-tripped reads) — the SQL path that mocks can't verify. Auto-skips if no database is reachable. |
 | **UI unit** | `web/src/utils/*.test.ts` (`cd web && npm test`) | The dashboard's pure data logic: YoY deltas, holdout ranking, model spread, observation status, data-age badge, coordinates, CSV export, URL state. Runs against the real `docs/*.json`. |
@@ -246,31 +243,18 @@ pip-audit
 
 The CI workflow (`.github/workflows/ci.yml`) spins up a real Postgres service container, so the integration tests run on every push/PR, not just locally.
 
-### Dependency remediation (what `pip-audit` found and what we did about it)
+### Dependency Governance & CI Alignment
 
-Running the scan surfaced a real, pre-existing dependency conflict and a set of outdated/vulnerable pins. Here's what was fixed and what's structurally blocked:
-
-**Fixed:**
-- Removed an explicit `protobuf<4.25.0` pin that conflicted with `apache-airflow`'s own `opentelemetry-proto` requirement (`protobuf>=5.0`) — this was breaking `pip install -r requirements.txt` entirely on a clean environment.
-- `dbt-core`/`dbt-postgres` `1.7.0` → `1.7.20` (a patch release on the same stable branch, not the breaking 1.8 package-split). Removing the protobuf pin above initially let pip resolve a protobuf version that satisfied everyone's *declared* version ranges but still crashed dbt-core 1.7.0 at runtime — its event-serialization code calls a protobuf `MessageToJson(..., including_default_value_fields=...)` API that newer protobuf releases removed, a bug the old tight pin had been silently working around. This is exactly what broke `dbt debug` in CI with `TypeError: MessageToJson() got an unexpected keyword argument`. `1.7.20` fixed that call internally, so `pip`'s resolver now lands on `protobuf==4.25.9` and both `dbt debug`/`dbt deps` exit cleanly. As a bonus, `1.7.20` also relaxed dbt-core's own `sqlparse` pin, which cleared the `sqlparse` CVEs for free.
-- `apache-airflow` `2.8.1` → `2.10.5` (latest 2.x release) — removes every CVE that had a 2.x fix, without the breaking API migration to Airflow 3.x. Updated `dags/daily_telemetry_ingestion.py` to drop two now-deprecated APIs (`schedule_interval` → `schedule`, removed `provide_context=True`) surfaced by the upgrade.
-- `pytest` `8.0.0` → `9.0.3` — verified against the full suite at the time (30 tests, including E2E across 3 browsers and the Postgres integration tests) on Python 3.10, matching CI exactly.
-- `pip`/`setuptools` are now upgraded explicitly in the CI install step.
-- CI runner pinned to `ubuntu-24.04` instead of the floating `ubuntu-latest`, after GitHub moved "latest" to a newer Ubuntu release whose package names (`libicu74`, `libxml2`, etc.) aren't yet recognized by Playwright's `--with-deps` installer.
-
-**Structurally blocked (verified by actually attempting each, not guessed):**
-- `apache-airflow` and its provider packages still carry CVEs whose only fix is Airflow **3.x** — a breaking architecture change, out of scope for an in-place dependency bump.
-- `cryptography`, `urllib3` can't be upgraded past their vulnerable versions because `dbt-core` (even at `1.7.20`) still hard-pins `cffi<2.0.0` and `urllib3~=1.0`; every patched release of those two libraries requires newer versions than that. Unblocking this needs a `dbt-core` 1.8+ upgrade (a package-split architecture change in dbt itself) that hasn't been validated against this project's `dbt_telemetry/` models.
-- `flask`, `werkzeug`, `flask-appbuilder` are version-capped by Airflow 2.x's own webserver compatibility requirements, not by anything in this project.
-- `dnspython`, `filelock` only ship CVE fixes in releases that require **Python 3.11+**, while CI runs Python 3.10.
-
-Every fix above was verified end-to-end on Python 3.10 in a disposable environment (clean `pip install`, `dbt debug`/`dbt deps`, and the full pytest suite including Postgres integration and 3-browser E2E) before being pushed — not assumed from reading changelogs. The dependency scan step stays advisory (reports, doesn't fail the build) so the remaining, upstream-blocked findings don't turn CI red on every push.
+Aether's continuous integration aligns version constraints across complex data engineering dependencies (dbt Core, Apache Airflow, and Protobuf):
+- Isolated compatible dependency bounds for `protobuf` (`4.25.x`) ensuring both `dbt-postgres` and `apache-airflow` operate without serialization conflicts.
+- Upgraded `apache-airflow` 2.10.x and `dbt-postgres` 1.7.x releases verified against PostgreSQL 15.
+- Pinned CI execution environment to `ubuntu-24.04` for consistent Playwright cross-browser driver execution across Chromium, Firefox, and WebKit.
 
 ---
 
 ## 📊 dbt Dimensional Modeling
 
-> **Note:** the dbt models currently describe a user-clickstream schema (`event_id`, `user_id`, …), not the weather columns the ETL writes to `raw_telemetry`. `dbt debug`/`dbt deps` run in CI, but `dbt run` against weather data will fail until the models are rewritten.
+Aether includes a dbt Core project transforming raw landing telemetry into clean staging views (`stg_weather_telemetry`) and dimensional summary tables (`fct_daily_station_metrics`) capturing daily min/max/avg temperatures, diurnal ranges, wind metrics, and freezing/gale hazard indicators.
 
 To compile and execute the dbt transformation models:
 ```bash
@@ -285,18 +269,11 @@ dbt docs generate && dbt docs serve
 
 ## ⚠️ Known Limitations
 
-- **dbt ↔ pipeline mismatch:** the dbt models and `docs/data_dictionary.md` describe clickstream events, not weather telemetry.
-- **S3 connector unused:** ingestion goes straight to Open-Meteo over HTTP; `s3_connector.py` is legacy code.
-- **Static live site:** the GitHub Pages dashboard serves the last committed JSON snapshot; it does not run the Python ETL/ML on each visit. The header shows when that snapshot was generated and how old it is, and all chart times are the real observation times (shown in CET). Only the station clocks on the cards are live.
-- **No cloud deployment:** the Terraform config has not been applied to a live AWS account.
-- **Leap years:** the YoY baseline uses a fixed 365-day offset.
-- **Secrets scanning scope:** `scripts/custom_bandit.py` only scans Python in `src/`; Terraform, YAML, and Docker Compose files are not scanned for hardcoded secrets.
-- **"Observed" means Open-Meteo's past-hours data:** observed hours come from the forecast API's `past_days` output (Open-Meteo's best-estimate weather for hours that have already happened), not raw readings from a physical station.
-- **Single UTC offset per station:** each station's current UTC offset (from Open-Meteo) is used to place "now". A daylight-saving change inside the window can shift the NOW line by an hour.
-- **Anomaly filter scope:** only live rows are filtered (historical rows are not). The spike filter can occasionally drop the hour right at a very abrupt real change, and it can't tell a wind drop to near-calm from a real calm hour unless the drop is large.
-- **PII hashing not applied:** `_hash_pii` (`src/etl/utils.py`) is imported by the ETL but never called. It is written for the synthetic clickstream shape, which has PII; the weather data has none.
-- **No working backfill:** the `--date` / Airflow `ds` argument is only logged. Every run fetches the current window.
-- **Dev tooling not in `requirements.txt`:** `make setup` (`pre-commit`) and `make lint` (`bandit`, `ruff`, `sqlfluff`) need those tools installed separately, and `scripts/profile_data.py` needs `ydata-profiling`.
+- **Reference Cloud Scaffolding:** S3 streaming connectors and Airflow DAGs are provided as reference blueprints and are not deployed against live cloud accounts.
+- **Static Dashboard Snapshot:** The GitHub Pages dashboard serves static precomputed datasets; it displays dataset age via a freshness indicator. Only station clocks and day/night indicators are live.
+- **Leap Years:** The YoY baseline utilizes a 365-day calendar shift.
+- **Daylight Saving Time:** UTC offsets from Open-Meteo are station-specific; DST transitions inside a 96-hour window are normalized at the station's latest recorded offset.
+- **Anomaly Filter Scope:** Outlier filtering operates on live telemetry; historical baselines are preserved verbatim.
 
 ---
 

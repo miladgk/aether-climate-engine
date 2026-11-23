@@ -51,7 +51,7 @@ def test_generate_predictions_structure():
 
 
 def _diurnal_records(hours, start=datetime(2026, 1, 1, 0, 0)):
-    """Synthetic station-local data: temperature peaks at 14:00, wind at 16:00 local time."""
+    """Generated test station-local data: temperature peaks at 14:00, wind at 16:00 local time."""
     import math
     return [
         {

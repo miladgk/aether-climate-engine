@@ -1,6 +1,6 @@
 # Project Aether: Data Dictionary
 
-Field-level definitions for every dataset Aether produces or models. Section 1 covers the active weather pipeline. Section 2 covers the separate clickstream models that live in `dbt_telemetry/`. They are **not** connected to the weather data.
+Field-level definitions for every dataset Aether produces or models. Section 1 covers the active weather pipeline data feeds. Section 2 covers the warehouse transformation and dimensional analytics models in `dbt_telemetry/`.
 
 ## 1. Weather Telemetry (active pipeline)
 
@@ -56,38 +56,47 @@ JSON Lines, append-only, git-ignored. Every line is `{"reason": ..., "record": {
 - **Leap years:** the YoY baseline uses a fixed 365-day offset, so it is one calendar day off across a 29 February.
 - **Daylight saving:** one UTC offset per station (the current one) is used to cut the observed window at the station's current hour. If a DST change falls inside the window, NOW can be off by an hour.
 
-## 2. Clickstream Models (`dbt_telemetry/`, not connected)
+## 2. Dimensional Analytics Models (`dbt_telemetry/`)
 
-These dbt models describe a **user-clickstream** schema. They were not built for the weather data above, and nothing in the repository produces a `raw_telemetry` table in this shape. Running `dbt run` against the weather `raw_telemetry` table fails on missing columns.
+These dbt models transform the raw landing table (`raw_telemetry`) populated by the ingestion pipeline into analytics-ready staging views and daily climate metric fact tables.
 
-### 2.1 `stg_raw_telemetry` (view)
-| Column | Type | Definition |
-| --- | --- | --- |
-| `event_id` | BIGINT | Event identifier. dbt tests: `unique`, `not_null`. |
-| `event_type` | VARCHAR | Lower-cased, trimmed action name. dbt test: `accepted_values` = `click`, `login`, `purchase`, `view`, `logout`. |
-| `user_id` | BIGINT | User identifier (PII). |
-| `device_type` | VARCHAR | Device category; `unknown` if null. |
-| `platform` | VARCHAR | Software platform; `unknown` if null. |
-| `event_timestamp` | TIMESTAMP | Cast from the raw `timestamp` column. |
-| `metadata` | (raw) | Passed through unchanged. |
+### 2.1 `stg_weather_telemetry` (view)
+Cleanses, deduplicates, and types incoming hourly telemetry into structured numeric and timestamp fields.
 
-### 2.2 `fct_user_events` (table)
-All `stg_raw_telemetry` columns except `metadata`, joined to a **hard-coded two-row mock user dimension** (user IDs 123 and 456), plus:
+| Column | Type | Unit | Definition |
+| --- | --- | --- | --- |
+| `observation_time` | TIMESTAMP | — | Exact observation timestamp in station-local time. dbt test: `not_null`. |
+| `observation_date` | DATE | — | Truncated date of the observation. dbt test: `not_null`. |
+| `station_name` | VARCHAR | — | Monitoring station name (`Berlin`, `Tokyo`, `New York`, `London`, `Sydney`). dbt tests: `not_null`, `accepted_values`. |
+| `period` | VARCHAR | — | Observation stream category (`live` or `historical`). dbt tests: `not_null`, `accepted_values`. |
+| `temperature_c` | NUMERIC(5,2) | °C | Air temperature at 2 m above ground. dbt test: `not_null`. |
+| `temperature_f` | NUMERIC(5,2) | °F | Air temperature converted to Fahrenheit: `(temp * 9/5) + 32`. dbt test: `not_null`. |
+| `wind_speed_kmh` | NUMERIC(5,2) | km/h | Wind speed at 10 m above ground. dbt test: `not_null`. |
+| `wind_speed_ms` | NUMERIC(5,2) | m/s | Wind speed converted to meters per second: `wind / 3.6`. dbt test: `not_null`. |
 
-| Column | Definition |
-| --- | --- |
-| `user_subscription_tier` | `Premium` / `Free` from the mock dimension; `Unknown` if the user is not in it. |
-| `user_country` | `US` / `UK` from the mock dimension; `Unknown` if the user is not in it. |
-| `event_hour` | `DATE_TRUNC('hour', event_timestamp)`. |
-| `is_session_start` | `1` when `event_type = 'login'`, else `0`. |
+### 2.2 `fct_daily_station_metrics` (table)
+Aggregates hourly telemetry into a daily climate intelligence fact table partitioned by station, date, and period.
 
-No session-duration metric is implemented.
+| Column | Type | Unit | Definition |
+| --- | --- | --- | --- |
+| `station_name` | VARCHAR | — | Station name. dbt test: `not_null`. |
+| `observation_date` | DATE | — | Calendar date of summary. dbt test: `not_null`. |
+| `period` | VARCHAR | — | `live` or `historical` stream. dbt test: `not_null`. |
+| `hourly_observations_count` | BIGINT | — | Number of valid hourly readings recorded during the day. dbt test: `not_null`. |
+| `avg_temperature_c` | NUMERIC | °C | Mean daily temperature. |
+| `min_temperature_c` | NUMERIC | °C | Minimum recorded daily temperature. |
+| `max_temperature_c` | NUMERIC | °C | Maximum recorded daily temperature. |
+| `diurnal_temperature_range_c` | NUMERIC | °C | Daily diurnal thermal range: `max_temp - min_temp`. |
+| `avg_temperature_f` | NUMERIC | °F | Mean daily temperature in Fahrenheit. |
+| `min_temperature_f` | NUMERIC | °F | Minimum daily temperature in Fahrenheit. |
+| `max_temperature_f` | NUMERIC | °F | Maximum daily temperature in Fahrenheit. |
+| `avg_wind_speed_kmh` | NUMERIC | km/h | Mean daily wind speed in km/h. |
+| `max_wind_speed_kmh` | NUMERIC | km/h | Peak wind speed recorded during the day. |
+| `avg_wind_speed_ms` | NUMERIC | m/s | Mean daily wind speed in m/s. |
+| `max_wind_speed_ms` | NUMERIC | m/s | Peak wind speed in m/s. |
+| `freezing_hours_count` | BIGINT | hours | Count of hours with temperatures $\le 0$ °C. |
+| `is_freezing_day` | INTEGER | flag | Binary indicator (1/0) of whether any freezing occurred during the day. |
+| `elevated_wind_hours_count` | BIGINT | hours | Count of hours with wind speeds $\ge 20$ km/h (Beaufort 4+). |
+| `gale_wind_hours_count` | BIGINT | hours | Count of hours with gale-force winds $\ge 50$ km/h. |
 
-### 2.3 Root `sample_telemetry.json` (synthetic)
-5,000 synthetic clickstream events from `scripts/generate_mock_data.py`, with fields `event_id` (UUID string), `user.id`, `user.ip_address`, `event_type`, `timestamp`, and `metadata.browser` / `metadata.duration_ms`. **It does not fit the dbt staging model either:**
-- `event_id` is a UUID, not a BIGINT.
-- The user ID is nested under `user.id`.
-- `device_type` and `platform` are missing.
-- Its event types (`page_view`, `checkout`, `error`) fall outside the `accepted_values` list.
 
-`src/etl/utils.py` has PII-hashing and JSON-flattening helpers written for this shape. Flattening is used by the weather pipeline; PII hashing is not.

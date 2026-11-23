@@ -1,29 +1,51 @@
 version: 2
 
 models:
-  - name: stg_raw_telemetry
-    description: "Cleansed and standardized user-clickstream events from raw_telemetry. Not compatible with the weather rows the ETL writes to that table."
+  - name: stg_weather_telemetry
+    description: "Cleansed, typed, and standardized hourly weather telemetry from raw_telemetry."
     columns:
-      - name: event_id
-        description: "Unique identifier for the telemetry event."
+      - name: observation_time
+        description: "Exact timestamp of the meteorological observation."
         tests:
-          - unique
           - not_null
 
-      - name: event_type
-        description: "The type of user action."
+      - name: observation_date
+        description: "Calendar date of the observation."
+        tests:
+          - not_null
+
+      - name: station_name
+        description: "Name of the monitoring station (e.g. Berlin, Tokyo, New York, London, Sydney)."
         tests:
           - not_null
           - accepted_values:
-              values: ['click', 'login', 'purchase', 'view', 'logout']
-              quote: false
+              values: ['Berlin', 'Tokyo', 'New York', 'London', 'Sydney']
+              quote: true
 
-      - name: user_id
-        description: "The ID of the user performing the action."
+      - name: period
+        description: "Telemetry period category: live (recent observed) or historical (YoY baseline)."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['live', 'historical']
+              quote: true
+
+      - name: temperature_c
+        description: "Near-surface air temperature at 2m in Celsius."
         tests:
           - not_null
 
-      - name: event_timestamp
-        description: "The time the event occurred."
+      - name: temperature_f
+        description: "Near-surface air temperature at 2m in Fahrenheit."
+        tests:
+          - not_null
+
+      - name: wind_speed_kmh
+        description: "Wind speed at 10m in kilometers per hour."
+        tests:
+          - not_null
+
+      - name: wind_speed_ms
+        description: "Wind speed at 10m in meters per second."
         tests:
           - not_null

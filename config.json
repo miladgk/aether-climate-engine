@@ -26,7 +26,7 @@
             "longitude": 151.20
         }
     ],
-    "cache_ttl_seconds": 1800,
+    "cache_ttl_seconds": 900,
     "anomaly_sigma_threshold": 2.0,
     "anomaly_window_hours": 3,
     "anomaly_min_deviation_c": 2.5,

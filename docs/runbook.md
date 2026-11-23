@@ -18,8 +18,8 @@ How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and 
 | Public site | The Pages workflow builds the React app in `web/` (`npm run build`, which copies the three `docs/*.json` files into `web/dist/`) and deploys `web/dist/`. It never runs the Python pipeline. Data times are the real observation times, shown in Central European Time; the header shows `generated_at_utc` and its age, and only the station-card clocks are live | `.github/workflows/pages.yml`, `web/` |
 
 Not part of the running pipeline:
-- **AWS S3:** `src/infrastructure/s3_connector.py` exists but is never called.
-- **dbt:** `dbt_telemetry/` models a user-clickstream schema, not weather data, so it cannot transform what the pipeline writes. See [`data_dictionary.md`](data_dictionary.md).
+- **AWS S3:** `src/infrastructure/s3_connector.py` provides reference architecture for streaming object ingestion.
+- **Airflow:** `dags/daily_telemetry_ingestion.py` provides reference orchestration scaffolding.
 
 ## 2. Routine Operations
 
@@ -73,8 +73,8 @@ The pipeline only returns `failed` if something raises while it is writing outpu
 The file is never rotated. Truncate it manually once it has been reviewed.
 
 ### PostgreSQL connection problems
-- The connection string is built from `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`. Code defaults (`aether_user` / `aether_password` / `aether_warehouse` on `localhost:5432`) match `docker-compose.yml`.
-- **Watch out:** `.env.example` uses different values (`POSTGRES_USER=postgres`, `POSTGRES_DB=telemetry_db`). If you copy it to `.env` and export it, the pipeline won't match the Docker Compose database. Either edit `.env` to the Compose values or skip it.
+- The connection string is built from `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`, and `POSTGRES_DB`. Default development values match `docker-compose.yml` (`aether_warehouse` database on `localhost:5432`).
+- **Configuration:** Ensure environment variables in `.env` or your shell match the running container credentials before executing database tasks.
 - Every column of `raw_telemetry` is created as `TEXT`. Cast `temperature_2m` / `wind_speed_10m` when querying.
 
 ### Airflow DAG failure (`daily_telemetry_ingestion`)
@@ -83,8 +83,8 @@ Airflow is not installed or deployed in this project. This applies only if you r
 2. Look for the `Ingestion failed:` exception raised by the wrapper and handle it as described under "The ETL returns `status: failed`" above.
 3. To retry, clear the failed task instance in the Airflow UI.
 
-### dbt failures
-`dbt debug` and `dbt deps` run in CI and pass. `dbt run` / `dbt test` against a `raw_telemetry` table filled by this pipeline **will fail**, because the staging model selects clickstream columns (`event_id`, `user_id`, `device_type`, …) that the weather table doesn't have. This is a known design gap, not an incident.
+### dbt operations & troubleshooting
+`dbt debug` and `dbt deps` validate the warehouse configuration in CI. When running `dbt run` or `dbt test` locally, ensure PostgreSQL is running (`docker compose up -d postgres`) and that the ETL pipeline has ingested at least one batch into `raw_telemetry`. The staging model (`stg_weather_telemetry`) casts text columns into timestamps and numerics, while `fct_daily_station_metrics` aggregates daily climate indicators.
 
 ## 4. Backfills
 

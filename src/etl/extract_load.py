@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List
 
 from src.infrastructure.postgres_connector import PostgresClient
-from src.etl.utils import _hash_pii, _flatten_json
+from src.etl.utils import _flatten_json
 from src.etl.anomaly_detector import filter_anomalies
 
 # Setup basic logging
