@@ -298,9 +298,17 @@ export function summarizeDataAge(
     };
   }
 
-  const ageH = Math.max(0, (now.getTime() - ms) / HOUR_MS);
+  const ageMs = Math.max(0, now.getTime() - ms);
+  const ageMinutes = Math.floor(ageMs / (60 * 1000));
+  const ageH = ageMs / HOUR_MS;
   const ageLabel =
-    ageH < 1 ? 'under 1h ago' : ageH < 48 ? `${Math.floor(ageH)}h ago` : `${Math.floor(ageH / 24)}d ago`;
+    ageMinutes < 15
+      ? 'Just now'
+      : ageMinutes < 60
+        ? `${ageMinutes}m ago`
+        : ageH < 48
+          ? `${Math.floor(ageH)}h ago`
+          : `${Math.floor(ageH / 24)}d ago`;
   const freshness: DataFreshness = ageH < 26 ? 'fresh' : ageH < 72 ? 'aging' : 'stale';
   const d = new Date(ms);
   // Same zone as every other timestamp on the page (Central European Time by default).

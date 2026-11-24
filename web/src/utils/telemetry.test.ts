@@ -80,6 +80,14 @@ test('wallMs and fmtWall preserve station-local wall-clock time regardless of vi
 
 test('summarizeDataAge reports the pipeline snapshot time and grades its age', () => {
   const generated = '2026-11-18T16:02:17Z';
+  const justNow = summarizeDataAge(generated, new Date('2026-11-18T16:10:00Z'), 'UTC');
+  assert.equal(justNow.freshness, 'fresh');
+  assert.equal(justNow.ageLabel, 'Just now');
+
+  const minutesAgo = summarizeDataAge(generated, new Date('2026-11-18T16:32:00Z'), 'UTC');
+  assert.equal(minutesAgo.freshness, 'fresh');
+  assert.equal(minutesAgo.ageLabel, '29m ago');
+
   const fresh = summarizeDataAge(generated, new Date('2026-11-19T04:00:00Z'), 'UTC');
   assert.equal(fresh.freshness, 'fresh');
   assert.equal(fresh.label, 'Data as of Nov 18, 16:02 UTC');
