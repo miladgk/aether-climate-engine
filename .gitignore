@@ -48,6 +48,7 @@ venv.bak/
 .cache
 nosetests.xml
 coverage.xml
+bandit/
 *.cover
 *.py,cover
 .hypothesis/
