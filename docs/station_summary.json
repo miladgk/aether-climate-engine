@@ -1,27 +1,27 @@
 {
-  "generated_at_utc": "2026-11-25T02:27:57Z",
+  "generated_at_utc": "2026-11-25T11:36:44Z",
   "stations": {
     "Berlin": {
       "utc_offset_seconds": 3600,
       "timezone": "Europe/Berlin",
       "timezone_abbreviation": "GMT+1",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T03:00",
+      "observed_until": "2026-11-25T12:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 1.35,
-          "wind_mae": 6.75,
+          "temp_mae": 2.49,
+          "wind_mae": 3.63,
           "n": 24
         },
         "sma": {
-          "temp_mae": 1.15,
-          "wind_mae": 7.78,
+          "temp_mae": 1.07,
+          "wind_mae": 3.83,
           "n": 24
         },
         "ema": {
-          "temp_mae": 1.14,
-          "wind_mae": 6.95,
+          "temp_mae": 0.97,
+          "wind_mae": 2.86,
           "n": 24
         }
       },
@@ -34,23 +34,23 @@
       "timezone": "Asia/Tokyo",
       "timezone_abbreviation": "GMT+9",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T11:00",
+      "observed_until": "2026-11-25T20:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 2.62,
-          "wind_mae": 3.34,
-          "n": 22
+          "temp_mae": 3.97,
+          "wind_mae": 5.88,
+          "n": 24
         },
         "sma": {
-          "temp_mae": 2.27,
-          "wind_mae": 3.63,
-          "n": 22
+          "temp_mae": 4.35,
+          "wind_mae": 5.82,
+          "n": 24
         },
         "ema": {
-          "temp_mae": 1.36,
-          "wind_mae": 2.15,
-          "n": 22
+          "temp_mae": 4.04,
+          "wind_mae": 5.57,
+          "n": 24
         }
       },
       "latitude": 35.7,
@@ -62,22 +62,22 @@
       "timezone": "America/New_York",
       "timezone_abbreviation": "GMT-5",
       "observed_hours": 96,
-      "observed_until": "2026-11-24T21:00",
+      "observed_until": "2026-11-25T06:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 9.01,
-          "wind_mae": 6.03,
+          "temp_mae": 6.32,
+          "wind_mae": 5.87,
           "n": 24
         },
         "sma": {
-          "temp_mae": 8.38,
-          "wind_mae": 5.62,
+          "temp_mae": 3.93,
+          "wind_mae": 4.35,
           "n": 24
         },
         "ema": {
-          "temp_mae": 6.1,
-          "wind_mae": 5.8,
+          "temp_mae": 2.23,
+          "wind_mae": 4.34,
           "n": 24
         }
       },
@@ -90,22 +90,22 @@
       "timezone": "Europe/London",
       "timezone_abbreviation": "GMT",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T02:00",
+      "observed_until": "2026-11-25T11:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 1.08,
-          "wind_mae": 2.8,
+          "temp_mae": 2.34,
+          "wind_mae": 5.21,
           "n": 24
         },
         "sma": {
-          "temp_mae": 0.96,
-          "wind_mae": 2.82,
+          "temp_mae": 1.54,
+          "wind_mae": 3.72,
           "n": 24
         },
         "ema": {
-          "temp_mae": 1.51,
-          "wind_mae": 2.75,
+          "temp_mae": 0.96,
+          "wind_mae": 3.41,
           "n": 24
         }
       },
@@ -118,22 +118,22 @@
       "timezone": "Australia/Sydney",
       "timezone_abbreviation": "GMT+11",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T13:00",
+      "observed_until": "2026-11-25T22:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 3.7,
-          "wind_mae": 4.84,
+          "temp_mae": 2.31,
+          "wind_mae": 9.5,
           "n": 24
         },
         "sma": {
-          "temp_mae": 2.07,
-          "wind_mae": 4.85,
+          "temp_mae": 1.99,
+          "wind_mae": 8.75,
           "n": 24
         },
         "ema": {
-          "temp_mae": 2.35,
-          "wind_mae": 4.6,
+          "temp_mae": 1.86,
+          "wind_mae": 9.41,
           "n": 24
         }
       },
