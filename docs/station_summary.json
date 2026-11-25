@@ -1,27 +1,27 @@
 {
-  "generated_at_utc": "2026-11-25T11:36:44Z",
+  "generated_at_utc": "2026-11-25T20:40:42Z",
   "stations": {
     "Berlin": {
       "utc_offset_seconds": 3600,
       "timezone": "Europe/Berlin",
       "timezone_abbreviation": "GMT+1",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T12:00",
+      "observed_until": "2026-11-25T21:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 2.49,
-          "wind_mae": 3.63,
+          "temp_mae": 0.7,
+          "wind_mae": 1.54,
           "n": 24
         },
         "sma": {
-          "temp_mae": 1.07,
-          "wind_mae": 3.83,
+          "temp_mae": 1.4,
+          "wind_mae": 2.09,
           "n": 24
         },
         "ema": {
-          "temp_mae": 0.97,
-          "wind_mae": 2.86,
+          "temp_mae": 1.35,
+          "wind_mae": 3.21,
           "n": 24
         }
       },
@@ -34,22 +34,22 @@
       "timezone": "Asia/Tokyo",
       "timezone_abbreviation": "GMT+9",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T20:00",
+      "observed_until": "2026-11-26T05:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 3.97,
-          "wind_mae": 5.88,
+          "temp_mae": 3.96,
+          "wind_mae": 7.24,
           "n": 24
         },
         "sma": {
-          "temp_mae": 4.35,
-          "wind_mae": 5.82,
+          "temp_mae": 2.06,
+          "wind_mae": 5.71,
           "n": 24
         },
         "ema": {
-          "temp_mae": 4.04,
-          "wind_mae": 5.57,
+          "temp_mae": 1.1,
+          "wind_mae": 5.77,
           "n": 24
         }
       },
@@ -62,22 +62,22 @@
       "timezone": "America/New_York",
       "timezone_abbreviation": "GMT-5",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T06:00",
+      "observed_until": "2026-11-25T15:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 6.32,
-          "wind_mae": 5.87,
+          "temp_mae": 5.18,
+          "wind_mae": 7.94,
           "n": 24
         },
         "sma": {
-          "temp_mae": 3.93,
-          "wind_mae": 4.35,
+          "temp_mae": 3.75,
+          "wind_mae": 5.17,
           "n": 24
         },
         "ema": {
-          "temp_mae": 2.23,
-          "wind_mae": 4.34,
+          "temp_mae": 5.04,
+          "wind_mae": 5.88,
           "n": 24
         }
       },
@@ -90,22 +90,22 @@
       "timezone": "Europe/London",
       "timezone_abbreviation": "GMT",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T11:00",
+      "observed_until": "2026-11-25T20:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 2.34,
-          "wind_mae": 5.21,
+          "temp_mae": 1.19,
+          "wind_mae": 4.23,
           "n": 24
         },
         "sma": {
-          "temp_mae": 1.54,
-          "wind_mae": 3.72,
+          "temp_mae": 1.1,
+          "wind_mae": 2.33,
           "n": 24
         },
         "ema": {
-          "temp_mae": 0.96,
-          "wind_mae": 3.41,
+          "temp_mae": 1.04,
+          "wind_mae": 2.26,
           "n": 24
         }
       },
@@ -118,22 +118,22 @@
       "timezone": "Australia/Sydney",
       "timezone_abbreviation": "GMT+11",
       "observed_hours": 96,
-      "observed_until": "2026-11-25T22:00",
+      "observed_until": "2026-11-26T07:00",
       "holdout_hours": 24,
       "holdout_mae": {
         "linear": {
-          "temp_mae": 2.31,
-          "wind_mae": 9.5,
+          "temp_mae": 3.09,
+          "wind_mae": 11.15,
           "n": 24
         },
         "sma": {
-          "temp_mae": 1.99,
-          "wind_mae": 8.75,
+          "temp_mae": 2.44,
+          "wind_mae": 6.88,
           "n": 24
         },
         "ema": {
-          "temp_mae": 1.86,
-          "wind_mae": 9.41,
+          "temp_mae": 2.39,
+          "wind_mae": 4.99,
           "n": 24
         }
       },
