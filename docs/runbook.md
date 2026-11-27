@@ -6,7 +6,7 @@ How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and 
 
 | Stage | What actually runs | Code |
 | --- | --- | --- |
-| Ingestion | Python `urllib.request` calls to the Open-Meteo **forecast** API (live, hourly) and **archive** API (a 15-day window one year earlier, `today − 372 d` → `today − 358 d`), for the 5 stations in `config.json`. Both requests use `timezone=auto`, so timestamps are station-local wall-clock time; the archive date range is computed from today's UTC date | `src/etl/extract_load.py` |
+| Ingestion | Python `urllib.request` calls to the Open-Meteo **forecast** API (live, hourly) and **archive** API (a 15-day window one year earlier, `today − 372 d` → `today − 358 d`), for the 6 stations in `config.json` (Berlin, Tokyo, New York, London, Sydney, Helsinki) with 3-attempt exponential backoff and 0.3s request pacing. Both requests use `timezone=auto`, so timestamps are station-local wall-clock time; the archive date range is computed from today's UTC date | `src/etl/extract_load.py` |
 | Caching | Each API response is cached on disk in `/tmp/aether_cache/` (MD5 of the URL) for `cache_ttl_seconds` (1800s) | `src/etl/cache_manager.py` |
 | Validation | Data contract: `time` (string), `temperature_2m` and `wind_speed_10m` (numeric) must be present | `src/etl/validator.py` |
 | Anomaly filter | Local spike filter on **live temperature and wind**: flags an hour that is > `anomaly_sigma_threshold` (2.0) robust σ and more than `anomaly_min_deviation_c` (2.5 °C) / `anomaly_min_deviation_wind_kmh` (12 km/h) off a robust line through the ±`anomaly_window_hours` (3) neighbouring hours. A flag on either metric removes the whole hour. Historical records are not filtered | `src/etl/anomaly_detector.py` |
@@ -15,7 +15,7 @@ How to run, troubleshoot, and recover the Aether weather-telemetry pipeline and 
 | Model scoring | Holdout MAE per model (train on the window minus its last `holdout_hours` (24), score those hours), written to `docs/station_summary.json` with each station's time zone | `src/ml/predictor.py` (`evaluate_holdout`) |
 | Outputs | `docs/sample_telemetry.json` (clean live + historical records), `docs/predictions.json` (forecasts), both JSON Lines, and `docs/station_summary.json`; best-effort batch insert into PostgreSQL table `raw_telemetry` | `src/etl/extract_load.py`, `src/infrastructure/postgres_connector.py` |
 | Orchestration | Airflow DAG `daily_telemetry_ingestion` (`@daily`, 3 retries, 5-minute delay, `catchup=False`). Defined but not deployed anywhere | `dags/daily_telemetry_ingestion.py` |
-| Public site | The Pages workflow builds the React app in `web/` (`npm run build`, which copies the three `docs/*.json` files into `web/dist/`) and deploys `web/dist/`. It never runs the Python pipeline. Data times are the real observation times, shown in Central European Time; the header shows `generated_at_utc` and its age, and only the station-card clocks are live | `.github/workflows/pages.yml`, `web/` |
+| Public site | Dual-pipeline two-speed architecture: (1) Hourly Live Ingestion: `.github/workflows/pages.yml` runs every hour at off-peak minute 17 (`17 * * * *`), runs `scripts/fetch_live_readings.py` to fetch current readings for all 6 stations into `docs/live_latest.json` (git-ignored), builds the React app in `web/` (`npm run build`) and deploys to GitHub Pages without modifying git history. (2) Daily Deep ML Ingestion: `.github/workflows/scheduled_ingestion.yml` runs once daily at off-peak hour `17 5 * * *` (05:17 UTC) to pull the full 96-hour history, train models, score holdout MAE, and commit the three updated JSON datasets. The dashboard prioritizes newer live telemetry while rendering ML forecasts and YoY baselines | `.github/workflows/pages.yml`, `.github/workflows/scheduled_ingestion.yml`, `web/` |
 
 Not part of the running pipeline:
 - **AWS S3:** `src/infrastructure/s3_connector.py` provides reference architecture for streaming object ingestion.
@@ -39,7 +39,7 @@ Nothing in the code loads a `.env` file (there is no `python-dotenv`). Database 
 ### Update the public dashboard data
 The public site only changes when those files are committed and pushed. Any push to `main` that touches `docs/*.json` or `web/**` triggers the "Deploy Aether dashboard" workflow, which type-checks, unit-tests and builds `web/` before deploying. Before you commit regenerated data, check the record counts:
 ```bash
-wc -l docs/sample_telemetry.json docs/predictions.json   # predictions should be 5 stations × 3 methods × 48h = 720
+wc -l docs/sample_telemetry.json docs/predictions.json   # predictions should be 6 stations × 3 methods × 48h = 864
 ```
 Commit all three files together: the dashboard uses `station_summary.json` for time zones and the MAE ranking, so mixing files from different runs mislabels the chart. If you change `observed_window_hours`, the chart still shows `2 × horizon` observed hours, so keep it ≥ 96 for the 48h view.
 

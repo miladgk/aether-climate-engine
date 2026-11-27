@@ -12,7 +12,7 @@ JSON Lines, one hourly reading per line, written by `src/etl/extract_load.py` an
 | `time` | string (ISO-8601, no timezone) | — | Hour of the reading in the **station's local time** (requested with `timezone=auto`; the station's UTC offset is in `station_summary.json`). For `historical` rows this is the original timestamp **shifted forward 365 days**, so it lines up with the current timeline. |
 | `temperature_2m` | number | °C | Air temperature 2 m above ground. |
 | `wind_speed_10m` | number | km/h | Wind speed 10 m above ground. |
-| `location` | string | — | Station name from `config.json`: `Berlin`, `Tokyo`, `New York`, `London`, `Sydney`. |
+| `location` | string | — | Station name from `config.json`: `Berlin`, `Tokyo`, `New York`, `London`, `Sydney`, `Helsinki`. |
 | `period` | string | — | `live`: an hour that has **already happened**, taken from the Open-Meteo forecast API's `past_days` output (Open-Meteo's best-estimate weather for past hours, not a raw station reading). Future hours are discarded. `historical`: from the archive API, used as the Year-over-Year baseline. The archive request covers `today − 372 d` → `today − 358 d` (15 calendar days, 360 hourly rows per station), which after the +365-day shift spans `today − 7 d` → `today + 7 d`. |
 
 Quality rules applied before a row is written:
@@ -22,7 +22,7 @@ Quality rules applied before a row is written:
 **Observed window.** After filtering, only the latest `observed_window_hours` (96) clean `live` rows per station are written, ending at the station's current local hour. That window is exactly what the models are trained on and what the dashboard plots as "Observed". The chart always shows twice as many observed hours as forecast hours (96 + 48 by default), so it is two-thirds observed and one-third forecast. An hour dropped by the anomaly filter leaves a gap (the dashboard draws it as a break in the line). With the local spike filter this is rare: the 2026-11-18 snapshot has one gap (London, 2026-11-17 07:00 local, the wind hour flagged at a front), so London's 96 rows span 97 hours.
 
 ### 1.2 `docs/predictions.json`: model forecasts
-JSON Lines, one forecast hour per station per model. Expected size: 5 stations × 3 methods × 48 hours = 720 rows.
+JSON Lines, one forecast hour per station per model. Expected size: 6 stations × 3 methods × 48 hours = 864 rows.
 
 | Field | Type | Unit | Definition |
 | --- | --- | --- | --- |
@@ -51,8 +51,21 @@ Best-effort copy of the rows in 1.1, batch-inserted by `src/infrastructure/postg
 ### 1.5 `dead_letter_queue.dlq`
 JSON Lines, append-only, git-ignored. Every line is `{"reason": ..., "record": {...}}`. `reason` is `"Schema Validation Failure"` or `"Anomaly: <metric(s)> spike"`, e.g. `"Anomaly: wind_speed_10m spike"` or `"Anomaly: temperature_2m + wind_speed_10m spike"`. (Before 2026-11-18, anomaly lines were the bare record with no `reason`.) See [`runbook.md`](runbook.md).
 
+### 1.6 `docs/live_latest.json`: hourly real-time telemetry stream
+A single JSON document generated hourly at off-peak minute `17 * * * *` by `scripts/fetch_live_readings.py`. Deployed directly to GitHub Pages as part of the two-speed architecture without committing to git history (`docs/live_latest.json` is git-ignored). Contains the latest near-surface temperature and 10 m wind speed for all 6 stations directly from Open-Meteo's `current` endpoint:
+
+| Field | Type | Unit | Definition |
+| --- | --- | --- | --- |
+| `generated_at_utc` | string (ISO-8601, UTC) | — | Pipeline generation timestamp. |
+| `readings.<Station>.temperature_2m` | number | °C | Current near-surface air temperature. |
+| `readings.<Station>.wind_speed_10m` | number | km/h | Current surface wind speed. |
+| `readings.<Station>.time` | string (ISO-8601) | — | Station-local reading timestamp. |
+| `readings.<Station>.timezone` | string | — | Station IANA time zone (e.g. `Europe/Berlin`, `Europe/Helsinki`). |
+| `readings.<Station>.utc_offset_seconds` | integer | s | UTC offset in seconds. |
+| `readings.<Station>.latitude`, `longitude`, `elevation` | number | — | Model grid coordinates and elevation. |
+
 ### Caveats
-- **Freshness:** the public GitHub Pages site serves the last committed snapshot. Timestamps are the recorded ones, shown in Central European Time, and the header badge shows `generated_at_utc` and how old it is (amber after 26 h, red after 72 h).
+- **Freshness & Two-Speed Architecture:** The public dashboard employs a two-speed architecture: precomputed ML forecasts and 96-hour history are refreshed daily at 05:17 UTC (`station_summary.json`), while live telemetry readings are refreshed hourly at minute 17 (`live_latest.json`). The header badge displays the latest dataset snapshot timestamp in Central European Time with its relative age (amber after 26 h, red after 72 h).
 - **Leap years:** the YoY baseline uses a fixed 365-day offset, so it is one calendar day off across a 29 February.
 - **Daylight saving:** one UTC offset per station (the current one) is used to cut the observed window at the station's current hour. If a DST change falls inside the window, NOW can be off by an hour.
 
@@ -67,7 +80,7 @@ Cleanses, deduplicates, and types incoming hourly telemetry into structured nume
 | --- | --- | --- | --- |
 | `observation_time` | TIMESTAMP | — | Exact observation timestamp in station-local time. dbt test: `not_null`. |
 | `observation_date` | DATE | — | Truncated date of the observation. dbt test: `not_null`. |
-| `station_name` | VARCHAR | — | Monitoring station name (`Berlin`, `Tokyo`, `New York`, `London`, `Sydney`). dbt tests: `not_null`, `accepted_values`. |
+| `station_name` | VARCHAR | — | Monitoring station name (`Berlin`, `Tokyo`, `New York`, `London`, `Sydney`, `Helsinki`). dbt tests: `not_null`, `accepted_values`. |
 | `period` | VARCHAR | — | Observation stream category (`live` or `historical`). dbt tests: `not_null`, `accepted_values`. |
 | `temperature_c` | NUMERIC(5,2) | °C | Air temperature at 2 m above ground. dbt test: `not_null`. |
 | `temperature_f` | NUMERIC(5,2) | °F | Air temperature converted to Fahrenheit: `(temp * 9/5) + 32`. dbt test: `not_null`. |
