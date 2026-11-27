@@ -24,6 +24,11 @@
             "name": "Sydney",
             "latitude": -33.86,
             "longitude": 151.20
+        },
+        {
+            "name": "Helsinki",
+            "latitude": 60.17,
+            "longitude": 24.94
         }
     ],
     "cache_ttl_seconds": 900,

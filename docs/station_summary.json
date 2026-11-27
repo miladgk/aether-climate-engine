@@ -140,6 +140,34 @@
       "latitude": -33.848858,
       "longitude": 151.19551,
       "elevation": 0.0
+    },
+    "Helsinki": {
+      "utc_offset_seconds": 7200,
+      "timezone": "Europe/Helsinki",
+      "timezone_abbreviation": "GMT+2",
+      "observed_hours": 96,
+      "observed_until": "2026-11-27T15:00",
+      "holdout_hours": 24,
+      "holdout_mae": {
+        "linear": {
+          "temp_mae": 0.81,
+          "wind_mae": 3.52,
+          "n": 24
+        },
+        "sma": {
+          "temp_mae": 1.66,
+          "wind_mae": 2.88,
+          "n": 24
+        },
+        "ema": {
+          "temp_mae": 1.66,
+          "wind_mae": 2.85,
+          "n": 24
+        }
+      },
+      "latitude": 60.16998,
+      "longitude": 24.945206,
+      "elevation": 7.0
     }
   }
 }

@@ -10,7 +10,7 @@ const SHORTCUT_GROUPS: {
   {
     title: 'Station Orbit',
     items: [
-      { keys: ['1', '–', '5'], desc: 'Switch between Berlin, Tokyo, New York, London & Sydney' },
+      { keys: ['1', '–', '6'], desc: 'Switch between Berlin, Tokyo, New York, London, Sydney & Helsinki' },
     ],
   },
   {

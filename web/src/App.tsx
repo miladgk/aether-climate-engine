@@ -35,6 +35,7 @@ import {
 const TELEMETRY_URL = './sample_telemetry.json';
 const PREDICTIONS_URL = './predictions.json';
 const SUMMARY_URL = './station_summary.json';
+const LIVE_LATEST_URL = './live_latest.json';
 
 function isEditableEventTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -72,10 +73,11 @@ export default function App() {
     try {
       setErrorMessage(null);
       const cacheBuster = `?t=${Date.now()}`;
-      const [liveRes, predRes, summaryRes] = await Promise.all([
+      const [liveRes, predRes, summaryRes, latestRes] = await Promise.all([
         fetch(`${TELEMETRY_URL}${cacheBuster}`, { cache: 'no-store' }),
         fetch(`${PREDICTIONS_URL}${cacheBuster}`, { cache: 'no-store' }).catch(() => null),
         fetch(`${SUMMARY_URL}${cacheBuster}`, { cache: 'no-store' }).catch(() => null),
+        fetch(`${LIVE_LATEST_URL}${cacheBuster}`, { cache: 'no-store' }).catch(() => null),
       ]);
 
       if (!liveRes.ok) {
@@ -91,6 +93,19 @@ export default function App() {
           generatedAt = parsedSummary.generated_at_utc;
         } catch {
           summaryMap = {};
+        }
+      }
+
+      if (latestRes && latestRes.ok) {
+        try {
+          const parsedLatest = (await latestRes.json()) as { generated_at_utc?: string };
+          if (parsedLatest?.generated_at_utc) {
+            if (!generatedAt || Date.parse(parsedLatest.generated_at_utc) > Date.parse(generatedAt)) {
+              generatedAt = parsedLatest.generated_at_utc;
+            }
+          }
+        } catch {
+          // live_latest is optional (git-ignored)
         }
       }
 
@@ -199,7 +214,7 @@ export default function App() {
       // Pause instrument shortcuts while the shortcut reference modal is open
       if (shortcutsOpen) return;
 
-      if (e.key >= '1' && e.key <= '5') {
+      if (e.key >= '1' && e.key <= '6') {
         const station = STATION_ORDER[Number(e.key) - 1];
         if (station) {
           e.preventDefault();

@@ -15,11 +15,11 @@ models:
           - not_null
 
       - name: station_name
-        description: "Name of the monitoring station (e.g. Berlin, Tokyo, New York, London, Sydney)."
+        description: "Name of the monitoring station (e.g. Berlin, Tokyo, New York, London, Sydney, Helsinki)."
         tests:
           - not_null
           - accepted_values:
-              values: ['Berlin', 'Tokyo', 'New York', 'London', 'Sydney']
+              values: ['Berlin', 'Tokyo', 'New York', 'London', 'Sydney', 'Helsinki']
               quote: true
 
       - name: period

@@ -49,6 +49,7 @@ venv.bak/
 nosetests.xml
 coverage.xml
 bandit/
+docs/live_latest.json
 *.cover
 *.py,cover
 .hypothesis/

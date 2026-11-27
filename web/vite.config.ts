@@ -14,6 +14,7 @@ export const DATA_FILES = [
   'sample_telemetry.json',
   'predictions.json',
   'station_summary.json',
+  'live_latest.json',
 ] as const;
 
 function pipelineData(): Plugin {
@@ -23,18 +24,23 @@ function pipelineData(): Plugin {
       server.middlewares.use((req, res, next) => {
         const name = (req.url ?? '').split('?')[0].replace(/^\//, '');
         if (!(DATA_FILES as readonly string[]).includes(name)) return next();
+        const filePath = path.join(DATA_DIR, name);
+        if (!fs.existsSync(filePath)) return next();
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store');
-        fs.createReadStream(path.join(DATA_DIR, name)).pipe(res);
+        fs.createReadStream(filePath).pipe(res);
       });
     },
     generateBundle() {
       for (const name of DATA_FILES) {
-        this.emitFile({
-          type: 'asset',
-          fileName: name,
-          source: fs.readFileSync(path.join(DATA_DIR, name)),
-        });
+        const filePath = path.join(DATA_DIR, name);
+        if (fs.existsSync(filePath)) {
+          this.emitFile({
+            type: 'asset',
+            fileName: name,
+            source: fs.readFileSync(filePath),
+          });
+        }
       }
     },
   };

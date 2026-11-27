@@ -37,6 +37,7 @@ import {
 } from './telemetry';
 import {
   PredictionRecord,
+  STATION_ORDER,
   StationSummaryEntry,
   StationSummaryFile,
   TelemetryRecord,
@@ -394,7 +395,7 @@ test('real uploaded observatory datasets parse, rank holdout winners, and comput
   const clockNow = new Date('2026-11-19T21:28:00Z');
   const deck = computeStationDeckData(live, { temp: 'C', wind: 'kmh' }, summary, clockNow);
 
-  assert.equal(deck.length, 5);
+  assert.equal(deck.length, STATION_ORDER.length);
   assert.ok(deck.filter((c) => c.isMaxAnomaly).length <= 1);
   assert.ok(deck.filter((c) => c.isMinAnomaly).length <= 1);
 
@@ -413,7 +414,7 @@ test('real uploaded observatory datasets parse, rank holdout winners, and comput
   }
 
   // Verify valid holdout winners are computed for all stations
-  for (const stationName of ['Berlin', 'Tokyo', 'New York', 'London', 'Sydney']) {
+  for (const stationName of Object.keys(summary)) {
     const best = findBestHoldoutModel(summary[stationName]);
     assert.ok(best === 'linear' || best === 'sma' || best === 'ema', `Expected valid best model for ${stationName}`);
   }

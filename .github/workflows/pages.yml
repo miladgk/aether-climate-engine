@@ -1,13 +1,11 @@
-name: Deploy Aether dashboard
+name: Deploy Aether Dashboard & Hourly Live Telemetry
 
 on:
   push:
     branches: [main]
-    paths:
-      # The pipeline's JSON outputs live in docs/; the UI source lives in web/.
-      - "docs/*.json"
-      - "web/**"
-      - ".github/workflows/pages.yml"
+  schedule:
+    # Runs hourly at minute 17 (off-peak minute avoiding top-of-hour congestion)
+    - cron: '17 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,6 +23,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # Fast live fetcher: takes ~3 seconds, writes docs/live_latest.json
+      # (git-ignored, so hourly refresh adds no commits to git history)
+      - name: Fetch newest live weather readings
+        continue-on-error: true
+        run: |
+          python3 scripts/fetch_live_readings.py
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -44,7 +54,7 @@ jobs:
           npm test
 
       # vite build bundles the React app and copies docs/{sample_telemetry,
-      # predictions,station_summary}.json next to index.html (see web/vite.config.ts).
+      # predictions,station_summary,live_latest}.json next to index.html (see web/vite.config.ts).
       - name: Build dashboard
         working-directory: web
         run: npm run build

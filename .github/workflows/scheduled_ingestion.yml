@@ -1,9 +1,9 @@
-name: Scheduled Weather Telemetry Ingestion
+name: Daily Deep ML & Weather Warehouse Ingestion
 
 on:
   schedule:
-    # Runs every 15 minutes (at minute 0, 15, 30, 45 of every hour)
-    - cron: '*/15 * * * *'
+    # Runs once a day at 05:17 UTC (an off-peak minute and hour on GitHub Actions)
+    - cron: '17 5 * * *'
   workflow_dispatch:
 
 # Permissions required for deploying to GitHub Pages and pushing updated snapshots

@@ -1,4 +1,4 @@
-export type StationId = 'Berlin' | 'Tokyo' | 'New York' | 'London' | 'Sydney';
+export type StationId = 'Berlin' | 'Tokyo' | 'New York' | 'London' | 'Sydney' | 'Helsinki';
 
 export type SingleForecastModel = 'linear' | 'sma' | 'ema';
 export type ForecastModel = SingleForecastModel | 'ensemble';
@@ -78,6 +78,7 @@ export const STATION_ORDER: readonly StationId[] = [
   'New York',
   'London',
   'Sydney',
+  'Helsinki',
 ] as const;
 
 export const STATION_META: Record<StationId, StationMetadata> = {
@@ -86,7 +87,24 @@ export const STATION_META: Record<StationId, StationMetadata> = {
   'New York': { id: 'New York', shortLabel: 'New York, US', fullName: 'New York, USA', latitude: 40.71, longitude: -74.0, elevation: 10 },
   London: { id: 'London', shortLabel: 'London, UK', fullName: 'London, UK', latitude: 51.5, longitude: -0.12, elevation: 11 },
   Sydney: { id: 'Sydney', shortLabel: 'Sydney, AU', fullName: 'Sydney, Australia', latitude: -33.86, longitude: 151.2, elevation: 19 },
+  Helsinki: { id: 'Helsinki', shortLabel: 'Helsinki, FI', fullName: 'Helsinki, Finland', latitude: 60.17, longitude: 24.94, elevation: 26 },
 };
+
+export interface LiveLatestReading {
+  temperature_2m: number | null;
+  wind_speed_10m: number | null;
+  time?: string;
+  timezone?: string;
+  utc_offset_seconds?: number;
+  latitude?: number;
+  longitude?: number;
+  elevation?: number;
+}
+
+export interface LiveLatestFile {
+  generated_at_utc: string;
+  readings: Record<string, LiveLatestReading>;
+}
 
 export interface UnitPreferences {
   temp: TempUnit;
