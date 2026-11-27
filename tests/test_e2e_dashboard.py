@@ -91,7 +91,7 @@ def page(request, dashboard_url):
 def test_dashboard_loads_and_hides_loading_screen(page):
     """The observatory should load, fetch telemetry, and dismiss the loading overlay."""
     assert page.title().startswith("Aether")
-    assert page.locator(".station-card").count() == 5
+    assert page.locator(".station-card").count() == 6
 
 
 def test_temperature_and_wind_charts_render(page):

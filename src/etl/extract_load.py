@@ -114,14 +114,21 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
         else:
             logger.info(f"Fetching live data for {loc_name}")
             req = urllib.request.Request(forecast_url, headers={'User-Agent': 'Mozilla/5.0'})
-            try:
-                with urllib.request.urlopen(req) as response:
-                    if response.status == 200:
-                        raw_data = response.read().decode('utf-8')
-                        forecast_data = json.loads(raw_data)
-                        set_cached_response(forecast_url, raw_data)
-            except Exception as e:
-                logger.error(f"Error fetching live data for {loc_name}: {e}")
+            for attempt in range(3):
+                try:
+                    with urllib.request.urlopen(req, timeout=20) as response:
+                        if response.status == 200:
+                            raw_data = response.read().decode('utf-8')
+                            forecast_data = json.loads(raw_data)
+                            set_cached_response(forecast_url, raw_data)
+                            break
+                except Exception as e:
+                    logger.warning(f"Attempt {attempt+1} failed for live {loc_name}: {e}")
+                    if attempt < 2:
+                        time.sleep(1.0 * (attempt + 1))
+                    else:
+                        logger.error(f"Error fetching live data for {loc_name}: {e}")
+            time.sleep(0.3)
                 
         # 2. Fetch Archive (Historical) Data
         cached_archive = get_cached_response(archive_url)
@@ -131,14 +138,21 @@ def run_daily_ingestion(execution_date: str) -> Dict[str, Any]:
         else:
             logger.info(f"Fetching historical YoY data for {loc_name}")
             req = urllib.request.Request(archive_url, headers={'User-Agent': 'Mozilla/5.0'})
-            try:
-                with urllib.request.urlopen(req) as response:
-                    if response.status == 200:
-                        raw_data = response.read().decode('utf-8')
-                        archive_data = json.loads(raw_data)
-                        set_cached_response(archive_url, raw_data)
-            except Exception as e:
-                logger.error(f"Error fetching historical data for {loc_name}: {e}")
+            for attempt in range(3):
+                try:
+                    with urllib.request.urlopen(req, timeout=20) as response:
+                        if response.status == 200:
+                            raw_data = response.read().decode('utf-8')
+                            archive_data = json.loads(raw_data)
+                            set_cached_response(archive_url, raw_data)
+                            break
+                except Exception as e:
+                    logger.warning(f"Attempt {attempt+1} failed for archive {loc_name}: {e}")
+                    if attempt < 2:
+                        time.sleep(1.0 * (attempt + 1))
+                    else:
+                        logger.error(f"Error fetching historical data for {loc_name}: {e}")
+            time.sleep(0.3)
 
         # Process Live Data. With timezone=auto, Open-Meteo returns station-local
         # wall-clock times, so "now" is computed in the station's local time and

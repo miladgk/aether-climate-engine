@@ -9,7 +9,7 @@
 [![Terraform](https://img.shields.io/badge/terraform-AWS%20provider%205.x-purple.svg)](https://www.terraform.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Aether** is an end-to-end weather-telemetry pipeline and dashboard. It pulls hourly temperature and wind data for five cities from the Open-Meteo APIs, validates it, filters statistical outliers into a dead-letter queue, produces 48-hour forecasts with three simple models, and compares everything against the same hours one year earlier in a static React + Chart.js dashboard (`web/`) published on GitHub Pages.
+**Aether** is an end-to-end weather-telemetry pipeline and dashboard. It pulls hourly temperature and wind data for six cities (Berlin, Tokyo, New York, London, Sydney, and Helsinki) from the Open-Meteo APIs, validates it, filters statistical outliers into a dead-letter queue, produces 48-hour forecasts with three models, and compares everything against the same hours one year earlier in a static React + Chart.js dashboard (`web/`) published on GitHub Pages.
 
 <div align="center">
   <img src="docs/dashboard_preview.jpg" alt="Aether Command Center Dashboard Preview" width="100%">
@@ -21,7 +21,7 @@
 
 ## 🌟 Key Features
 
-- **🌐 Multi-Station Global Ingestion**: Hourly atmospheric data ingestion pipeline supporting global monitoring stations (Berlin, Tokyo, New York, London, Sydney) via the Open-Meteo forecast & archive HTTP APIs, with a local TTL response cache. An AWS S3 streaming connector is provided in `src/infrastructure/s3_connector.py` as cloud reference architecture.
+- **🌐 Multi-Station Global Ingestion & Two-Speed Architecture**: Automated dual-pipeline architecture: hourly lightweight live telemetry ingestion (`pages.yml` at minute 17) for real-time readings without git churn, coupled with a daily deep analytical & ML warehouse pipeline (`scheduled_ingestion.yml` at 05:17 UTC) supporting 6 global monitoring stations (Berlin, Tokyo, New York, London, Sydney, Helsinki) via the Open-Meteo APIs, with an exponential-backoff retry mechanism and a local TTL response cache. An AWS S3 streaming connector is provided in `src/infrastructure/s3_connector.py` as cloud reference architecture.
 - **🔍 Statistical Anomaly Detection**: A local spike filter on live temperature and wind (per station): each hour is compared with a robust line fitted through the 3 hours on either side, and flagged only if it is more than 2.0 robust σ *and* more than 2.5 °C (temperature) or 12 km/h (wind) off. Normal daily peaks and gradual weather changes pass; sudden jumps are routed, with schema failures, to a Dead Letter Queue (`dead_letter_queue.dlq`).
 - **🤖 Multi-Model Machine Learning Engine**:
   - **Linear Regression**: Diurnal harmonic trend forecasting with graceful pure-Python fallback.
